@@ -341,7 +341,7 @@ let seen=store.get('kmSeen',{});if(!seen||typeof seen!=='object'||Array.isArray(
 let company=store.get('kmCompany','All');if(company!=='All'&&!COMPANIES.includes(company))company='All';
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
 function isNew(it){
-  if(it.newBadge==='show')return true;if(it.newBadge==='hide')return false;
+  if(it.newBadge==='show'||it.newBadge==='always')return true;if(it.newBadge==='hide'||it.newBadge==='never')return false;
   const d=new Date(String(it.updated)+'T00:00:00');if(isNaN(d))return false;
   const age=(TODAY-d)/864e5;return age<=NEWDAYS&&age>=-1&&seen[it.id]!==it.updated;
 }
