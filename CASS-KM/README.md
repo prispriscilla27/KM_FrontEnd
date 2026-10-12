@@ -10,12 +10,17 @@ The CASS Knowledge Centre is an internal website for CASS (Chandra Asri Sentral 
 |---|---|
 | `index.html` | The Knowledge Centre: taxonomy, service pages, process maps, search and glossary. |
 | `km-data.js` | **All the content**: settings, the service taxonomy with its L3 functions, people, service page details, knowledge items, glossary, search synonyms, Academy content and the change log. Every page reads this one file. |
+| `new-joiner-academy.html` | The New Joiner Academy: pick a tower, then follow its 12-week pathway with a progress circle per week and checkpoint tests. |
+| `academy-week.html` | One week of the Academy (`academy-week.html?week=3&tower=customer-operations`): its goals and materials, which you open and mark as finished. |
+| `academy-test.html` | Every Academy test (`academy-test.html?test=cp1&tower=customer-operations`, also `cp2`, `cp3`, `final`). |
+| `academy-data.js` | Shared Academy helper used by the three Academy pages: the progress rules, the week and checkpoint locks, and the progress circle. It holds no content. |
 | `km-boot.js` | A small shared loader that every reader page loads right after `km-data.js`. It hands the content to the page. It also powers the admin's **Preview on site**: an admin can see unpublished changes on the real pages, with an orange bar on top. Readers never see a preview. |
 | `reference/service-taxonomy.json` | The source of the taxonomy (towers, processes, services) and the L3 functions. `km-data.js` was built from it. |
 | `reference/glossary-seed.json` | The starting glossary (66 terms with tower tags). |
+| `reference/academy-sample-questions.json` | The 51 sample test questions copied into the Academy. |
 | `reference/mockup/` | The approved clickable mockup that the site is built from. It is reference only and is not needed to run the site. |
 
-Coming in later steps: `new-joiner-academy.html`, `academy-week.html`, `academy-test.html` (the New Joiner Academy) and `admin.html` (the admin page). The links to them are already in the top bar.
+Coming in a later step: `admin.html` (the admin page). The link to it is already in the top bar.
 
 ## Open it on your own computer
 
@@ -50,9 +55,20 @@ These are personal and stay in that person's browser only. They are never shared
 - which items you have opened (this drives the orange **New** badge, which comes back when an admin updates an item),
 - your company filter (All, APS, ACE or AMS),
 - whether the "Start here" box is open or closed,
-- your New Joiner Academy progress (later step).
+- your New Joiner Academy progress and test results.
 
 If the browser blocks storage, the site still works; it just will not remember these between visits.
+
+## New Joiner Academy
+
+A guided 12-week onboarding pathway, one per tower. Open `new-joiner-academy.html`.
+
+- **Pick a tower first.** The page always starts with the four tower cards, also after a reload. Choosing a tower shows only that tower's path; "← Back to towers" returns to the four cards. A link such as `new-joiner-academy.html#tower-customer-operations` opens one tower directly (the other slugs are `finance-and-accounting`, `procurement` and `human-resources`), so you can send a new joiner the right link.
+- **Weeks and progress circles.** Each week has a circle that fills as its materials are finished ("2/5"). Open a material (a Knowledge Centre page, or a placeholder for now), then mark it as finished. When every material is finished the circle turns green and the next week opens. Materials marked "To be added" are greyed and not counted; a week whose materials are all still to be added has a "Mark week as done" button instead.
+- **Checkpoints.** Checkpoint 1 (weeks 1–4), Checkpoint 2 (weeks 5–8) and Checkpoint 3 (weeks 9–12) open after the weeks they cover; the Final checkpoint opens after week 12 and Checkpoint 3. Once a checkpoint is taken, the weeks it covers are locked and can no longer be changed (retakes are allowed). Questions are drawn at random from the question bank; the 51 questions now in place are samples, and the test format is still to be decided.
+- **What admins can change** (in `admin.html`, later step): the weeks, goals, materials, each tower's linked pages, the tests, the questions, the pass mark (70%) and the switches `lockWeeksInOrder`, `lockAfterCheckpoint` and `requirePassToUnlockNextWeek` (off for now: a failed test does not block the next week). A material's `id` must never change once joiners have used it, because finished materials are saved by id.
+- **Saved on this device only.** Progress and test results stay in the joiner's own browser. They do not move to another computer or browser, and clearing the browser data removes them. This is a convenience, not security: anyone can still open any tower's pages from the Knowledge Centre itself, and could clear their browser storage to start again. Real access control comes from the Microsoft Loop and folder permissions.
+- **Demo reset.** Add `?demo=1` to the address (`new-joiner-academy.html?demo=1`) to show a "Reset my progress" button for demos. It also clears test results, so do not share that link with real joiners.
 
 ## Notes
 

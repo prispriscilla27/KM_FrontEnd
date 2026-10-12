@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CASS Academy Week</title>
+<style>
+/* One week of the New Joiner Academy for one tower: progress circle, goals, materials (open, then mark as finished), week status and footer navigation. Tokens copied from index.html. */
+:root{
+  --bg:#f3f6fa;--surface:#ffffff;--surface-2:#eef4f9;--ink:#16324a;--muted:#5d7385;--line:#dae4ed;
+  --brand:#0a6fc2;--brand-soft:#e5f1fb;--on-brand:#ffffff;--hdr1:#052944;--hdr1b:#07527e;--hdr2:#0b6899;--hdr3:#15a9c8;--hdr-ink:#ffffff;--hdr-muted:#d4ebf5;
+  --ok:#1d7f55;--ok-bg:#e3f4ec;
+  --partial:#efcf6a;--partial-ink:#7a6210;--partial-bg:#fbf3d6;
+  --warn:#9a6411;--warn-bg:#fbf0dc;--none:#7a8896;--none-bg:#edf1f4;--bad:#b42318;--bad-bg:#fdeceb;
+  --new:#c2410c;--new-bg:#fdeee5;--lock:#7c3aed;--lock-bg:#f1eafe;--hl:#fff6d6;--hl-line:#e3c35a;--mark:#fdeeb0;
+  --t1:#be185d;--t2:#0e7490;--t3:#8a4b14;--t4:#374151;--t-ink:#ffffff;
+  --overlay:rgba(5,20,35,.5);--toast-bg:#16324a;--toast-ink:#ffffff;
+  --shadow:0 4px 16px rgba(18,59,90,.07);--pop-shadow:0 12px 32px rgba(10,40,70,.18);
+  --font:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;
+  --brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--partial:#e3c45f;--partial-ink:#efd78c;--partial-bg:#3a3218;
+  --warn:#e7b25a;--warn-bg:#3a2d14;--none:#8e9dab;--none-bg:#1e3142;--bad:#f59a8f;--bad-bg:#3d1a17;
+  --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;--mark:#5a4a12;
+  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
+  --overlay:rgba(0,0,0,.6);--toast-bg:#e2ecf4;--toast-ink:#0c1824;
+  --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;
+  --brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--partial:#e3c45f;--partial-ink:#efd78c;--partial-bg:#3a3218;
+  --warn:#e7b25a;--warn-bg:#3a2d14;--none:#8e9dab;--none-bg:#1e3142;--bad:#f59a8f;--bad-bg:#3d1a17;
+  --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;--mark:#5a4a12;
+  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
+  --overlay:rgba(0,0,0,.6);--toast-bg:#e2ecf4;--toast-ink:#0c1824;
+  --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}
+*{box-sizing:border-box}
+html{overflow-x:hidden}
+body{margin:0;font-family:var(--font);font-size:14px;color:var(--ink);background:var(--bg);line-height:1.45;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+h2[tabindex="-1"]:focus,.result[tabindex="-1"]:focus{outline:none}
+.top :focus-visible,.hero :focus-visible,.final :focus-visible{outline-color:#ffffff}
+.wrap{padding-inline:max(16px,4vw)}
+.top{background:linear-gradient(105deg,var(--hdr1),var(--hdr1b));color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
+.brand{font-weight:800;font-size:19px;letter-spacing:.4px;color:var(--hdr-ink)}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav a{padding:8px 12px;border-radius:8px;color:var(--hdr-ink)}
+.nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
+.mock{font-size:12px;background:var(--hl);color:var(--ink);border-bottom:1px solid var(--hl-line);padding-block:6px}
+.hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
+.hero h1{margin:0 0 4px;font-size:26px;text-wrap:balance;overflow-wrap:anywhere}
+.hero p{margin:0;color:var(--hdr-muted);max-width:65ch}
+.page{padding-block:22px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0}
+.pad{padding:20px}
+h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
+.sub{color:var(--muted);margin:0;max-width:70ch}
+.note{font-size:12px;color:var(--muted);margin:8px 0 0}
+.crumb{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.crumb a{color:var(--brand)}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;vertical-align:middle}
+.tw-1{--tc:var(--t1)}.tw-2{--tc:var(--t2)}.tw-3{--tc:var(--t3)}.tw-4{--tc:var(--t4)}
+.pill.tw{background:var(--tc);color:var(--t-ink)}
+.tag{display:inline-block;background:var(--surface-2);color:var(--ink);padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;margin:0 4px 2px 0}
+.tag.type{background:var(--brand-soft);color:var(--brand)}
+.tag.tba{background:var(--warn-bg);color:var(--warn)}
+.tag.okt{background:var(--ok-bg);color:var(--ok)}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;background:var(--brand);color:var(--on-brand);border:1px solid var(--brand);padding:9px 15px;border-radius:9px;font-weight:700;cursor:pointer;font-size:13.5px}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:var(--surface);color:var(--brand);border-color:var(--line)}
+.btn.ghost:hover{background:var(--brand-soft);filter:none}
+.btn.sm{padding:6px 12px;font-size:12.5px}
+.btn:disabled,.btn[aria-disabled="true"]{background:var(--surface-2);color:var(--muted);border-color:var(--line);cursor:not-allowed;filter:none}
+.tlink{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12px;padding:2px 4px}
+.tlink:disabled{cursor:not-allowed;opacity:.6;text-decoration:none}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--toast-bg);color:var(--toast-ink);padding:10px 16px;border-radius:9px;z-index:50;font-size:13px;max-width:calc(100% - 32px);box-shadow:var(--pop-shadow)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.health{border-left:4px solid var(--new)}
+.banner-admin{background:var(--hl);border:1px solid var(--hl-line);border-radius:10px;padding:9px 12px;font-size:13px}
+.footnav{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+/* progress circle */
+.ring{flex:none;display:block}
+.ring .rt{fill:none;stroke:var(--line);stroke-width:6}
+.ring .rb{fill:none;stroke:var(--brand);stroke-width:6;stroke-linecap:round}
+.ring.done .rt,.ring.done .rb{stroke:var(--ok)}
+.ring text{fill:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;font-family:var(--font)}
+.ring .ck{fill:none;stroke:var(--ok);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:no-preference){.ring .rb{transition:stroke-dasharray .5s ease}}
+.prog{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.prog>div{flex:1;min-width:200px}
+.goals{margin:8px 0 0;padding-left:20px;display:grid;gap:4px}
+.mats{display:grid;gap:10px;margin-top:12px}
+.mat{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.mat.fin{border-color:var(--ok)}
+.mat.tba{opacity:.62;background:var(--surface-2);box-shadow:none}
+.mat h3{margin:4px 0 2px;font-size:14.5px;overflow-wrap:anywhere}
+.mat p{margin:0;color:var(--muted);font-size:12.5px}
+.mstat{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;background:transparent}
+.mstat.opened{border-color:var(--brand);border-style:dashed}
+.mstat.fin{background:var(--ok);border-color:var(--ok)}
+.mstat svg{width:16px;height:16px;stroke:#ffffff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.macts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.openbtn{border:1px solid var(--brand);background:var(--surface);color:var(--brand);padding:7px 13px;border-radius:9px;font-weight:700;cursor:pointer;white-space:nowrap;display:inline-block;font-size:13px}
+.openbtn:hover{background:var(--brand-soft)}
+.openbtn:disabled{border-color:var(--line);color:var(--muted);cursor:not-allowed;background:var(--surface-2)}
+.okt{color:var(--ok);font-weight:700;font-size:12.5px;white-space:nowrap}
+.frozenmsg{color:var(--ok);font-weight:600;font-size:12.5px;margin:10px 0 0}
+.donebar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.donebar>div{flex:1;min-width:220px}
+.overlay{position:fixed;inset:0;background:var(--overlay);display:grid;place-items:center;padding:16px;z-index:30}
+.dlg{background:var(--surface);border:1px solid var(--line);border-radius:14px;max-width:520px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:22px;box-shadow:var(--pop-shadow);display:grid;gap:10px}
+.dlg h2{margin:0}
+@media (max-width:600px){.mat{grid-template-columns:auto minmax(0,1fr)}.macts{grid-column:1/-1;justify-content:flex-start}}
+</style>
+</head>
+<body>
+<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home">CASS</a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a class="on" href="new-joiner-academy.html">New Joiner Academy</a><a href="admin.html">Admin login</a></nav></header>
+<div class="mock wrap" id="mockBanner" hidden></div>
+<section class="hero wrap"><h1 id="wTitle">New Joiner Academy</h1><p id="wSub"></p></section>
+<main class="page wrap" id="page"></main>
+<div id="ovRoot"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script src="km-data.js"></script>
+<script src="km-boot.js"></script>
+<script src="academy-data.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+if(!A||!NWEEKS){$('page').innerHTML='<section class="panel pad health" role="alert"><h2>Academy content not available</h2><p class="sub">The content file km-data.js could not be loaded, or it has no Academy content. Make sure it sits in the same folder as this page.</p></section>';return}
+academyBanner('Progress and test results are saved on this device only.');
+function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>{t.hidden=true},2800)}
+const params=new URLSearchParams(location.search);
+const first=WEEKS[0].n,last=WEEKS[NWEEKS-1].n;
+const n=Math.min(last,Math.max(first,parseInt(params.get('week'),10)||first));
+const tower=towerFromQuery();
+const ADMIN=!!window.KM_PREVIEW&&params.get('as')==='admin';   /* admin preview: show the week even if it is still locked */
+const W=WEEKS.find(x=>x.n===n)||WEEKS[0];
+const BACK='new-joiner-academy.html'+(tower?'#tower-'+slug(tower):'');
+const qs=k=>'academy-week.html?week='+k+'&tower='+encodeURIComponent(slug(tower))+(ADMIN?'&as=admin':'');
+let mats=[];
+function stop(title,msg,btn){
+  $('wTitle').textContent='Week '+n+' · '+W.title;$('wSub').textContent=tower?tower:'';
+  $('page').innerHTML=`<section class="panel pad"><h2>${esc(title)}</h2><p class="sub">${esc(msg)}</p><div class="actions"><a class="btn" href="${BACK}">${esc(btn)}</a></div></section>`;
+}
+function matRow(m,i,P,I){
+  const fin=P.fin.includes(m.id),opened=P.opn.includes(m.id)||fin,frozen=I.frozen,change=!frozen&&canChange(n,tower);
+  const href=safeHref(m.href);
+  const st=`<span class="mstat ${fin?'fin':(opened?'opened':'')}" aria-hidden="true">${fin?CHECK_SVG:''}</span>`;
+  const state=m.tba?'':fin?'<span class="tag okt">Finished</span>':opened?'<span class="tag" style="background:var(--brand-soft);color:var(--brand)">Opened</span>':'';
+  const tags=`<span class="tag type">${esc(m.type)}</span><span class="tag">${esc(m.time)}</span>${m.tba?'<span class="tag tba">To be added</span>':''}${state}`;
+  const open=href?`<a class="openbtn" href="${esc(href)}" data-open="${esc(m.id)}">Open in Knowledge Centre →</a>`:`<button type="button" class="openbtn" data-prev="${i}" aria-haspopup="dialog">Open</button>`;
+  let acts='';
+  if(m.tba)acts='<button type="button" class="openbtn" disabled>To be added</button>';
+  else if(fin)acts=`<span class="okt">✓ Finished</span>${open}${change?`<button type="button" class="tlink" data-unfin="${esc(m.id)}" aria-label="Undo finished: ${esc(m.title)}">Undo</button>`:''}`;
+  else acts=`${open}${opened&&!frozen?`<button type="button" class="btn sm" data-fin="${esc(m.id)}">Mark as finished</button>`:''}`;
+  return `<div class="mat ${fin?'fin':''} ${m.tba?'tba':''}">${st}<div><div>${tags}</div><h3>${esc(m.title)}</h3><p>${esc(m.desc)}</p></div><div class="macts">${acts}</div></div>`;
+}
+function render(focusSel){
+  if(!tower)return stop('Choose your tower first','The weeks follow your tower’s learning path. Pick your tower in the Academy first.','Go to the Academy');
+  const Wk=weekInfo(tower),done=Wk.done,P=Wk.P,I=Wk.info[n];
+  const reason=ADMIN?'':lockReason(n,done,tower);
+  if(reason)return stop('This week is locked',`${reason.replace(' to open this week.','')} to open week ${n}.`,'Back to my journey');
+  const complete=done.includes(n),frozen=I.frozen;
+  document.title='Week '+n+' · '+W.title+' · CASS Academy';
+  $('wTitle').textContent='Week '+n+' · '+W.title;
+  $('wSub').innerHTML=`${esc(W.desc)} <span class="tag" style="background:rgba(255,255,255,.16);color:var(--hdr-ink)">About ${esc(W.hours)}</span><span class="tag" style="background:rgba(255,255,255,.16);color:var(--hdr-ink)">${esc(tower)}</span>`;
+  mats=materialsFor(n,tower);
+  const C=(A.weekContent&&A.weekContent[n])||{goals:[]};
+  const nextOpen=n<last&&(ADMIN||unlocked(n+1,done,tower));
+  const p=I.total?I.fin/I.total:0;
+  const rg=ring(p,84,I.total?I.fin+'/'+I.total:'–',complete?'done':'',`Week ${n}: `+(I.total?`${I.fin} of ${I.total} materials finished`:'no materials to finish')+(complete?', week complete':''));
+  const track=I.total?`${I.fin} of ${I.total} materials finished`:(complete?'Week marked as done':'Nothing to finish yet');
+  const change=!frozen&&canChange(n,tower);
+  let tail='';
+  if(I.manual){
+    tail=`<div><h2 style="margin:0 0 4px">${complete?'Week '+n+' is complete':'Nothing to finish yet'}</h2><p class="sub">The materials for this week are still to be added, so there is nothing to finish yet.${complete?(frozen?' Locked because a checkpoint covering this week has been taken.':' You marked this week as done.'):''}</p></div>`+
+      (complete?(frozen?'':`<button type="button" class="btn ghost" id="manUndo" ${change?'':'disabled title="Later progress or a checkpoint stops this from being undone."'}>Undo</button>`):`<button type="button" class="btn" id="manDone">Mark week ${n} as done</button>`);
+  } else {
+    const msgDone=frozen?'Locked because a checkpoint covering this week has been taken.':(n<last?(nextOpen?'Week '+(n+1)+' is open.':'Week '+(n+1)+' stays locked until the checkpoint rule is met.'):'Take Checkpoint 3 and the final checkpoint from your journey page.');
+    const msgTodo=AS.lockWeeksInOrder?'When every material is finished, the circle completes and '+(n<last?'week '+(n+1)+' opens.':'Checkpoint 3 opens.'):'Finish every material to complete this week.';
+    tail=`<div><h2 style="margin:0 0 4px">${complete?'Week '+n+' is complete':'Open each material, then mark it as finished'}</h2><p class="sub">${complete?msgDone:msgTodo}</p></div>`;
+  }
+  const totalMin=mats.length;
+  $('page').innerHTML=`${ADMIN?'<div class="banner-admin">Admin preview: this week is shown even if it would be locked for a new joiner. Progress you make here is saved for this browser only.</div>':''}
+  <div class="crumb"><a href="${BACK}">My onboarding journey</a> › ${esc(tower)} › Week ${n}</div>
+  <section class="panel pad" aria-labelledby="progH"><div class="prog">${rg}<div><h2 id="progH" style="margin:0 0 4px">Your progress</h2><p class="sub" id="progText">${track}${complete?' · week complete':''}.</p></div></div></section>
+  <section class="panel pad"><h2>What you will learn</h2>${(C.goals||[]).length?`<ul class="goals">${C.goals.map(g=>'<li>'+esc(g)+'</li>').join('')}</ul>`:'<p class="sub">Goals to be added.</p>'}</section>
+  <section class="panel pad"><h2>Materials for this week</h2><p class="sub">${totalMin} material${totalMin===1?'':'s'} · about ${esc(W.hours)} in total. Open a material, read or watch it, then mark it as finished. The check symbol and the circle update as you go.</p>
+   ${frozen?'<p class="frozenmsg">Completed. Locked because a checkpoint covering this week has been taken.</p>':''}
+   <div class="mats">${mats.map((m,i)=>matRow(m,i,P,I)).join('')||'<p class="sub">No materials yet.</p>'}</div></section>
+  <section class="panel pad"><div class="donebar">${tail}</div></section>
+  <nav class="footnav" aria-label="Weeks"><span>${n>first?`<a class="btn ghost" href="${qs(n-1)}">← Week ${n-1}</a>`:''}</span><a class="btn ghost" href="${BACK}">Back to my journey</a><span>${n<last?(nextOpen?`<a class="btn" href="${qs(n+1)}">Week ${n+1} →</a>`:`<button type="button" class="btn" disabled>Week ${n+1} · locked</button>`):''}</span></nav>`;
+  if(focusSel){const el=document.querySelector(focusSel);if(el)el.focus()}
+}
+function finish(id){
+  const before=doneOf(tower).includes(n);
+  if(!setFinished(tower,n,id,true,ADMIN)){toast('This week is locked.');return}
+  const after=doneOf(tower).includes(n);
+  render(`[data-unfin="${CSS.escape(id)}"],[data-open="${CSS.escape(id)}"],[data-prev]`);
+  if(after&&!before)toast(n<last?(unlocked(n+1,doneOf(tower),tower)?'Week '+(n+1)+' is now open.':'Week '+n+' complete. Week '+(n+1)+' stays locked until the checkpoint rule is met.'):'Week '+n+' complete. Checkpoint 3 is now open.');
+  else toast('Marked as finished.');
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button,a');if(!b)return;
+  if(b.disabled||b.getAttribute('aria-disabled')==='true'){e.preventDefault();return}
+  if(b.dataset.open){markOpened(tower,b.dataset.open)}
+  else if(b.dataset.fin){finish(b.dataset.fin)}
+  else if(b.dataset.unfin){if(setFinished(tower,n,b.dataset.unfin,false)){render('#progText');toast('Marked as not finished.')}else toast('This can no longer be undone.')}
+  else if(b.id==='manDone'){if(setManual(tower,n,true,ADMIN)){render('#manUndo');toast(n<last?'Week '+(n+1)+' is now open.':'Checkpoint 3 is now open.')}}
+  else if(b.id==='manUndo'){if(setManual(tower,n,false))render('#manDone');else toast('This can no longer be undone.')}
+  else if(b.dataset.prev!==undefined)openPrev(mats[+b.dataset.prev],b);
+});
+/* Placeholder dialog for materials without a link. Opening it counts as opening the material. */
+function openPrev(m,opener){
+  if(!m||m.tba)return;
+  markOpened(tower,m.id);
+  const P=prog(tower),fin=P.fin.includes(m.id),I=weekInfo(tower).info[n];
+  const o=document.createElement('div');o.className='overlay';
+  o.innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dT" aria-describedby="dD"><div><span class="tag type">${esc(m.type)}</span><span class="tag">${esc(m.time)}</span></div><h2 id="dT" tabindex="-1">${esc(m.title)}</h2><p class="sub" id="dD">${esc(m.desc)}</p><p class="sub">This is placeholder content for the mockup. In the live version this opens the real file in Microsoft Loop or SharePoint, or a Knowledge Centre item.</p><div class="macts" style="justify-content:flex-start"><button type="button" class="btn ghost" id="dlgClose">Close</button>${fin||I.frozen?'':'<button type="button" class="btn" id="dlgFin">I have finished this</button>'}</div></div>`;
+  $('ovRoot').appendChild(o);
+  const idx=mats.indexOf(m);
+  const close=fn=>{o.remove();document.removeEventListener('keydown',key,true);if(fn)finish(m.id);else render();const nb=document.querySelector(`[data-prev="${idx}"]`);if(nb)nb.focus()};
+  const key=ev=>{if(ev.key==='Escape'){ev.preventDefault();close(false)}else if(ev.key==='Tab'){const f=[...o.querySelectorAll('button')];if(!f.length)return;const a=f[0],z=f[f.length-1];if(ev.shiftKey&&(document.activeElement===a||document.activeElement.id==='dT')){ev.preventDefault();z.focus()}else if(!ev.shiftKey&&document.activeElement===z){ev.preventDefault();a.focus()}}};
+  document.addEventListener('keydown',key,true);
+  o.addEventListener('click',ev=>{if(ev.target===o||ev.target.id==='dlgClose')close(false);else if(ev.target.id==='dlgFin')close(true)});
+  $('dT').focus();
+}
+render();
+})();
+</script>
+</body>
+</html>

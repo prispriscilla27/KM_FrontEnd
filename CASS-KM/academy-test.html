@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CASS Academy Test</title>
+<style>
+/* One page for every Academy test (cp1, cp2, cp3, final): guards, random question selection, answers, result. Tokens copied from index.html. */
+:root{
+  --bg:#f3f6fa;--surface:#ffffff;--surface-2:#eef4f9;--ink:#16324a;--muted:#5d7385;--line:#dae4ed;
+  --brand:#0a6fc2;--brand-soft:#e5f1fb;--on-brand:#ffffff;--hdr1:#052944;--hdr1b:#07527e;--hdr2:#0b6899;--hdr3:#15a9c8;--hdr-ink:#ffffff;--hdr-muted:#d4ebf5;
+  --ok:#1d7f55;--ok-bg:#e3f4ec;
+  --partial:#efcf6a;--partial-ink:#7a6210;--partial-bg:#fbf3d6;
+  --warn:#9a6411;--warn-bg:#fbf0dc;--none:#7a8896;--none-bg:#edf1f4;--bad:#b42318;--bad-bg:#fdeceb;
+  --new:#c2410c;--new-bg:#fdeee5;--lock:#7c3aed;--lock-bg:#f1eafe;--hl:#fff6d6;--hl-line:#e3c35a;--mark:#fdeeb0;
+  --t1:#be185d;--t2:#0e7490;--t3:#8a4b14;--t4:#374151;--t-ink:#ffffff;
+  --overlay:rgba(5,20,35,.5);--toast-bg:#16324a;--toast-ink:#ffffff;
+  --shadow:0 4px 16px rgba(18,59,90,.07);--pop-shadow:0 12px 32px rgba(10,40,70,.18);
+  --font:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;
+  --brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--partial:#e3c45f;--partial-ink:#efd78c;--partial-bg:#3a3218;
+  --warn:#e7b25a;--warn-bg:#3a2d14;--none:#8e9dab;--none-bg:#1e3142;--bad:#f59a8f;--bad-bg:#3d1a17;
+  --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;--mark:#5a4a12;
+  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
+  --overlay:rgba(0,0,0,.6);--toast-bg:#e2ecf4;--toast-ink:#0c1824;
+  --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;
+  --brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--partial:#e3c45f;--partial-ink:#efd78c;--partial-bg:#3a3218;
+  --warn:#e7b25a;--warn-bg:#3a2d14;--none:#8e9dab;--none-bg:#1e3142;--bad:#f59a8f;--bad-bg:#3d1a17;
+  --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;--mark:#5a4a12;
+  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
+  --overlay:rgba(0,0,0,.6);--toast-bg:#e2ecf4;--toast-ink:#0c1824;
+  --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}
+*{box-sizing:border-box}
+html{overflow-x:hidden}
+body{margin:0;font-family:var(--font);font-size:14px;color:var(--ink);background:var(--bg);line-height:1.45;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+h2[tabindex="-1"]:focus,.result[tabindex="-1"]:focus{outline:none}
+.top :focus-visible,.hero :focus-visible,.final :focus-visible{outline-color:#ffffff}
+.wrap{padding-inline:max(16px,4vw)}
+.top{background:linear-gradient(105deg,var(--hdr1),var(--hdr1b));color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
+.brand{font-weight:800;font-size:19px;letter-spacing:.4px;color:var(--hdr-ink)}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav a{padding:8px 12px;border-radius:8px;color:var(--hdr-ink)}
+.nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
+.mock{font-size:12px;background:var(--hl);color:var(--ink);border-bottom:1px solid var(--hl-line);padding-block:6px}
+.hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
+.hero h1{margin:0 0 4px;font-size:26px;text-wrap:balance;overflow-wrap:anywhere}
+.hero p{margin:0;color:var(--hdr-muted);max-width:65ch}
+.page{padding-block:22px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0}
+.pad{padding:20px}
+h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
+.sub{color:var(--muted);margin:0;max-width:70ch}
+.note{font-size:12px;color:var(--muted);margin:8px 0 0}
+.crumb{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.crumb a{color:var(--brand)}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;vertical-align:middle}
+.tw-1{--tc:var(--t1)}.tw-2{--tc:var(--t2)}.tw-3{--tc:var(--t3)}.tw-4{--tc:var(--t4)}
+.pill.tw{background:var(--tc);color:var(--t-ink)}
+.tag{display:inline-block;background:var(--surface-2);color:var(--ink);padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;margin:0 4px 2px 0}
+.tag.type{background:var(--brand-soft);color:var(--brand)}
+.tag.tba{background:var(--warn-bg);color:var(--warn)}
+.tag.okt{background:var(--ok-bg);color:var(--ok)}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;background:var(--brand);color:var(--on-brand);border:1px solid var(--brand);padding:9px 15px;border-radius:9px;font-weight:700;cursor:pointer;font-size:13.5px}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:var(--surface);color:var(--brand);border-color:var(--line)}
+.btn.ghost:hover{background:var(--brand-soft);filter:none}
+.btn.sm{padding:6px 12px;font-size:12.5px}
+.btn:disabled,.btn[aria-disabled="true"]{background:var(--surface-2);color:var(--muted);border-color:var(--line);cursor:not-allowed;filter:none}
+.tlink{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12px;padding:2px 4px}
+.tlink:disabled{cursor:not-allowed;opacity:.6;text-decoration:none}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--toast-bg);color:var(--toast-ink);padding:10px 16px;border-radius:9px;z-index:50;font-size:13px;max-width:calc(100% - 32px);box-shadow:var(--pop-shadow)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.health{border-left:4px solid var(--new)}
+.banner-admin{background:var(--hl);border:1px solid var(--hl-line);border-radius:10px;padding:9px 12px;font-size:13px}
+.footnav{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+/* progress circle */
+.ring{flex:none;display:block}
+.ring .rt{fill:none;stroke:var(--line);stroke-width:6}
+.ring .rb{fill:none;stroke:var(--brand);stroke-width:6;stroke-linecap:round}
+.ring.done .rt,.ring.done .rb{stroke:var(--ok)}
+.ring text{fill:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;font-family:var(--font)}
+.ring .ck{fill:none;stroke:var(--ok);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:no-preference){.ring .rb{transition:stroke-dasharray .5s ease}}
+.q{margin-top:16px;border:0;padding:0;min-width:0;scroll-margin-top:20px}
+.q legend{margin:0 0 8px;font-weight:650;font-size:14.5px;padding:0;overflow-wrap:anywhere}
+.q label{display:flex;gap:8px;align-items:flex-start;margin:6px 0;padding:9px 11px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--surface);overflow-wrap:anywhere}
+.q label:hover{border-color:var(--brand)}
+.q label input{margin-top:3px;accent-color:var(--brand);flex:none}
+.q.missing label{border-color:var(--warn)}
+.q.right label.sel{background:var(--ok-bg);border-color:var(--ok)}
+.q.wrong label.sel{background:var(--bad-bg);border-color:var(--bad)}
+.q label.ans{border-color:var(--ok);border-width:2px}
+.q .mk{font-weight:700;font-size:12.5px;margin-left:6px}
+.q.right .mk{color:var(--ok)}.q.wrong .mk{color:var(--bad)}
+.why{font-size:12.5px;margin-top:6px;color:var(--muted)}
+.score{font-size:30px;font-weight:800;margin:6px 0}
+.score span{font-size:15px;font-weight:600;color:var(--muted)}
+.result{border-radius:12px;padding:16px;margin:14px 0 4px;border:1px solid var(--line)}
+.result.pass{background:var(--ok-bg);border-color:var(--ok)}
+.result.fail{background:var(--warn-bg);border-color:var(--warn)}
+.result h2{margin:0}
+.msg{font-size:13px;color:var(--warn);font-weight:700;margin:10px 0 0}
+.lockline{font-size:12.5px;color:var(--ink);background:var(--warn-bg);border-radius:8px;padding:8px 10px;margin:10px 0 0}
+</style>
+</head>
+<body>
+<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home">CASS</a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a class="on" href="new-joiner-academy.html">New Joiner Academy</a><a href="admin.html">Admin login</a></nav></header>
+<div class="mock wrap" id="mockBanner" hidden></div>
+<section class="hero wrap"><h1 id="tTitle">New Joiner Academy test</h1><p id="tSub"></p></section>
+<main class="page wrap" id="page"><section class="panel pad" id="box"></section></main>
+<script src="km-data.js"></script>
+<script src="km-boot.js"></script>
+<script src="academy-data.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+if(!A||!ORDER.length){$('page').innerHTML='<section class="panel pad health" role="alert"><h2>Academy content not available</h2><p class="sub">The content file km-data.js could not be loaded, or it has no Academy tests. Make sure it sits in the same folder as this page.</p></section>';return}
+/* While the test format is still open (settings.format says "to be decided"), the banner says the questions are samples. */
+academyBanner(/decided|sample/i.test(AS.format||'')||!AS.format?'Test format and questions are samples and still to be decided.':'Progress and test results are saved on this device only.');
+const params=new URLSearchParams(location.search);
+const id=TESTS[params.get('test')]?params.get('test'):ORDER[0],T=TESTS[id];
+const tower=towerFromQuery();
+const ADMIN=!!window.KM_PREVIEW&&params.get('as')==='admin';
+const BACK='new-joiner-academy.html'+(tower?'#tower-'+slug(tower):'');
+const IS_FINAL=id==='final'||(T.weeks||[]).length>=NWEEKS;
+const lower=s=>String(s).charAt(0).toLowerCase()+String(s).slice(1);
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+
+/* ---------- Question types: add a new type here only (for example true/false, short answer or a practical sign-off). ----------
+   prepare(q)        -> a copy of q ready to show (e.g. options shuffled, answer index following the shuffle)
+   render(q,i)       -> HTML for the answer inputs of question i
+   read(block)       -> the answer given, or null when unanswered
+   correct(q,ans)    -> true when the answer is right
+   reveal(block,q,ans,right) -> mark the answer and show the correct one */
+const QTYPES={
+  'Multiple choice':{
+    prepare(q){const idx=shuffle(q.o.map((_,i)=>i));return Object.assign({},q,{o:idx.map(i=>q.o[i]),a:idx.indexOf(+q.a)})},
+    render(q,i){return q.o.map((o,j)=>`<label><input type="radio" name="q${i}" value="${j}"><span>${esc(o)}</span></label>`).join('')},
+    read(b){const c=b.querySelector('input:checked');return c?+c.value:null},
+    correct(q,ans){return ans===q.a},
+    reveal(b,q,ans){b.querySelectorAll('label').forEach((l,j)=>{if(j===ans)l.classList.add('sel');if(j===q.a){l.classList.add('ans');l.insertAdjacentHTML('beforeend','<span class="sr"> (correct answer)</span>')}});b.querySelectorAll('input').forEach(x=>{x.disabled=true})},
+    usable(q){return Array.isArray(q.o)&&q.o.length>1&&Number.isInteger(+q.a)&&+q.a>=0&&+q.a<q.o.length}
+  }
+};
+const typeOf=q=>QTYPES[q.qtype||'Multiple choice'];
+const usable=q=>{const t=typeOf(q);if(!t){console.warn('[academy] question',q.id,'has an unknown type',q.qtype);return false}return !t.usable||t.usable(q)};
+
+/* From the bank: questions for "All" or this tower, from the weeks the test covers. The final checkpoint takes finalRecentShare from finalRecentWeeks. */
+function pick(){
+  const pool=BANK.filter(q=>(q.tower==='All'||q.tower===tower)&&(T.weeks||[]).includes(+q.week)&&usable(q));
+  const n=Math.min(+T.count||pool.length,pool.length);
+  let chosen;
+  if(IS_FINAL&&Array.isArray(AS.finalRecentWeeks)&&AS.finalRecentWeeks.length){
+    const R=AS.finalRecentWeeks.map(Number),recent=shuffle(pool.filter(q=>R.includes(+q.week))),older=shuffle(pool.filter(q=>!R.includes(+q.week)));
+    let nr=Math.min(recent.length,Math.round(n*(+AS.finalRecentShare||0)));
+    const no=Math.min(older.length,n-nr);nr=Math.min(recent.length,n-no);
+    chosen=[...recent.slice(0,nr),...older.slice(0,no)];
+  } else chosen=shuffle(pool).slice(0,n);
+  return shuffle(chosen).map(q=>typeOf(q).prepare(q));
+}
+const coversText=()=>lower(T.covers||'');
+const lockText=()=>!AS.lockAfterCheckpoint?'':(IS_FINAL?'Taking this test locks every week.':'Taking this test locks '+coversText()+', so their progress can no longer be changed.');
+function guard(title,msg){$('box').innerHTML=`<h2>${esc(title)}</h2><p class="sub">${esc(msg)}</p><div class="actions"><a class="btn" href="${BACK}">${tower?'Back to my journey':'Go to the Academy'}</a></div>`}
+let picked=[];
+function start(){
+  $('tTitle').textContent=T.title+(tower?' · '+tower:'');$('tSub').textContent='Covers '+coversText()+'.';
+  document.title=T.title+' · CASS Academy';
+  if(!tower)return guard('Choose your tower first','The test follows your tower’s learning path. Pick your tower in the Academy first.');
+  const done=doneOf(tower),st=testOpen(T,done,tower);
+  if(!st.open&&!ADMIN)return guard('This test is locked',st.why);
+  picked=pick();
+  if(!picked.length)return guard('No questions yet','An admin adds questions for this test.');
+  const prev=result(tower,id);
+  $('box').innerHTML=`${ADMIN?'<div class="banner-admin" style="margin-bottom:12px">Admin preview: this test is shown even if it would be locked for a new joiner. The result is saved for this browser only.</div>':''}
+  <h2>${esc(T.title)} · ${esc(tower)}</h2>
+  <p class="sub" style="margin-top:6px"><span class="tag">${picked.length} question${picked.length===1?'':'s'}</span><span class="tag">Pass mark ${esc(AS.passMark)}%</span><span class="tag">Covers ${esc(coversText())}</span></p>
+  ${prev?`<p class="note">Your last result: ${prev.passed?'Passed':'Not passed yet'} · ${esc(prev.score)}% · ${esc(prev.date)}. You can retake the test with new questions.</p>`:''}
+  ${lockText()?`<p class="lockline">${esc(lockText())}</p>`:''}
+  <div id="resultSlot" role="status" aria-live="polite"></div>
+  <form id="f" novalidate>${picked.map((q,i)=>`<fieldset class="q" data-i="${i}" id="qb${i}"><legend>${i+1}. ${esc(q.q)} <span class="tag">Week ${esc(q.week)}</span><span class="mk"></span></legend>${typeOf(q).render(q,i)}<div class="why" hidden></div></fieldset>`).join('')}
+  <p class="msg" id="msg" role="alert"></p>
+  <div class="actions"><button type="submit" class="btn" id="submitBtn">Submit answers</button><a class="btn ghost" href="${BACK}">Back to my journey</a></div>
+  <p class="note">Sample questions. The real questions and test format (${esc(AS.format||'to be decided')}) will be set by the admin later.</p></form>`;
+  $('f').addEventListener('submit',submit);
+  $('f').addEventListener('change',e=>{const b=e.target.closest('.q');if(b)b.classList.remove('missing')});
+}
+function submit(e){
+  e.preventDefault();
+  const blocks=[...document.querySelectorAll('.q')];
+  const answers=blocks.map((b,i)=>typeOf(picked[i]).read(b));
+  const missing=blocks.filter((b,i)=>answers[i]===null);
+  blocks.forEach(b=>b.classList.toggle('missing',missing.includes(b)));
+  if(missing.length){$('msg').textContent='Answer all questions first. '+missing.length+' left.';missing[0].scrollIntoView({block:'center'});const f=missing[0].querySelector('input');if(f)f.focus({preventScroll:true});return}
+  $('msg').textContent='';
+  let ok=0;const review=[];
+  blocks.forEach((b,i)=>{const q=picked[i],t=typeOf(q),ans=answers[i],right=t.correct(q,ans);if(right)ok++;else review.push(+q.week);
+    b.classList.add(right?'right':'wrong');b.querySelector('.mk').textContent=right?'Correct':'Not quite';t.reveal(b,q,ans,right);
+    const w=b.querySelector('.why');w.hidden=false;w.textContent=(right?'Correct. ':'Not quite. ')+(q.why||'')});
+  const score=Math.round(ok/picked.length*100),passed=score>=(+AS.passMark||0);
+  store.set('acadTest-'+tower+'-'+id,{score,passed,date:fmtDate(new Date())});
+  const weeks=[...new Set(review)].sort((a,b)=>a-b);
+  const lockMsg=!AS.lockAfterCheckpoint?'':(IS_FINAL?'Every week is now locked.':(T.covers||'The weeks this test covers')+' are now locked.');
+  $('resultSlot').innerHTML=`<div class="result ${passed?'pass':'fail'}" id="result" tabindex="-1"><h2>${passed?'Passed':'Not passed yet'}</h2><div class="score">${score}% <span>${ok} of ${picked.length} correct</span></div>
+   <p class="sub">${passed?'Well done.':'The pass mark is '+esc(AS.passMark)+'%.'} ${weeks.length?'Revisit week'+(weeks.length>1?'s ':' ')+weeks.join(', ')+' in the Knowledge Centre.':''} ${esc(lockMsg)}</p>
+   <div class="actions"><a class="btn" href="${BACK}">Back to my journey</a><a class="btn ghost" href="academy-test.html?test=${encodeURIComponent(id)}&tower=${encodeURIComponent(slug(tower))}${ADMIN?'&as=admin':''}">Retake with new questions</a></div></div>`;
+  $('submitBtn').hidden=true;
+  const r=$('result');r.scrollIntoView({block:'start'});r.focus({preventScroll:true});
+}
+start();
+})();
+</script>
+</body>
+</html>

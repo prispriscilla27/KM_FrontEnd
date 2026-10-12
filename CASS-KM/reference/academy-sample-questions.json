@@ -1,0 +1,719 @@
+{
+  "note": "Sample test questions for the New Joiner Academy (placeholders: the real questions and format are still to be decided and will be edited through admin.html). Same shape as academy.questions in km-data.js: o = options, a = index of the correct option, why = explanation. The test page must shuffle the option order each time so the answer is not always in the same position.",
+  "questions": [
+    {
+      "id": "g1",
+      "tower": "All",
+      "week": 1,
+      "qtype": "Multiple choice",
+      "q": "Where do you find the meaning of an abbreviation such as LC or SBLC?",
+      "o": [
+        "The Glossary in the Knowledge Centre",
+        "The search results only",
+        "Ask HR"
+      ],
+      "a": 0,
+      "why": "The Glossary lists the common terms and abbreviations."
+    },
+    {
+      "id": "g2",
+      "tower": "All",
+      "week": 2,
+      "qtype": "Multiple choice",
+      "q": "In the service taxonomy, what is an L2?",
+      "o": [
+        "A tower such as Finance & Accounting",
+        "A process area such as Order to Cash",
+        "A specific service such as Credit Management"
+      ],
+      "a": 2,
+      "why": "L0 is the tower, L1 the process, L2 the service and L3 the function."
+    },
+    {
+      "id": "g3",
+      "tower": "All",
+      "week": 2,
+      "qtype": "Multiple choice",
+      "q": "What does the coloured dot next to a service in the taxonomy show?",
+      "o": [
+        "How much content is available for it",
+        "Who is online",
+        "The priority of the service"
+      ],
+      "a": 0,
+      "why": "Covered, Partial or Not started describes how much knowledge content exists."
+    },
+    {
+      "id": "g4",
+      "tower": "All",
+      "week": 3,
+      "qtype": "Multiple choice",
+      "q": "Where do you see who owns a Knowledge Centre page?",
+      "o": [
+        "The “Page owner” field at the top of the page",
+        "The search results",
+        "Ask HR"
+      ],
+      "a": 0,
+      "why": "Page owner, Ask the expert and Approved by are shown at the top of each service page."
+    },
+    {
+      "id": "g5",
+      "tower": "All",
+      "week": 4,
+      "qtype": "Multiple choice",
+      "q": "A document is marked “Require access”. What does that mean?",
+      "o": [
+        "You need permission before you can open it",
+        "It is out of date",
+        "It is a draft"
+      ],
+      "a": 0,
+      "why": "Require access means the content is restricted. Follow the access request steps."
+    },
+    {
+      "id": "g6",
+      "tower": "All",
+      "week": 4,
+      "qtype": "Multiple choice",
+      "q": "Who do you contact when a Knowledge Centre page looks wrong or outdated?",
+      "o": [
+        "Use “Suggest an edit” or contact the page owner",
+        "Edit the page yourself",
+        "Ignore it"
+      ],
+      "a": 0,
+      "why": "Readers do not edit content. The page owner and the admin team keep it correct."
+    },
+    {
+      "id": "g7",
+      "tower": "All",
+      "week": 6,
+      "qtype": "Multiple choice",
+      "q": "What is the best use of shadowing time?",
+      "o": [
+        "Observe live work and note down questions",
+        "Fix problems in the live process",
+        "Skip it if the SOP is clear"
+      ],
+      "a": 0,
+      "why": "Shadowing is for observing and collecting questions."
+    },
+    {
+      "id": "g8",
+      "tower": "All",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "You hit a problem a process step does not cover. What do you check first?",
+      "o": [
+        "Exception Handling for that step, then the “Escalate to” contact",
+        "The glossary",
+        "Restart the process"
+      ],
+      "a": 0,
+      "why": "Exception Handling lists the situation, the action and who to escalate to."
+    },
+    {
+      "id": "g9",
+      "tower": "All",
+      "week": 10,
+      "qtype": "Multiple choice",
+      "q": "Why do SLAs and KPIs matter in day-to-day work?",
+      "o": [
+        "They show what good looks like and when to escalate",
+        "They are only for managers",
+        "They replace the SOP"
+      ],
+      "a": 0,
+      "why": "They set the expected quality and timing."
+    },
+    {
+      "id": "g10",
+      "tower": "All",
+      "week": 12,
+      "qtype": "Multiple choice",
+      "q": "What should you do when you still need support after week 12?",
+      "o": [
+        "Tell your manager and use the Knowledge Centre to find the right contact",
+        "Wait for the probation review",
+        "Stop using the Knowledge Centre"
+      ],
+      "a": 0,
+      "why": "Raise gaps early and use the Ask the expert contact on the page."
+    },
+    {
+      "id": "f1",
+      "tower": "Finance & Accounting",
+      "week": 3,
+      "qtype": "Multiple choice",
+      "q": "Which Knowledge Centre page holds the LC review pilot content?",
+      "o": [
+        "3.1.1 Credit Management",
+        "3.2.1 Invoice Receiving",
+        "3.4.1 Tax Data Management"
+      ],
+      "a": 0,
+      "why": "The LC review pilot sits under 3.1.1 Credit Management."
+    },
+    {
+      "id": "f2",
+      "tower": "Finance & Accounting",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "An LC charges split (field 71D) differs from the sales contract. What is the first step?",
+      "o": [
+        "Request an amendment through Customer Operations",
+        "Ignore it",
+        "Pay the charges and report later"
+      ],
+      "a": 0,
+      "why": "See the exception handling item for the charges split."
+    },
+    {
+      "id": "f3",
+      "tower": "Finance & Accounting",
+      "week": 9,
+      "qtype": "Multiple choice",
+      "q": "Which LC field covers additional conditions?",
+      "o": [
+        "47A",
+        "44C",
+        "71D"
+      ],
+      "a": 0,
+      "why": "47A is Additional Conditions. 71D is Charges."
+    },
+    {
+      "id": "f4",
+      "tower": "Finance & Accounting",
+      "week": 9,
+      "qtype": "Multiple choice",
+      "q": "Which two teams work together in the LC review and consultation step?",
+      "o": [
+        "Customer Operations and Finance",
+        "Procurement and HR",
+        "Treasury and Tax only"
+      ],
+      "a": 0,
+      "why": "CO and Finance share this step in the workflow."
+    },
+    {
+      "id": "f5",
+      "tower": "Finance & Accounting",
+      "week": 11,
+      "qtype": "Multiple choice",
+      "q": "The payment method decision can lead to which outcome?",
+      "o": [
+        "Credit limit, LC or cash in advance",
+        "Only an LC",
+        "Only a credit limit"
+      ],
+      "a": 0,
+      "why": "The risk assessment leads to a credit limit, an LC (or SBLC) or CIA."
+    },
+    {
+      "id": "c1",
+      "tower": "Customer Operations",
+      "week": 3,
+      "qtype": "Multiple choice",
+      "q": "Which L2 service covers shipping the order?",
+      "o": [
+        "1.1.4 Fulfil Orders",
+        "1.1.6 Collection Management",
+        "1.1.8 Freight Invoice"
+      ],
+      "a": 0,
+      "why": "Fulfil Orders includes processing and shipping the order."
+    },
+    {
+      "id": "c2",
+      "tower": "Customer Operations",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "Who do you involve when an LC clause needs review?",
+      "o": [
+        "Finance, through the LC review process",
+        "Procurement",
+        "HR"
+      ],
+      "a": 0,
+      "why": "LC review and consultation is shared between CO and Finance."
+    },
+    {
+      "id": "c3",
+      "tower": "Customer Operations",
+      "week": 9,
+      "qtype": "Multiple choice",
+      "q": "Which L2 service covers proforma invoices?",
+      "o": [
+        "1.1.5 Billing & Invoicing",
+        "1.1.3 Capture & Monitor Orders",
+        "1.1.7 Customer Satisfaction"
+      ],
+      "a": 0,
+      "why": "Billing & Invoicing includes creating and releasing invoices."
+    },
+    {
+      "id": "c4",
+      "tower": "Customer Operations",
+      "week": 9,
+      "qtype": "Multiple choice",
+      "q": "Where do you find follow-up steps for overdue payments?",
+      "o": [
+        "1.1.6 Collection Management",
+        "1.1.2 Contract Management",
+        "1.1.1 Customer Data Management"
+      ],
+      "a": 0,
+      "why": "Collection Management covers overdue payments."
+    },
+    {
+      "id": "c5",
+      "tower": "Customer Operations",
+      "week": 11,
+      "qtype": "Multiple choice",
+      "q": "A customer order is delayed. Where do you start looking for guidance?",
+      "o": [
+        "The Fulfil Orders page and its exception handling",
+        "The Tax pages",
+        "The Glossary only"
+      ],
+      "a": 0,
+      "why": "Start from the service page that matches the process step."
+    },
+    {
+      "id": "p1",
+      "tower": "Procurement",
+      "week": 3,
+      "qtype": "Multiple choice",
+      "q": "Which L2 service covers Request to Purchase?",
+      "o": [
+        "2.1.4 Request to Purchase (RTP)",
+        "2.1.7 Spot Buy",
+        "2.2.1 Contract Management"
+      ],
+      "a": 0,
+      "why": "2.1.4 is Request to Purchase."
+    },
+    {
+      "id": "p2",
+      "tower": "Procurement",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "Where are agreements with vendors managed?",
+      "o": [
+        "2.1.3 Outline Agreement Management",
+        "2.1.5 Inventory Management",
+        "2.1.6 Project Turnaround"
+      ],
+      "a": 0,
+      "why": "Outline agreements sit under 2.1.3."
+    },
+    {
+      "id": "p3",
+      "tower": "Procurement",
+      "week": 9,
+      "qtype": "Multiple choice",
+      "q": "Which service covers one-off purchases?",
+      "o": [
+        "2.1.7 Spot Buy",
+        "2.2.2 Strategic / Agile Sourcing",
+        "2.1.2 Material Master"
+      ],
+      "a": 0,
+      "why": "Spot Buy covers one-off purchases."
+    },
+    {
+      "id": "p4",
+      "tower": "Procurement",
+      "week": 9,
+      "qtype": "Multiple choice",
+      "q": "Which L2 service covers vendor master data for purchase orders?",
+      "o": [
+        "2.1.1 Vendor Data Management (PO)",
+        "2.1.3 Outline Agreement Management",
+        "2.2.1 Contract Management"
+      ],
+      "a": 0,
+      "why": "Vendor data for PO sits under 2.1.1."
+    },
+    {
+      "id": "p5",
+      "tower": "Procurement",
+      "week": 11,
+      "qtype": "Multiple choice",
+      "q": "You need to run a sourcing event. Where do you start?",
+      "o": [
+        "2.2.2 Strategic / Agile Sourcing",
+        "2.1.5 Inventory Management",
+        "The Glossary only"
+      ],
+      "a": 0,
+      "why": "Sourcing activities sit under 2.2.2."
+    },
+    {
+      "id": "h1",
+      "tower": "Human Resources",
+      "week": 3,
+      "qtype": "Multiple choice",
+      "q": "Which L2 service covers employee master data?",
+      "o": [
+        "4.1.1 Employee Data Management",
+        "4.1.2 Recruitment",
+        "4.1.3 Employee Payroll Data Preparation"
+      ],
+      "a": 0,
+      "why": "Employee master data sits under 4.1.1."
+    },
+    {
+      "id": "h2",
+      "tower": "Human Resources",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "An employee record has a data quality issue. Where do you look first?",
+      "o": [
+        "The exception handling and data quality checks for 4.1.1",
+        "The Tax pages",
+        "Delete the record"
+      ],
+      "a": 0,
+      "why": "Data quality checks are a function of 4.1.1."
+    },
+    {
+      "id": "h3",
+      "tower": "Human Resources",
+      "week": 9,
+      "qtype": "Multiple choice",
+      "q": "Which service covers screening and shortlisting candidates?",
+      "o": [
+        "4.1.2 Recruitment",
+        "4.1.1 Employee Data Management",
+        "4.1.3 Payroll Data Preparation"
+      ],
+      "a": 0,
+      "why": "Recruitment includes screening and shortlisting."
+    },
+    {
+      "id": "h4",
+      "tower": "Human Resources",
+      "week": 9,
+      "qtype": "Multiple choice",
+      "q": "Which service covers payroll cut-off dates?",
+      "o": [
+        "4.1.3 Employee Payroll Data Preparation",
+        "4.1.2 Recruitment",
+        "4.1.1 Employee Data Management"
+      ],
+      "a": 0,
+      "why": "Payroll cut-off coordination sits under 4.1.3."
+    },
+    {
+      "id": "h5",
+      "tower": "Human Resources",
+      "week": 11,
+      "qtype": "Multiple choice",
+      "q": "You must prepare payroll data on your own. Where do you find the steps?",
+      "o": [
+        "4.1.3 Employee Payroll Data Preparation",
+        "4.1.2 Recruitment",
+        "Ask a colleague only"
+      ],
+      "a": 0,
+      "why": "The service page links to the SOPs and guides."
+    },
+    {
+      "id": "g11",
+      "tower": "All",
+      "week": 5,
+      "qtype": "Multiple choice",
+      "q": "You are following one process end to end. Where do you start?",
+      "o": [
+        "The L2 service page and its process map",
+        "The glossary",
+        "An old email from a colleague"
+      ],
+      "a": 0,
+      "why": "The L2 page shows the process steps and the knowledge for each step."
+    },
+    {
+      "id": "g12",
+      "tower": "All",
+      "week": 5,
+      "qtype": "Multiple choice",
+      "q": "What does a highlighted step on the business process map mean?",
+      "o": [
+        "It is covered by the current KM pilot",
+        "It is urgent",
+        "It is blocked"
+      ],
+      "a": 0,
+      "why": "The highlighted step is the one covered by the current KM pilot."
+    },
+    {
+      "id": "g13",
+      "tower": "All",
+      "week": 6,
+      "qtype": "Multiple choice",
+      "q": "While shadowing you notice a step that differs from the SOP. What should you do?",
+      "o": [
+        "Note it down and raise it with the page owner or expert",
+        "Rewrite the SOP yourself",
+        "Ignore it"
+      ],
+      "a": 0,
+      "why": "Readers do not edit content. The page owner and the expert keep it correct."
+    },
+    {
+      "id": "g14",
+      "tower": "All",
+      "week": 7,
+      "qtype": "Multiple choice",
+      "q": "Which two sources do you use when practising a step?",
+      "o": [
+        "The SOP and the quick reference guide",
+        "Only the glossary",
+        "Only what a colleague remembers"
+      ],
+      "a": 0,
+      "why": "The SOP gives the steps and the quick reference guide is the checklist."
+    },
+    {
+      "id": "g15",
+      "tower": "All",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "What does the complexity rating (Low, Medium, High) on an exception tell you?",
+      "o": [
+        "How involved the situation is and how soon to escalate",
+        "How long the document is",
+        "Who wrote it"
+      ],
+      "a": 0,
+      "why": "Exception Handling items list the situation, complexity, action and who to escalate to."
+    },
+    {
+      "id": "g16",
+      "tower": "All",
+      "week": 9,
+      "qtype": "Multiple choice",
+      "q": "During supervised execution, what is the reviewer’s role?",
+      "o": [
+        "Check your work and give feedback before it is final",
+        "Do the task for you",
+        "Approve it without checking"
+      ],
+      "a": 0,
+      "why": "You do the step and someone reviews it."
+    },
+    {
+      "id": "g17",
+      "tower": "All",
+      "week": 10,
+      "qtype": "Multiple choice",
+      "q": "A page is marked Draft. What does that mean?",
+      "o": [
+        "The content is still being worked on and is not approved yet",
+        "It has been approved",
+        "It has been retired"
+      ],
+      "a": 0,
+      "why": "Draft, In review and Approved show how far content is through approval."
+    },
+    {
+      "id": "g18",
+      "tower": "All",
+      "week": 11,
+      "qtype": "Multiple choice",
+      "q": "You need guidance on a task you have not done before. What is the fastest route?",
+      "o": [
+        "Search the Knowledge Centre and open the matching service page",
+        "Wait for your manager to explain",
+        "Guess based on a similar task"
+      ],
+      "a": 0,
+      "why": "Search or browse to the L2 service, then to the process step."
+    },
+    {
+      "id": "g19",
+      "tower": "All",
+      "week": 12,
+      "qtype": "Multiple choice",
+      "q": "What makes a good readiness reflection?",
+      "o": [
+        "What I can do on my own and where I still need support",
+        "A list of every document I opened",
+        "Only what went well"
+      ],
+      "a": 0,
+      "why": "It helps you and your manager plan the support you still need."
+    },
+    {
+      "id": "f6",
+      "tower": "Finance & Accounting",
+      "week": 5,
+      "qtype": "Multiple choice",
+      "q": "What is the first step on the Credit Management process map?",
+      "o": [
+        "Customer Risk Assessment",
+        "Payment Approval",
+        "Shipment & Payment"
+      ],
+      "a": 0,
+      "why": "The map starts with the customer risk assessment, then the payment method decision."
+    },
+    {
+      "id": "f7",
+      "tower": "Finance & Accounting",
+      "week": 7,
+      "qtype": "Multiple choice",
+      "q": "Which LC field lists the documents required for presentation?",
+      "o": [
+        "46A",
+        "45A",
+        "48"
+      ],
+      "a": 0,
+      "why": "46A lists documents required, 45A the goods and 48 the presentation period."
+    },
+    {
+      "id": "f8",
+      "tower": "Finance & Accounting",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "A 47A condition needs several review passes between CO and Finance. How is it rated in the pilot?",
+      "o": [
+        "Medium complexity",
+        "Low complexity",
+        "It is not an exception"
+      ],
+      "a": 0,
+      "why": "See the exception handling item for additional conditions."
+    },
+    {
+      "id": "c6",
+      "tower": "Customer Operations",
+      "week": 5,
+      "qtype": "Multiple choice",
+      "q": "In Fulfil Orders, which function comes first?",
+      "o": [
+        "Processing the orders",
+        "Shipping the order",
+        "Manage reversed logistics"
+      ],
+      "a": 0,
+      "why": "1.1.4.1 Processing the orders comes before 1.1.4.2 Shipping the order."
+    },
+    {
+      "id": "c7",
+      "tower": "Customer Operations",
+      "week": 7,
+      "qtype": "Multiple choice",
+      "q": "Where do you find creating a credit or debit note and approving it?",
+      "o": [
+        "1.1.5 Billing & Invoicing",
+        "1.1.4 Fulfil Orders",
+        "1.1.7 Customer Satisfaction"
+      ],
+      "a": 0,
+      "why": "Credit and debit notes are a function of Billing & Invoicing."
+    },
+    {
+      "id": "c8",
+      "tower": "Customer Operations",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "Which service covers system adjustments for delinquent account balances?",
+      "o": [
+        "1.1.6 Collection Management",
+        "1.1.3 Capture & Monitor Orders",
+        "1.1.2 Contract Management"
+      ],
+      "a": 0,
+      "why": "This is function 1.1.6.1 under Collection Management."
+    },
+    {
+      "id": "p6",
+      "tower": "Procurement",
+      "week": 5,
+      "qtype": "Multiple choice",
+      "q": "Which function comes first under Spot Buy?",
+      "o": [
+        "Analyze spot buy requirements",
+        "Generate and issue a Purchase Order",
+        "Recommend and approve vendor"
+      ],
+      "a": 0,
+      "why": "2.1.7.1 is the first function of Spot Buy."
+    },
+    {
+      "id": "p7",
+      "tower": "Procurement",
+      "week": 7,
+      "qtype": "Multiple choice",
+      "q": "Which function comes first under Vendor Data Management (PO)?",
+      "o": [
+        "Establish vendor master data policies and guideline",
+        "Deactivate vendor accounts",
+        "Modify/block vendor accounts"
+      ],
+      "a": 0,
+      "why": "2.1.1.1 comes first."
+    },
+    {
+      "id": "p8",
+      "tower": "Procurement",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "Where would you find crisis procurement and emergency sourcing?",
+      "o": [
+        "2.1.6 Project Turnaround (PTA)",
+        "2.1.7 Spot Buy",
+        "2.2.1 Contract Management"
+      ],
+      "a": 0,
+      "why": "This is function 2.1.6.5."
+    },
+    {
+      "id": "h6",
+      "tower": "Human Resources",
+      "week": 5,
+      "qtype": "Multiple choice",
+      "q": "Which service reviews a job requisition for completeness?",
+      "o": [
+        "4.1.2 Recruitment",
+        "4.1.1 Employee Data Management",
+        "4.1.3 Employee Payroll Data Preparation"
+      ],
+      "a": 0,
+      "why": "This is function 4.1.2.1 under Recruitment."
+    },
+    {
+      "id": "h7",
+      "tower": "Human Resources",
+      "week": 7,
+      "qtype": "Multiple choice",
+      "q": "Where do you find creating, updating and validating employee records?",
+      "o": [
+        "4.1.1 Employee Data Management",
+        "4.1.2 Recruitment",
+        "4.1.3 Employee Payroll Data Preparation"
+      ],
+      "a": 0,
+      "why": "This is function 4.1.1.1."
+    },
+    {
+      "id": "h8",
+      "tower": "Human Resources",
+      "week": 8,
+      "qtype": "Multiple choice",
+      "q": "Which function covers periodic audits of employee data accuracy and consistency?",
+      "o": [
+        "Data quality and validation checks (4.1.1)",
+        "Screening and shortlisting candidates (4.1.2)",
+        "Payroll cut-off coordination (4.1.3)"
+      ],
+      "a": 0,
+      "why": "This is function 4.1.1.3."
+    }
+  ]
+}

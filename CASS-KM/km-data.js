@@ -3058,7 +3058,7 @@ window.KM_DATA = {
           "3": [
             {
               "title": "LC review process map",
-              "href": "index.html#l2-3.1.1"
+              "href": "index.html#l2-3.1.1/step-5"
             },
             {
               "title": "Invoice Receiving",
@@ -3068,13 +3068,13 @@ window.KM_DATA = {
           "5": [
             {
               "title": "Credit decision walkthrough",
-              "href": "index.html#l2-3.1.1"
+              "href": "index.html#l2-3.1.1/step-1"
             }
           ],
           "7": [
             {
               "title": "LC clause checklist",
-              "href": "index.html#l2-3.1.1"
+              "href": "index.html#item-lc-qrd"
             },
             {
               "title": "Account Receivables",
@@ -3084,13 +3084,13 @@ window.KM_DATA = {
           "8": [
             {
               "title": "LC exception handling",
-              "href": "index.html#l2-3.1.1"
+              "href": "index.html#l2-3.1.1/step-5"
             }
           ],
           "9": [
             {
               "title": "LC review & consultation",
-              "href": "index.html#l2-3.1.1"
+              "href": "index.html#l2-3.1.1/step-5"
             }
           ],
           "11": [
@@ -3112,7 +3112,7 @@ window.KM_DATA = {
               "href": "index.html#l2-1.1.3"
             },
             {
-              "title": "1.1.9 Supporting Activities",
+              "title": "Supporting activities & reporting",
               "href": "index.html#l2-1.1.9"
             }
           ],
@@ -3145,7 +3145,7 @@ window.KM_DATA = {
           "8": [
             {
               "title": "LC review with Finance",
-              "href": "index.html#l2-3.1.1"
+              "href": "index.html#l2-3.1.1/step-5"
             },
             {
               "title": "Collection Management",
@@ -3356,21 +3356,27 @@ window.KM_DATA = {
             "type": "Training Material",
             "title": "CASS overview and structure",
             "time": "20 min",
-            "desc": "How CASS supports the group companies and what each tower does."
+            "desc": "How CASS supports the group companies and what each tower does.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w1-m2",
             "type": "Training Material",
             "title": "Values and ways of working",
             "time": "15 min",
-            "desc": "The values and working norms you will see every day."
+            "desc": "The values and working norms you will see every day.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w1-m3",
             "type": "Video",
             "title": "Welcome and team introductions",
             "time": "10 min",
-            "desc": "A short welcome from the tower heads."
+            "desc": "A short welcome from the tower heads.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w1-m4",
@@ -3378,7 +3384,8 @@ window.KM_DATA = {
             "title": "Knowledge Centre in 5 minutes",
             "time": "10 min",
             "desc": "Search, browse the taxonomy and read the status labels.",
-            "href": "index.html"
+            "href": "index.html",
+            "tba": false
           },
           {
             "id": "w1-m5",
@@ -3386,7 +3393,8 @@ window.KM_DATA = {
             "title": "CASS terms and acronyms",
             "time": "10 min",
             "desc": "Look up acronyms and filter them by your tower.",
-            "href": "index.html#glossary"
+            "href": "index.html#glossary",
+            "tba": false
           }
         ]
       },
@@ -3401,14 +3409,18 @@ window.KM_DATA = {
             "type": "Quick Reference Guide",
             "title": "How the service taxonomy works (L0 to L3)",
             "time": "10 min",
-            "desc": "What each level means and how to use the sidebar."
+            "desc": "What each level means and how to use the sidebar.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w2-m2",
             "type": "Training Material",
             "title": "Walk through your tower’s services",
             "time": "40 min",
-            "desc": "Open each L2 service in your tower and read its intro."
+            "desc": "Open each L2 service in your tower and read its intro.",
+            "href": "",
+            "tba": false
           }
         ]
       },
@@ -3423,14 +3435,18 @@ window.KM_DATA = {
             "type": "Quick Reference Guide",
             "title": "How to read a process map",
             "time": "10 min",
-            "desc": "Steps, role tags and the highlighted pilot step."
+            "desc": "Steps, role tags and the highlighted pilot step.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w3-m2",
             "type": "Training Material",
             "title": "SOP, DTP and quick reference guide: what is the difference?",
             "time": "15 min",
-            "desc": "When to use each type of document."
+            "desc": "When to use each type of document.",
+            "href": "",
+            "tba": false
           }
         ]
       },
@@ -3447,6 +3463,7 @@ window.KM_DATA = {
             "title": "Access request guide",
             "time": "15 min",
             "desc": "How to request systems access for your role.",
+            "href": "",
             "tba": true
           },
           {
@@ -3455,6 +3472,7 @@ window.KM_DATA = {
             "title": "Contacts and escalation",
             "time": "10 min",
             "desc": "Who to contact for what, and how to escalate.",
+            "href": "",
             "tba": true
           },
           {
@@ -3462,7 +3480,9 @@ window.KM_DATA = {
             "type": "Training Material",
             "title": "Microsoft Loop basics",
             "time": "30 min",
-            "desc": "Pages, components and how the Knowledge Centre links to them."
+            "desc": "Pages, components and how the Knowledge Centre links to them.",
+            "href": "",
+            "tba": true
           }
         ]
       },
@@ -3477,14 +3497,18 @@ window.KM_DATA = {
             "type": "Training Material",
             "title": "Guided walkthrough: following a process end to end",
             "time": "30 min",
-            "desc": "A worked example from first step to last."
+            "desc": "A worked example from first step to last.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w5-m2",
             "type": "Templates & Forms",
             "title": "Walkthrough notes template",
             "time": "10 min",
-            "desc": "A page to record questions and open points."
+            "desc": "A page to record questions and open points.",
+            "href": "",
+            "tba": false
           }
         ]
       },
@@ -3499,14 +3523,18 @@ window.KM_DATA = {
             "type": "Templates & Forms",
             "title": "Shadowing question log",
             "time": "10 min",
-            "desc": "A simple log of what you saw and what you want to ask."
+            "desc": "A simple log of what you saw and what you want to ask.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w6-m2",
             "type": "Quick Reference Guide",
             "title": "Shadowing: do’s and don’ts",
             "time": "10 min",
-            "desc": "How to observe without disturbing live work."
+            "desc": "How to observe without disturbing live work.",
+            "href": "",
+            "tba": false
           }
         ]
       },
@@ -3521,14 +3549,18 @@ window.KM_DATA = {
             "type": "SOP / DTP",
             "title": "Using an SOP step by step",
             "time": "15 min",
-            "desc": "How to follow a desktop procedure and where to note issues."
+            "desc": "How to follow a desktop procedure and where to note issues.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w7-m2",
             "type": "Quick Reference Guide",
             "title": "Practice checklist",
             "time": "10 min",
-            "desc": "A checklist to use while you practise."
+            "desc": "A checklist to use while you practise.",
+            "href": "",
+            "tba": false
           }
         ]
       },
@@ -3543,7 +3575,9 @@ window.KM_DATA = {
             "type": "Exception Handling",
             "title": "How to read an exception item",
             "time": "15 min",
-            "desc": "Situation, complexity, action and who to escalate to."
+            "desc": "Situation, complexity, action and who to escalate to.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w8-m2",
@@ -3551,6 +3585,7 @@ window.KM_DATA = {
             "title": "Escalation contacts",
             "time": "10 min",
             "desc": "The contact for each situation.",
+            "href": "",
             "tba": true
           }
         ]
@@ -3566,14 +3601,18 @@ window.KM_DATA = {
             "type": "Training Material",
             "title": "Supervised execution: what to expect",
             "time": "15 min",
-            "desc": "How reviews work and how to use the feedback."
+            "desc": "How reviews work and how to use the feedback.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w9-m2",
             "type": "Templates & Forms",
             "title": "Review feedback form",
             "time": "10 min",
-            "desc": "Record the reviewer’s feedback on each step."
+            "desc": "Record the reviewer’s feedback on each step.",
+            "href": "",
+            "tba": false
           }
         ]
       },
@@ -3588,14 +3627,18 @@ window.KM_DATA = {
             "type": "Training Material",
             "title": "Controls, SLAs and KPIs at CASS",
             "time": "25 min",
-            "desc": "The measures your team is held to and why."
+            "desc": "The measures your team is held to and why.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w10-m2",
             "type": "Quick Reference Guide",
             "title": "Quality checklist",
             "time": "10 min",
-            "desc": "A self-check before you hand work on."
+            "desc": "A self-check before you hand work on.",
+            "href": "",
+            "tba": false
           }
         ]
       },
@@ -3610,14 +3653,18 @@ window.KM_DATA = {
             "type": "Training Material",
             "title": "Independent scenario brief",
             "time": "20 min",
-            "desc": "The scenario, the expected outcome and how it is reviewed."
+            "desc": "The scenario, the expected outcome and how it is reviewed.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w11-m2",
             "type": "Quick Reference Guide",
             "title": "Where to look: a decision guide",
             "time": "10 min",
-            "desc": "Which source to use for which kind of question."
+            "desc": "Which source to use for which kind of question.",
+            "href": "",
+            "tba": false
           }
         ]
       },
@@ -3632,14 +3679,18 @@ window.KM_DATA = {
             "type": "Templates & Forms",
             "title": "Readiness reflection template",
             "time": "20 min",
-            "desc": "A short template to write down what you can do alone and what you still need."
+            "desc": "A short template to write down what you can do alone and what you still need.",
+            "href": "",
+            "tba": false
           },
           {
             "id": "w12-m2",
             "type": "Training Material",
             "title": "Preparing for your checkpoint reviews",
             "time": "15 min",
-            "desc": "What to revisit before Checkpoint 3 and the Final checkpoint."
+            "desc": "What to revisit before Checkpoint 3 and the Final checkpoint.",
+            "href": "",
+            "tba": false
           }
         ]
       }
