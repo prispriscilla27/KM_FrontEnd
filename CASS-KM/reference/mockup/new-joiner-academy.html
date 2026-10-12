@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CASS New Joiner Academy</title>
+<style>
+
+/* Layout: brand bar + hero, tower picker (one tower shown at a time, with Back), progress panel, three month columns of weekly activities (locked in order) with test checkpoints, final checkpoint. */
+:root{
+  --bg:#f3f6fa;--surface:#ffffff;--surface-2:#eef4f9;--ink:#16324a;--muted:#5d7385;--line:#dae4ed;
+  --brand:#0a6fc2;--brand-soft:#e5f1fb;--on-brand:#ffffff;--hdr1:#052944;--hdr2:#0b6899;--hdr3:#15a9c8;--hdr-ink:#ffffff;--hdr-muted:#d4ebf5;
+  --ok:#1d7f55;--ok-bg:#e3f4ec;--warn:#9a6411;--warn-bg:#fbf0dc;--bad:#b42318;--bad-bg:#fdeceb;--hl:#fff3c4;--hl-line:#d9a900;--shadow:0 4px 16px rgba(18,59,90,.07);
+  --font:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;color-scheme:light
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;--brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--warn:#e7b25a;--warn-bg:#3a2d14;--bad:#f59a8f;--bad-bg:#3d1a17;--hl:#3a3112;--hl-line:#c9a227;--shadow:0 4px 16px rgba(0,0,0,.3);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;--brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--warn:#e7b25a;--warn-bg:#3a2d14;--bad:#f59a8f;--bad-bg:#3d1a17;--hl:#3a3112;--hl-line:#c9a227;--shadow:0 4px 16px rgba(0,0,0,.3);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font);font-size:14px;color:var(--ink);background:var(--bg);line-height:1.45}
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.wrap{padding-inline:max(16px,4vw)}
+.top{background:linear-gradient(105deg,var(--hdr1),#07527e);color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
+.brand{font-weight:800;font-size:19px}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav a{padding:8px 12px;border-radius:8px}
+.nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
+.mock{font-size:12px;background:var(--hl);border-bottom:1px solid var(--hl-line);padding-block:6px}
+.hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
+.hero h1{margin:0 0 4px;font-size:26px}
+.hero p{margin:0;color:var(--hdr-muted);max-width:65ch}
+.page{padding-block:22px;display:grid;gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.pad{padding:20px}
+h2{margin:0 0 6px;font-size:20px}
+.sub{color:var(--muted);margin:0;max-width:70ch}
+.back{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:999px;cursor:pointer;font-weight:600;color:var(--brand)}
+.back:hover{background:var(--brand-soft)}
+.phead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:14px}
+.tcard{display:grid;gap:4px;text-align:left;border:1px solid var(--line);background:var(--surface);padding:16px;border-radius:12px;cursor:pointer;min-width:0}
+.tcard:hover{border-color:var(--brand);background:var(--brand-soft)}
+.tcard b{font-size:15px}
+.tcard span{color:var(--muted);font-size:12.5px}
+.tcard i{font-style:normal;color:var(--brand);font-weight:700;font-size:12px;margin-top:4px}
+.bar{height:10px;background:var(--surface-2);border-radius:999px;margin-top:12px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--ok))}
+.progress{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px;margin-top:6px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.month{padding:16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.month h3{margin:0 0 8px;font-size:16px}
+.week{display:block;border-top:1px solid var(--line);padding:11px 0}
+.week:first-of-type{border-top:0}
+.row{display:flex;gap:9px;align-items:flex-start}
+.row input{margin-top:3px;accent-color:var(--brand);width:16px;height:16px;flex:none}
+.row b{font-size:13.5px}
+.row small{display:block;color:var(--muted);margin-top:2px}
+.when{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 0 25px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.when span{background:var(--surface-2);padding:2px 7px;border-radius:6px}
+.week.locked{opacity:.6}
+.week.locked .row b::after{content:" · Locked";color:var(--muted);font-weight:600;font-size:12px}
+.week.locked .row input{cursor:not-allowed}
+.lockmsg{display:block;margin:6px 0 0 25px;font-size:11.5px;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 25px}
+.wkbtn{display:inline-block;font-size:12.5px;color:var(--on-brand);background:var(--brand);padding:6px 12px;border-radius:999px;font-weight:700}
+.wkbtn:hover{filter:brightness(1.08)}
+.wkbtn.off{background:var(--surface-2);color:var(--muted);cursor:not-allowed}
+.check{margin-top:10px;background:var(--warn-bg);border:1px solid var(--line);padding:12px;border-radius:10px;display:grid;gap:6px}
+.check b{color:var(--warn);font-size:12.5px}
+.check p{margin:0;font-size:12.5px;color:var(--ink)}
+.tbtn{display:inline-block;justify-self:start;background:var(--brand);color:var(--on-brand);border:0;padding:8px 14px;border-radius:9px;font-weight:700;cursor:pointer}
+.tbtn[aria-disabled="true"]{background:var(--surface-2);color:var(--muted);cursor:not-allowed}
+.tres{font-size:12px;font-weight:700;color:var(--ok)}
+.final{padding:20px;background:linear-gradient(110deg,var(--hdr1),#0b719d);color:var(--hdr-ink);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.final h3{margin:0 0 4px}
+.final p{margin:0;color:var(--hdr-muted);max-width:65ch}
+.final .tbtn{background:#fff;color:#07527e}
+.final .tbtn[aria-disabled="true"]{background:rgba(255,255,255,.18);color:var(--hdr-muted)}
+.final .tres{color:#b9f1d6}
+.reset{border:0;background:none;color:var(--muted);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:9px;font-size:13px;max-width:calc(100% - 32px)}
+@media (max-width:950px){.months{grid-template-columns:1fr}}
+
+.crumb{font-size:12.5px;color:var(--muted)}
+.crumb a{color:var(--brand)}
+.goals{margin:8px 0 0;padding-left:20px;display:grid;gap:4px}
+.mats{display:grid;gap:10px;margin-top:12px}
+.mat{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.mat h3{margin:4px 0 2px;font-size:14.5px}
+.mat p{margin:0;color:var(--muted);font-size:12.5px}
+.tag{display:inline-block;background:var(--surface-2);padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;margin-right:4px}
+.tag.type{background:var(--brand-soft);color:var(--brand)}
+.tag.tba{background:var(--warn-bg);color:var(--warn)}
+.openbtn{border:1px solid var(--brand);background:var(--surface);color:var(--brand);padding:7px 13px;border-radius:9px;font-weight:700;cursor:pointer;white-space:nowrap;display:inline-block}
+.openbtn:hover{background:var(--brand-soft)}
+.openbtn[aria-disabled="true"]{border-color:var(--line);color:var(--muted);cursor:not-allowed;background:var(--surface-2)}
+.footnav{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:6px}
+.btn{display:inline-block;background:var(--brand);color:var(--on-brand);border:0;padding:10px 16px;border-radius:9px;font-weight:700;cursor:pointer}
+.btn.ghost{background:var(--surface);color:var(--brand);border:1px solid var(--line)}
+.btn[disabled]{background:var(--surface-2);color:var(--muted);cursor:not-allowed;border:1px solid var(--line)}
+.donebar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.overlay{position:fixed;inset:0;background:rgba(5,20,35,.5);display:grid;place-items:center;padding:16px;z-index:30}
+.dlg{background:var(--surface);border-radius:14px;max-width:520px;width:100%;padding:22px;box-shadow:var(--shadow);display:grid;gap:10px}
+.dlg h2{margin:0}
+@media (max-width:600px){.mat{grid-template-columns:minmax(0,1fr)}}
+
+.q{margin-top:16px}
+.q p{margin:0 0 8px;font-weight:650;font-size:14.5px}
+.q label{display:flex;gap:8px;align-items:flex-start;margin:6px 0;padding:9px 11px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--surface)}
+.q label:hover{border-color:var(--brand)}
+.q label input{margin-top:3px;accent-color:var(--brand)}
+.q.right label.sel{background:var(--ok-bg);border-color:var(--ok)}
+.q.wrong label.sel{background:var(--bad-bg);border-color:var(--bad)}
+.q.wrong label.ans{border-color:var(--ok)}
+.why{font-size:12.5px;margin-top:6px;color:var(--muted)}
+.score{font-size:30px;font-weight:800;margin:6px 0}
+.btn{display:inline-block;background:var(--brand);color:var(--on-brand);border:0;padding:10px 16px;border-radius:9px;font-weight:700;cursor:pointer}
+.btn.ghost{background:var(--surface);color:var(--brand);border:1px solid var(--line)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.tag{display:inline-block;background:var(--surface-2);padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;margin-right:6px}
+.note{font-size:12px;color:var(--muted);margin-top:14px}
+
+/* ---- Round 5: tower colours, progress circles, material list ---- */
+:root{--t1:#be185d;--t2:#0e7490;--t3:#8a4b14;--t4:#374151;--t-ink:#ffffff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824}}
+:root[data-theme="dark"]{--t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824}
+.brand{color:var(--hdr-ink)}
+.tw-1{--tc:var(--t1)}.tw-2{--tc:var(--t2)}.tw-3{--tc:var(--t3)}.tw-4{--tc:var(--t4)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;vertical-align:middle}
+.pill.tw{background:var(--tc);color:var(--t-ink)}
+.tcard{border-left:6px solid var(--tc,var(--line))}
+.ring{flex:none;display:block}
+.ring .rt{fill:none;stroke:var(--line);stroke-width:6}
+.ring .rb{fill:none;stroke:var(--brand);stroke-width:6;stroke-linecap:round}
+.ring.done .rb{stroke:var(--ok)}
+.ring.lock .rb{stroke:none}
+.ring text{fill:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.ring.lock text{fill:var(--muted)}
+.ring .ck{fill:none;stroke:var(--ok);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:no-preference){.ring .rb{transition:stroke-dasharray .5s ease}}
+.wrow{display:flex;gap:12px;align-items:flex-start}
+.wbody{min-width:0;flex:1}
+.wbody>b{font-size:13.5px;display:block}
+.wbody>small{display:block;color:var(--muted);margin-top:2px}
+.wbody .when{margin:6px 0 0}
+.wbody .links{margin:8px 0 0}
+.lockmsg{display:block;margin:6px 0 0;font-size:11.5px;color:var(--muted)}
+.week.locked .wbody>b::after{content:" · Locked";color:var(--muted);font-weight:600;font-size:12px}
+.mat{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}
+.mstat{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;background:transparent}
+.mstat.opened{border-color:var(--brand);border-style:dashed}
+.mstat.fin{background:var(--ok);border-color:var(--ok)}
+.mstat svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.mat.fin{border-color:var(--ok)}
+.macts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.btn.sm{padding:7px 12px;font-size:13px}
+.okt{color:var(--ok);font-weight:700;font-size:12.5px}
+.tlink{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12px;padding:2px 4px}
+.prog{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+@media (max-width:600px){.mat{grid-template-columns:auto minmax(0,1fr)}.macts{grid-column:1/-1;justify-content:flex-start}}
+
+.banner-admin{background:var(--hl);border:1px solid var(--hl-line);border-radius:10px;padding:9px 12px;font-size:13px}
+
+</style></head><body>
+<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS home">CASS</a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a class="on" href="new-joiner-academy.html">New Joiner Academy</a><a href="admin.html">Admin login</a></nav></header>
+<div class="mock wrap">Mockup for discussion. Progress and test results are saved on this device only.</div>
+<section class="hero wrap"><h1>New Joiner Academy</h1><p>A 12-week pathway for your tower, with every activity linked to the right page in the Knowledge Centre.</p></section>
+<main class="page wrap">
+  <section class="panel pad" id="picker" hidden>
+    <h2 id="pickH" tabindex="-1">Choose your tower</h2>
+    <p class="sub">Pick the tower you work in. You will only see the learning path for that tower. Chose the wrong one? You can go back and choose again.</p>
+    <div class="pick" id="pickList"></div>
+  </section>
+  <section class="panel pad" id="journey" hidden>
+    <div class="phead">
+      <div><h2 id="jH" tabindex="-1">My onboarding journey</h2><p class="sub" id="jSub"></p></div>
+      <button type="button" class="back" id="backBtn">← Back to towers</button>
+    </div>
+    <div class="bar"><span id="bar"></span></div>
+    <div class="progress"><span id="progress">0 of 12 weeks completed</span><span id="nextUp"></span></div>
+    <p class="sub" style="font-size:12px;margin-top:10px" id="howTo"></p>
+    <button type="button" class="reset" id="resetBtn">Reset my progress (mockup only)</button>
+  </section>
+  <section class="months" id="months" hidden></section>
+  <section class="panel final" id="finalBox" hidden></section>
+</main>
+<div class="toast" id="toast" hidden></div>
+<script src="km-data.js"></script>
+<script src="km-boot.js"></script>
+<script src="academy-data.js"></script>
+<script>
+const TEST_PAGE='academy-test.html',WEEK_PAGE='academy-week.html';
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,2400)}
+/* The tower is only kept in memory: opening this page always shows the towers first. */
+let tower='';
+const q=t=>'&tower='+slug(t);
+function testBox(T,done,final){
+  const st=testOpen(T,done,tower),r=result(tower,T.id);
+  const btn=st.open?`<a class="tbtn" href="${TEST_PAGE}?test=${T.id}${q(tower)}">${r?'Retake the test':(final?'Start the final checkpoint':'Take the test')}</a>`:`<span class="tbtn" aria-disabled="true">${final?'Final checkpoint':'Take the test'} · locked</span>`;
+  const msg=st.open?`Covers ${T.covers.toLowerCase()}.`:`${st.why} Covers ${T.covers.toLowerCase()}.`;
+  const res=r?`<span class="tres">${r.passed?'Passed':'Not passed yet'} · ${r.score}% · ${esc(r.date)}</span>`:'';
+  return {btn,msg,res};
+}
+function render(){
+  $('picker').hidden=!!tower;$('journey').hidden=!tower;$('months').hidden=!tower;$('finalBox').hidden=!tower;
+  if(!tower){
+    $('pickList').innerHTML=TOWERS.map(t=>`<button type="button" class="tcard tw-${esc(t.code)}" data-tower="${esc(t.name)}"><b>${esc(t.name)}</b><span>${esc(t.desc)}</span><i>Open my 12-week path →</i></button>`).join('');
+    return;
+  }
+  const W=weekInfo(tower),done=W.done,T=towerObj(tower);
+  $('jH').innerHTML=`${esc(tower)} <span class="pill tw tw-${esc(T.code)}" style="font-size:12px">Your tower</span>`;
+  $('jSub').textContent='Your 12-week onboarding journey. Only this tower’s learning path is shown.';
+  $('howTo').textContent='Open a week to see its materials. Open each material, then mark it as finished. When every material in a week is finished, its circle is complete'+(AS.lockWeeksInOrder?' and the next week unlocks':'')+'. A checkpoint test unlocks after the weeks it covers.'+(AS.lockAfterCheckpoint?' Once you take a checkpoint, the weeks it covers can no longer be changed.':'');
+  const months=[['Month 1 · Understand',0],['Month 2 · Practice',4],['Month 3 · Apply',8]];
+  $('months').innerHTML=months.map(([title,s])=>`<div class="panel month"><h3>${title}</h3>${WEEKS.slice(s,s+4).map(w=>{
+    const n=w.n,I=W.info[n],reason=lockReason(n,done,tower),open=!reason;
+    const complete=done.includes(n),started=I.fin>0;
+    const p=complete?1:(I.total?I.fin/I.total:0);
+    const label=I.total?`${I.fin}/${I.total}`:'–';
+    const rg=!open?ring(0,48,'🔒','lock','Week '+n+' is locked'):ring(p,48,label,complete?'done':'',complete?'Week '+n+' complete':(I.total?I.fin+' of '+I.total+' materials finished':'No materials to track yet'));
+    const wk=open?`<a class="wkbtn" href="${WEEK_PAGE}?week=${n}${q(tower)}">${complete?'Review week '+n:(started?'Continue week '+n:'Open week '+n)} →</a>`:`<span class="wkbtn off" aria-disabled="true">Week ${n} · locked</span>`;
+    const t=A.tests.find(x=>x.after===n&&x.id!=='final');
+    let tb='';if(t){const b=testBox(t,done);tb=`<div class="check"><b>${esc(t.title)} · ${esc(t.covers)}</b><p>${esc(b.msg)}</p>${b.btn}${b.res}</div>`}
+    const note=!open?`<span class="lockmsg">${esc(reason)}</span>`:(I.frozen&&complete?`<span class="lockmsg">Completed. Locked because a checkpoint covering this week has been taken.</span>`:'');
+    const count=I.total?`${I.fin} of ${I.total} materials finished`:'Materials to be added';
+    return `<div class="week ${open?'':'locked'}"><div class="wrow">${rg}<div class="wbody"><b>Week ${n} · ${esc(w.title)}</b><small>${esc(w.desc)}</small><span class="when"><span>About ${esc(w.hours)}</span><span>${count}</span></span>${note}<span class="links">${wk}</span></div></div>${tb}</div>`}).join('')}</div>`).join('');
+  $('bar').style.width=(done.length/12*100)+'%';
+  $('progress').textContent=`${done.length} of 12 weeks completed`;
+  const next=WEEKS.find(w=>!done.includes(w.n));$('nextUp').textContent=next?`Next: Week ${next.n} · ${next.title}`:'All weeks done. Take the last checkpoints.';
+  const f=testBox(TESTS.final,done,true);
+  $('finalBox').innerHTML=`<div><h3>Final checkpoint</h3><p>A test on everything you have learned, with extra weight on the last month (weeks 9–12). ${f.msg.startsWith('Covers')?'':f.msg.split(' Covers')[0]}</p>${f.res?`<p style="margin-top:6px">${f.res}</p>`:''}</div>${f.btn}`;
+}
+function choose(t){tower=t;render();$('jH').focus()}
+function back(){tower='';render();$('pickH').focus()}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button,a');if(!t)return;
+  if(t.dataset.tower)choose(t.dataset.tower);
+  else if(t.id==='backBtn')back();
+  else if(t.id==='resetBtn'){if(confirm('Mockup only: reset progress and test results for '+tower+'?')){resetTower(tower);render()}}
+  else if(t.getAttribute('aria-disabled')==='true'){e.preventDefault()}
+});
+/* Coming back from a week or test page, or following a link from a manager (#tower-customer-operations), opens that tower. The hash is cleared so a reload shows the towers again. */
+function openFromHash(){
+  const hv=location.hash.match(/^#tower-(.+)$/);
+  if(hv){const m=TOWERS.find(t=>slug(t.name)===hv[1]);if(m)tower=m.name;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}render()}
+}
+window.addEventListener('hashchange',openFromHash);
+openFromHash();render();
+</script>
+
+</body></html>

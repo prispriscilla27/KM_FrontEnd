@@ -1,0 +1,479 @@
+{
+  "note": "Seed glossary for the Knowledge Centre (66 terms). 'towers' lists the tower codes a term relates to (1 Customer Operations, 2 Procurement, 3 Finance & Accounting, 4 Human Resources), ['all'] for terms every tower uses, or [] when we could not tell (leave blank until a tower head confirms). Tags are a first draft from where the term appears in the service taxonomy and in the LC pilot. An empty 'meaning' is shown as 'Meaning to be added'.",
+  "towerNames": {
+    "1": "Customer Operations",
+    "2": "Procurement",
+    "3": "Finance & Accounting",
+    "4": "Human Resources"
+  },
+  "terms": [
+    {
+      "term": "A/R",
+      "meaning": "Accounts Receivable: money that customers owe the company.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "ACE",
+      "meaning": "A group company supported by CASS. Full name to be added.",
+      "towers": []
+    },
+    {
+      "term": "AMS",
+      "meaning": "A group company supported by CASS. Full name to be added.",
+      "towers": []
+    },
+    {
+      "term": "AP",
+      "meaning": "Accounts Payable: money the company owes its vendors.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "APS",
+      "meaning": "A group company supported by CASS. Full name to be added.",
+      "towers": []
+    },
+    {
+      "term": "ASM",
+      "meaning": "Authorized Signature Matrix: who is allowed to approve what.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "BG",
+      "meaning": "Bank Guarantee: a bank’s promise to pay if the applicant fails to meet an obligation.",
+      "towers": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "term": "BPJS",
+      "meaning": "Indonesia’s social security and health insurance agency, used in payroll.",
+      "towers": [
+        "4"
+      ]
+    },
+    {
+      "term": "CbCR",
+      "meaning": "Country-by-Country Reporting: reporting a group’s income and tax paid in each country.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "CCS",
+      "meaning": "",
+      "towers": [
+        "1"
+      ]
+    },
+    {
+      "term": "CIA",
+      "meaning": "Cash in Advance: the buyer pays before shipment.",
+      "towers": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "term": "CIT",
+      "meaning": "Corporate Income Tax.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "CO",
+      "meaning": "Customer Operations.",
+      "towers": [
+        "1"
+      ]
+    },
+    {
+      "term": "CoA",
+      "meaning": "Chart of Accounts: the list of accounts used to record transactions.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "CPF",
+      "meaning": "Central Provident Fund (Singapore): a mandatory retirement savings scheme handled in payroll.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "CV",
+      "meaning": "Curriculum Vitae: a candidate’s résumé.",
+      "towers": [
+        "4"
+      ]
+    },
+    {
+      "term": "DTP",
+      "meaning": "Desktop Procedure: step-by-step instructions for one task.",
+      "towers": [
+        "all"
+      ]
+    },
+    {
+      "term": "EBITDA",
+      "meaning": "Earnings Before Interest, Taxes, Depreciation and Amortisation.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "ERA",
+      "meaning": "Energy Risk Accounting.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "ERP",
+      "meaning": "Enterprise Resource Planning: the core business system.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "F&A",
+      "meaning": "Finance & Accounting.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "F(x) / FX",
+      "meaning": "Foreign exchange.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "FP&A",
+      "meaning": "Financial Planning & Analysis.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "GAAP",
+      "meaning": "Generally Accepted Accounting Principles.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "GL",
+      "meaning": "General Ledger: the main accounting record.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "GR",
+      "meaning": "Goods Receipt: confirmation that goods or services were received.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "GST / VAT",
+      "meaning": "Goods and Services Tax / Value Added Tax.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "HR",
+      "meaning": "Human Resources.",
+      "towers": [
+        "4"
+      ]
+    },
+    {
+      "term": "ICC",
+      "meaning": "International Chamber of Commerce.",
+      "towers": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "term": "IFRS",
+      "meaning": "International Financial Reporting Standards.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "ISBP 745",
+      "meaning": "ICC guidance on how LC documents are examined.",
+      "towers": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "term": "KM",
+      "meaning": "Knowledge Management.",
+      "towers": [
+        "all"
+      ]
+    },
+    {
+      "term": "KPI",
+      "meaning": "Key Performance Indicator: a measure of how well a process performs.",
+      "towers": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    {
+      "term": "KYC",
+      "meaning": "Know Your Customer: identity and background checks, for example by a bank.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "L0 / L1 / L2 / L3",
+      "meaning": "Levels of the service taxonomy: tower, process, service, function.",
+      "towers": [
+        "all"
+      ]
+    },
+    {
+      "term": "LC",
+      "meaning": "Letter of Credit: a bank’s promise to pay the seller if the documents match the LC terms.",
+      "towers": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "term": "LOI",
+      "meaning": "Letter of Indemnity.",
+      "towers": [
+        "1"
+      ]
+    },
+    {
+      "term": "M&A",
+      "meaning": "Mergers and Acquisitions.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "MT700",
+      "meaning": "The SWIFT message a bank uses to issue a letter of credit.",
+      "towers": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "term": "NRV",
+      "meaning": "",
+      "towers": [
+        "1"
+      ]
+    },
+    {
+      "term": "O2C",
+      "meaning": "Order to Cash: the process from a customer order to receiving the payment.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "P&L",
+      "meaning": "Profit and Loss statement.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "P2P",
+      "meaning": "Purchase to Pay: the process from buying to paying the vendor.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "PIC",
+      "meaning": "Person in charge of providing and maintaining content.",
+      "towers": [
+        "all"
+      ]
+    },
+    {
+      "term": "PO",
+      "meaning": "Purchase Order.",
+      "towers": [
+        "2",
+        "3"
+      ]
+    },
+    {
+      "term": "PSAK",
+      "meaning": "Pernyataan Standar Akuntansi Keuangan: Indonesian financial accounting standards.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "PTA",
+      "meaning": "Project Turnaround.",
+      "towers": [
+        "2"
+      ]
+    },
+    {
+      "term": "QRD",
+      "meaning": "Quick Reference Guide: a checklist or job aid.",
+      "towers": [
+        "all"
+      ]
+    },
+    {
+      "term": "R2R",
+      "meaning": "Record to Report: the process from recording transactions to financial reporting.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "RFI",
+      "meaning": "Request for Information.",
+      "towers": [
+        "2"
+      ]
+    },
+    {
+      "term": "RFQ / RFP",
+      "meaning": "Request for Quotation / Request for Proposal.",
+      "towers": [
+        "2"
+      ]
+    },
+    {
+      "term": "ROIC",
+      "meaning": "Return on Invested Capital.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "RTP",
+      "meaning": "Request to Purchase.",
+      "towers": [
+        "2"
+      ]
+    },
+    {
+      "term": "S2C",
+      "meaning": "Source to Contract.",
+      "towers": [
+        "2"
+      ]
+    },
+    {
+      "term": "S2P",
+      "meaning": "Source to Pay.",
+      "towers": [
+        "2"
+      ]
+    },
+    {
+      "term": "SBLC",
+      "meaning": "Standby Letter of Credit: a backup payment guarantee, used if the buyer fails to pay.",
+      "towers": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "term": "SLA",
+      "meaning": "Service Level Agreement: the agreed time or quality a service must meet.",
+      "towers": [
+        "2",
+        "3"
+      ]
+    },
+    {
+      "term": "SO",
+      "meaning": "Sales Order.",
+      "towers": [
+        "1"
+      ]
+    },
+    {
+      "term": "SOP",
+      "meaning": "Standard Operating Procedure.",
+      "towers": [
+        "all"
+      ]
+    },
+    {
+      "term": "SOX",
+      "meaning": "Sarbanes-Oxley Act: US law on financial reporting and internal controls.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "T&E",
+      "meaning": "Travel & Entertainment.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "TMS",
+      "meaning": "Treasury Management System.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "UCP 600",
+      "meaning": "The ICC rules that govern documentary credits.",
+      "towers": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "term": "VPO",
+      "meaning": "",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "WHT",
+      "meaning": "Withholding Tax.",
+      "towers": [
+        "3"
+      ]
+    },
+    {
+      "term": "WMS",
+      "meaning": "Warehouse Management System.",
+      "towers": [
+        "3"
+      ]
+    }
+  ]
+}
