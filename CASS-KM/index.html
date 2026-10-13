@@ -156,6 +156,7 @@ h3.sec{margin:0 0 10px;font-size:15px}
 .item:hover{border-color:var(--brand)}
 .item .t{font-weight:650;font-size:13px;display:block;overflow-wrap:anywhere}
 .item .m{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;align-items:center;font-size:11.5px;color:var(--muted)}
+.item .tr{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}.item .tr .t{flex:1;min-width:0}.item .tr .m.d{margin-top:1px;flex:none;white-space:nowrap}
 .feedback{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)}
 .btn{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;text-align:center}
 .btn:hover{border-color:var(--brand);color:var(--brand)}
@@ -247,7 +248,6 @@ textarea{width:100%;min-height:80px;padding:9px;border-radius:8px;border:1px sol
 <div class="mock wrap" id="mockBanner" hidden></div>
 <section class="hero wrap">
   <h1>CASS Knowledge Centre</h1>
-  <p>Find SOPs, desktop procedures, videos and guides by service taxonomy, then open the knowledge behind each process step.</p>
   <div class="searchrow">
     <div class="searchbox">
       <form class="search" id="searchForm" role="search">
@@ -550,7 +550,7 @@ function markLeaves(){document.querySelectorAll('.leaf').forEach(b=>{const on=st
 function renderChips(){document.getElementById('coChips').innerHTML='<span class="lbl" aria-hidden="true">Company</span>'+['All',...COMPANIES].map(c=>`<button type="button" class="chip" data-co="${esc(c)}" aria-pressed="${c===company}">${esc(c)}</button>`).join('')}
 function badges(it){return `${isNew(it)?'<span class="pill p-new">New</span>':''}${ST[it.status]?`<span class="pill ${ST[it.status]}">${esc(it.status)}</span>`:''}${it.requireAccess?'<span class="pill p-lock">Require access</span>':''}`}
 const towerOf=it=>L2INDEX[it.l2]?L2INDEX[it.l2].l0:null;
-function itemCard(it,o){o=o||{};return `<button type="button" class="item" data-item="${esc(it.id)}"><span class="t">${o.title||esc(it.title)}</span>${o.lead?`<span class="m">${o.lead}</span>`:''}<span class="m">${badges(it)}<span>Updated ${fmt(it.updated)}</span>${o.extra||''}</span></button>`}
+function itemCard(it,o){o=o||{};const up=`<span>Updated ${fmt(it.updated)}</span>`,bot=badges(it)+(o.dateTop?'':up)+(o.extra||'');return `<button type="button" class="item" data-item="${esc(it.id)}">${o.dateTop?`<span class="tr"><span class="t">${o.title||esc(it.title)}</span><span class="m d">${up}</span></span>`:`<span class="t">${o.title||esc(it.title)}</span>`}${o.lead?`<span class="m">${o.lead}</span>`:''}${bot?`<span class="m">${bot}</span>`:''}</button>`}
 const towerLead=it=>{const t=towerOf(it);return (t?`<span class="pill tw tw-${esc(t.code)}">${esc(t.name)}</span>`:'')+`<span>${esc(it.l2+' '+nameOf(it.l2))}</span>`};
 function assetGrid(list){
   return `<div class="assets">${TYPES.map(t=>{const its=list.filter(i=>i.type===t.name);return `<div class="panel asset ${its.length?'':'empty'}"><h4>${esc(t.name)}<span class="n">${its.length||''}</span></h4>${its.length?its.map(i=>itemCard(i)).join(''):`<p class="desc">${esc(t.desc)}<br>Not available yet.</p>`}</div>`}).join('')}</div>`;
@@ -562,9 +562,9 @@ function viewHome(){
   const recent=visItems.slice().sort((a,b)=>String(b.updated).localeCompare(String(a.updated))).slice(0,6);const nNew=visItems.filter(isNew).length;
   const cov=TAX.map(a=>{const cs=(a.l1||[]).flatMap(b=>(b.l2||[]).map(x=>covOf(x.code)));const n=cs.length,c=cs.filter(x=>x==='covered').length,p=cs.filter(x=>x==='partial').length;return {a,n,c,p}});
   return `<div class="crumb">Home › Knowledge Centre</div>
-  <section class="panel pad"><div class="titlerow" style="margin-bottom:10px"><h3 class="sec" style="margin:0">Recently updated${company!=='All'?' · '+esc(company):''}</h3>${nNew?`<span class="pill p-new">${nNew} new for you</span>`:''}</div>${recent.length?`<div class="recent">${recent.map(i=>itemCard(i,{lead:towerLead(i)})).join('')}</div>`:'<p class="sub">No documents for this company yet.</p>'}</section>
-  <section class="panel pad"><h3 class="sec">Content coverage by tower</h3><div class="cov">${cov.map(r=>`<div class="covrow"><span>${esc(r.a.name)}</span><span class="bar" role="img" aria-label="${r.c} covered, ${r.p} partial, ${r.n-r.c-r.p} not started"><i class="c" style="width:${r.n?r.c/r.n*100:0}%"></i><i class="p" style="width:${r.n?r.p/r.n*100:0}%"></i></span><span class="num">${r.c+r.p}/${r.n} L2</span></div>`).join('')}</div><p class="note">Each bar counts L2 services with at least partial content (green covered, yellow partial, grey not started), out of ${TOTAL_L2} L2 services in total.</p></section>
-  <section class="panel pad"><div class="titlerow"><div><h3 class="sec" style="margin-bottom:4px">Glossary</h3><p class="sub">Look up the acronyms and terms used across CASS. Filter by tower to see only the ones for your role.</p></div><button type="button" class="btn primary" data-view="glossary">Open the glossary</button></div>
+  <section class="panel pad"><div class="titlerow" style="margin-bottom:10px"><h3 class="sec" style="margin:0">Recently updated${company!=='All'?' · '+esc(company):''}</h3>${nNew?`<span class="pill p-new">${nNew} new for you</span>`:''}</div>${recent.length?`<div class="recent">${recent.map(i=>itemCard(i,{lead:towerLead(i),dateTop:true})).join('')}</div>`:'<p class="sub">No documents for this company yet.</p>'}</section>
+  <section class="panel pad"><h3 class="sec">Content coverage by tower</h3><div class="cov">${cov.map(r=>`<div class="covrow"><span>${esc(r.a.name)}</span><span class="bar" role="img" aria-label="${r.c} covered, ${r.p} partial, ${r.n-r.c-r.p} not started"><i class="c" style="width:${r.n?r.c/r.n*100:0}%"></i><i class="p" style="width:${r.n?r.p/r.n*100:0}%"></i></span><span class="num">${r.c+r.p}/${r.n} L2</span></div>`).join('')}</div></section>
+  <section class="panel pad"><div class="titlerow"><div><h3 class="sec" style="margin-bottom:4px">Glossary</h3></div><button type="button" class="btn primary" data-view="glossary">Open the glossary</button></div>
    <div class="gl-peek">${['LC','BG','SOP','SLA','PO','KPI'].map(t=>`<button type="button" class="chipbtn" data-term="${esc(t)}" aria-label="Open the glossary at ${esc(t)}"><b>${esc(t)}</b></button>`).join('')}</div></section>
   <section class="panel academy"><div><b>New to CASS?</b><br><small class="sub">Follow the guided 12-week learning pathway for your tower.</small></div><a href="new-joiner-academy.html">Open New Joiner Academy →</a></section>`;
 }

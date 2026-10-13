@@ -137,18 +137,18 @@ h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
 .final .tres{color:#b9f1d6}.final .tres.no{color:#fde3a7}
 .reset{border:0;background:none;color:var(--muted);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;margin-top:10px}
 @media (max-width:950px){.months{grid-template-columns:minmax(0,1fr)}}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home">CASS</a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a class="on" href="new-joiner-academy.html" aria-current="page">New Joiner Academy</a><a href="admin.html">Admin login</a></nav></header>
 <div class="mock wrap" id="mockBanner" hidden></div>
-<section class="hero wrap"><h1>New Joiner Academy</h1><p>A 12-week pathway for your tower, with every activity linked to the right page in the Knowledge Centre.</p></section>
+<section class="hero wrap"><h1>New Joiner Academy</h1></section>
 <main class="page wrap" id="page">
   <section class="panel pad" id="picker">
     <h2 id="pickH" tabindex="-1">Choose your tower</h2>
-    <p class="sub">Pick the tower you work in. You will only see the learning path for that tower. Chose the wrong one? You can go back and choose again.</p>
+    <p class="sub">Choose the department you are a part of.</p>
     <div class="pick" id="pickList"></div>
-    <p class="note">Your progress and test results are saved on this device only.</p>
   </section>
   <section class="panel pad" id="journey" hidden aria-labelledby="jH">
     <div class="phead">
@@ -157,7 +157,6 @@ h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
     </div>
     <div class="bar" role="img" id="barWrap"><span id="bar"></span></div>
     <div class="progress"><b id="progress"></b><span id="nextUp"></span></div>
-    <p class="sub" style="font-size:12.5px;margin-top:10px" id="howTo"></p>
     <p class="note">Progress and test results are saved on this device only.</p>
     <button type="button" class="reset" id="resetBtn" hidden>Reset my progress (demo only)</button>
   </section>
@@ -209,7 +208,6 @@ function render(){
   }
   const W=weekInfo(tower),done=W.done,T=towerObj(tower);
   $('jH').innerHTML=`${esc(tower)} <span class="pill tw tw-${esc(T.code)}" style="font-size:12px">Your tower</span>`;
-  $('howTo').textContent='Open a week to see its materials. Open each material, then mark it as finished. When every material in a week is finished, its circle is complete'+(AS.lockWeeksInOrder?' and the next week unlocks':'')+'. A checkpoint test unlocks after the weeks it covers.'+(AS.lockAfterCheckpoint?' Once you take a checkpoint, the weeks it covers can no longer be changed.':'');
   const months=[['Month 1 · Understand',1,4],['Month 2 · Practice',5,8],['Month 3 · Apply',9,12]];
   $('months').innerHTML=months.map(([title,a,b])=>`<div class="panel month"><h3>${title}</h3>${WEEKS.filter(w=>w.n>=a&&w.n<=b).map(w=>weekCard(w,W)).join('')}</div>`).join('');
   const pct=Math.round(done.length/NWEEKS*100);

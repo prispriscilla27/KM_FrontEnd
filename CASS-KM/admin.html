@@ -218,6 +218,7 @@ tr.locked td,tr.locked .ttl{color:var(--muted)}
 .subbox{border:1px dashed var(--line);border-radius:10px;padding:10px;display:grid;gap:6px}
 .verbox{border-top:1px solid var(--line);padding-top:12px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .vlist li{display:block}
+.vwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}.vtable{width:100%;border-collapse:collapse;font-size:12.5px}.vtable th,.vtable td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.vtable thead th{white-space:nowrap}.vtable tbody tr:last-child>td{border-bottom:0}.vtable td small{display:block}.vtable td:nth-child(2){white-space:nowrap}.vtable td.acts{white-space:nowrap}.vtable td.acts .btn{margin:0 4px 4px 0}.vtable tr.open>td{border-bottom:0}.vtable tr.vdet>td{background:var(--soft,rgba(127,127,127,.06));padding:8px 12px 10px}.vtable tr.vdet table.mini{width:100%}.vtable tr.vdet table.mini th,.vtable tr.vdet table.mini td{border-bottom:0;padding:3px 8px 3px 0;overflow-wrap:anywhere}.vtable tr.vdet table.mini td{white-space:normal}.vtable td:nth-child(7){min-width:140px}.vtable td.acts{display:table-cell;min-width:0;max-width:none;text-align:right}.vtable td.acts .btn{display:inline-flex}.vtable td.acts .btn{margin:0 4px 4px 0}.vtable tr.vdet table.mini th{width:auto}.vtable tr.vdet table.mini th:first-child{width:120px}
 .vlist summary{cursor:pointer;overflow-wrap:anywhere}
 .vbody{margin-top:8px;overflow-x:auto}
 table.mini{font-size:12.5px}
@@ -393,7 +394,7 @@ function renderLogin(msg){
   if(!ACC){APP.innerHTML=`${topBarLogin()}<div class="loginwrap"><div class="panel logincard" role="alert"><h1>Admin login</h1><div class="banner bad"><b>km-accounts.js could not be loaded.</b> This file holds the admin accounts. Put <code>km-accounts.js</code> in the same folder as admin.html and press Ctrl+F5. If it was lost, restore it from a backup.</div></div></div>`;return}
   APP.innerHTML=`${topBarLogin()}
   <div class="loginwrap"><form class="panel logincard" id="loginForm" autocomplete="off" novalidate>
-   <div><h1>Admin login</h1><p class="sub">For KM admins: Process Excellence, tower heads and tower editors.</p></div>
+   <div><h1>Admin login</h1><p class="sub">For Knowledge Centre admins only.</p></div>
    ${msg?`<div class="banner info" role="status">${esc(msg)}</div>`:''}
    <div class="fld"><label for="lu" class="req">Username</label><input id="lu" name="u" type="text" autocomplete="username" autofocus></div>
    <div class="fld"><label for="lp" class="req">Password</label><input id="lp" name="p" type="password" autocomplete="current-password"></div>
@@ -1014,7 +1015,7 @@ VIEWS.dash={render(){
   const since=PREV?DR.changeLog.filter(e=>Date.parse(e.at)>Date.parse(PREV)&&e.byAccount!==a.username&&!mine.includes(entryTower(e))&&entryTower(e)).length:null;
   const d30=Date.now()-30*DAY;
   const act=DR.taxonomy.map(t=>{const es=DR.changeLog.filter(e=>entryTower(e)===t.code&&Date.parse(e.at)>=d30);const c=k=>es.filter(e=>e.action===k).length;return {t,added:c('added'),edited:c('edited')+c('approved'),deleted:c('deleted'),last:es[0]}});
-  return `<div><h1>Dashboard</h1><p class="sub">What is in the Knowledge Centre draft and what needs your attention. Everyone who is logged in sees the work of every tower. Click a number to open the list behind it.</p></div>
+  return `<div><h1>Dashboard</h1></div>
   ${since!==null?`<div class="banner info">Since your last visit (${fmtDT(PREV)}): <b>${plural(since,'change')} in other towers</b>. <button type="button" class="linkbtn" data-act="goto" data-k="log">Open the change log</button></div>`:''}
   ${w?`<section class="panel pad"><div class="row between"><h2>Waiting for approval</h2><span class="muted small">${a.type==='superadmin'?'All towers':towerPills(w.towers)}</span></div>${w.review.length?`<ul class="list">${w.review.map(i=>`<li><div class="t"><b>${esc(i.title)}</b> ${isNewSince(lastChange(i),PREV)?'<span class="pill p-new">New</span>':''}${editedAfterApproval(i)?' <span class="pill p-draft">Edited after approval</span>':''}<div class="muted small">${towerPills([itemTower(i)])} ${esc(i.l2)} · ${esc(i.type)} · ${esc(lastBy(i)||'—')}, ${fmtDT(lastChange(i))}</div></div><button type="button" class="btn small primary" data-act="itemEdit" data-id="${esc(i.id)}">Review</button></li>`).join('')}</ul>`:'<p class="okrow">Nothing is waiting for approval.</p>'}</section>`:''}
   <div class="stats" role="list">
@@ -1310,11 +1311,17 @@ function itemForm(it){
 }
 function renderVersions(it,form,rec){
   const list=$('#verList',form),vs=it.versions||[],uploads=uploadsOf(it).slice(0,5).map(d=>d.file);
-  list.innerHTML=vs.length?`<p class="sub">Newest first. Only what changed is stored; an older version is rebuilt by undoing the later changes. ${vs.length>=30?'The oldest entries are dropped after 30.':''}</p><ul class="list vlist">${vs.map((v,k)=>{const fields=[...new Set((v.changes||[]).map(c=>FLABEL[c.f]||c.f))];
-    return `<li><details><summary><b>v${esc(v.v)}</b> · ${fmtDT(v.at)} · ${esc(v.by)}${v.note?` · ${esc(v.note)}`:''}<span class="muted small"> ${fields.length?'· '+esc(fields.join(', ')):''}</span></summary>
-     <div class="vbody">${(v.changes||[]).length?`<table class="mini"><tbody>${v.changes.filter(c=>c.f!=='approvedAt').map(c=>`<tr><th>${esc(FLABEL[c.f]||c.f)}</th><td>${c.f==='description'?`<div class="wdiff">${wordDiff(c.from,c.to)}</div>`:`${esc(valText(c.f,c.from))} → ${esc(valText(c.f,c.to))}`}${c.f==='document'&&c.to&&uploads.includes(c.to.file)?` <button type="button" class="linkbtn" data-vf="${esc(c.to.file)}" data-ro-ok>Open this version’s file</button>`:''}</td></tr>`).join('')}</tbody></table>`:'<p class="muted small">No field changes recorded (start of the history).</p>'}
-     <div class="row" style="margin-top:6px"><button type="button" class="btn small" data-vv="${k}" data-ro-ok>View this version</button>${k>0?`<button type="button" class="btn small" data-vc="${k}" data-ro-ok>Compare with current</button>${rec.readOnly?'':`<button type="button" class="btn small" data-vr="${k}">Restore this version</button>`}`:''}</div></div></details></li>`}).join('')}</ul>`:'<p class="muted">No versions recorded yet.</p>';
+  const KIND={new:'New item',major:'Major update',small:'Small update',none:'No new version'};
+  const chRow=c=>`<tr><th>${esc(FLABEL[c.f]||c.f)}</th><td>${c.f==='description'?`<div class="wdiff">${wordDiff(c.from,c.to)}</div>`:`${esc(valText(c.f,c.from))} → ${esc(valText(c.f,c.to))}`}${c.f==='document'&&c.to&&uploads.includes(c.to.file)?` <button type="button" class="linkbtn" data-vf="${esc(c.to.file)}" data-ro-ok>Open this version’s file</button>`:''}</td></tr>`;
+  list.innerHTML=vs.length?`<p class="sub">Newest first. Click <b>Show details</b> to see each change before → after. ${vs.length>=30?'The oldest entries are dropped after 30.':''}</p>
+   <div class="vwrap"><table class="vtable"><thead><tr><th>Version</th><th>Date &amp; time</th><th>Changed by</th><th>Type of change</th><th>Status</th><th>What changed</th><th>Note</th><th><span class="sr">Actions</span></th></tr></thead><tbody>${vs.map((v,k)=>{
+    const ch=(v.changes||[]).filter(c=>c.f!=='approvedAt'),fields=[...new Set(ch.map(c=>FLABEL[c.f]||c.f))];let stt='';try{stt=snapshot(it,k).status||''}catch(e){}
+    return `<tr data-vrow="${k}"><td><b>v${esc(v.v)}</b>${k===0?'<small class="muted">Current</small>':''}</td><td>${fmtDT(v.at)}</td><td>${esc(v.by||'—')}</td><td>${esc(KIND[v.kind]||'—')}</td><td>${stt?statusPill(stt):'<span class="muted">—</span>'}</td>
+     <td>${ch.length?`${esc(fields.join(', '))}<br><button type="button" class="linkbtn" data-vd="${k}" aria-expanded="false" aria-controls="vdet-${k}" data-ro-ok>Show details</button>`:'<span class="muted">Start of the history</span>'}</td>
+     <td>${v.note?esc(v.note):'<span class="muted">—</span>'}</td>
+     <td class="acts"><button type="button" class="btn small" data-vv="${k}" data-ro-ok>View</button>${k>0?`<button type="button" class="btn small" data-vc="${k}" data-ro-ok>Compare</button>${rec.readOnly?'':`<button type="button" class="btn small" data-vr="${k}">Restore</button>`}`:''}</td></tr>${ch.length?`<tr class="vdet" id="vdet-${k}" hidden><td colspan="8"><table class="mini"><thead><tr><th>Field</th><th>Before → after</th></tr></thead><tbody>${ch.map(chRow).join('')}</tbody></table></td></tr>`:''}`}).join('')}</tbody></table></div>`:'<p class="muted">No versions recorded yet.</p>';
   list.addEventListener('click',e=>{
+    const t=e.target.closest('[data-vd]');if(t){const r=$('#vdet-'+t.dataset.vd,list),open=r.hidden;r.hidden=!open;t.setAttribute('aria-expanded',String(open));t.textContent=open?'Hide details':'Show details';$(`[data-vrow="${t.dataset.vd}"]`,list).classList.toggle('open',open);return}
     const b=e.target.closest('[data-vv],[data-vc],[data-vr],[data-vf]');if(!b)return;e.preventDefault();
     if(b.dataset.vf)return openStoredFile(b.dataset.vf);
     const k=+(b.dataset.vv||b.dataset.vc||b.dataset.vr),s=snapshot(it,k);
