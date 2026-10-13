@@ -156,6 +156,7 @@ h3.sec{margin:0 0 10px;font-size:15px}
 .item:hover{border-color:var(--brand)}
 .item .t{font-weight:650;font-size:13px;display:block;overflow-wrap:anywhere}
 .item .m{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;align-items:center;font-size:11.5px;color:var(--muted)}
+.kmviews{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 .item .tr{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}.item .tr .t{flex:1;min-width:0}.item .tr .m.d{margin-top:1px;flex:none;white-space:nowrap}
 .feedback{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)}
 .btn{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;text-align:center}
@@ -550,7 +551,8 @@ function markLeaves(){document.querySelectorAll('.leaf').forEach(b=>{const on=st
 function renderChips(){document.getElementById('coChips').innerHTML='<span class="lbl" aria-hidden="true">Company</span>'+['All',...COMPANIES].map(c=>`<button type="button" class="chip" data-co="${esc(c)}" aria-pressed="${c===company}">${esc(c)}</button>`).join('')}
 function badges(it){return `${isNew(it)?'<span class="pill p-new">New</span>':''}${ST[it.status]?`<span class="pill ${ST[it.status]}">${esc(it.status)}</span>`:''}${it.requireAccess?'<span class="pill p-lock">Require access</span>':''}`}
 const towerOf=it=>L2INDEX[it.l2]?L2INDEX[it.l2].l0:null;
-function itemCard(it,o){o=o||{};const up=`<span>Updated ${fmt(it.updated)}</span>`,bot=badges(it)+(o.dateTop?'':up)+(o.extra||'');return `<button type="button" class="item" data-item="${esc(it.id)}">${o.dateTop?`<span class="tr"><span class="t">${o.title||esc(it.title)}</span><span class="m d">${up}</span></span>`:`<span class="t">${o.title||esc(it.title)}</span>`}${o.lead?`<span class="m">${o.lead}</span>`:''}${bot?`<span class="m">${bot}</span>`:''}</button>`}
+const eye=id=>window.kmEye?window.kmEye(id):'';
+function itemCard(it,o){o=o||{};const up=`<span>Updated ${fmt(it.updated)}</span>`,bot=badges(it)+(o.dateTop?'':up)+(o.extra||'')+eye(it.id);return `<button type="button" class="item" data-item="${esc(it.id)}">${o.dateTop?`<span class="tr"><span class="t">${o.title||esc(it.title)}</span><span class="m d">${up}</span></span>`:`<span class="t">${o.title||esc(it.title)}</span>`}${o.lead?`<span class="m">${o.lead}</span>`:''}${bot?`<span class="m">${bot}</span>`:''}</button>`}
 const towerLead=it=>{const t=towerOf(it);return (t?`<span class="pill tw tw-${esc(t.code)}">${esc(t.name)}</span>`:'')+`<span>${esc(it.l2+' '+nameOf(it.l2))}</span>`};
 function assetGrid(list){
   return `<div class="assets">${TYPES.map(t=>{const its=list.filter(i=>i.type===t.name);return `<div class="panel asset ${its.length?'':'empty'}"><h4>${esc(t.name)}<span class="n">${its.length||''}</span></h4>${its.length?its.map(i=>itemCard(i)).join(''):`<p class="desc">${esc(t.desc)}<br>Not available yet.</p>`}</div>`}).join('')}</div>`;
@@ -669,11 +671,12 @@ function openItem(id){
   const it=ITEMS.find(i=>i.id===id);if(!it)return;closePop();closeSuggest();
   if(!document.querySelector('.drawer'))drawerOpener=document.activeElement;
   seen[id]=it.updated;store.set('kmSeen',seen);
+  const vc=window.kmCountView?window.kmCountView(it.id):{counted:false};
   const fnc=it.l3?l3Find(it.l2,it.l3):null,link=safeUrl(it.link),lbl=it.requireAccess?'Request access in Microsoft Loop':'Open in Microsoft Loop';
   const isEx=it.type==='Exception Handling'||it.escalateTo||it.complexity;
   const hasDoc=!!(it.document&&it.document.file)&&!it.requireAccess,apprBy=it.status==='Approved'&&it.approvedBy&&PEOPLE[it.approvedBy];
   document.getElementById('drawerRoot').innerHTML=`<div class="drawer-bg" data-close></div><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
-   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="display:flex;gap:6px;flex-wrap:wrap">${badges(it)}</span><button type="button" class="btn" data-close aria-label="Close the detail panel">Close</button></div>
+   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${badges(it)}${eye(it.id)}</span><button type="button" class="btn" data-close aria-label="Close the detail panel">Close</button></div>
    <h3 id="dTitle">${esc(it.title)}</h3>
    ${it.description?`<p class="sub">${esc(it.description)}</p>`:''}
    ${apprBy?`<p class="apprline">Approved by ${esc(PEOPLE[it.approvedBy].name)} on ${fmt(it.approvedAt)}</p>`:''}
@@ -681,7 +684,7 @@ function openItem(id){
    <div class="meta" style="margin-top:0"><div><b>Type</b>${esc(it.type)}</div><div><b>Service</b>${esc(it.l2+' '+nameOf(it.l2))}</div>${it.step?`<div><b>Process step</b>${esc(it.step)}</div>`:''}${fnc?`<div><b>L3 function</b>${esc(fnc.code+' '+fnc.name)}</div>`:''}<div><b>Owner</b>${personBtn(it.owner,'Owner · '+it.title)}</div>${isEx?`<div><b>Escalate to</b>${personBtn(it.escalateTo,'Escalation · '+it.title)}</div><div><b>Complexity</b>${it.complexity?esc(it.complexity):'<span class="tba">Not set</span>'}</div>`:''}<div><b>Version</b>${esc(it.version||'')}</div><div><b>Last updated</b>${fmt(it.updated)}${personName(it.updatedBy)?' by '+esc(personName(it.updatedBy)):''}</div>${it.duration?`<div><b>Duration</b>${esc(it.duration)}</div>`:''}<div><b>Companies</b>${esc((it.companies||[]).join(', '))}</div></div>
    <div class="acts">${hasDoc?`<a class="btn primary" href="document.html?item=${encodeURIComponent(it.id)}">View document</a>`:''}${link?`<a class="btn ${hasDoc?'':'primary'}" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${lbl}</a>`:hasDoc?'':`<button type="button" class="btn primary" disabled title="${lbl}">Link not added yet</button>`}<button type="button" class="btn" data-copylink="${esc(it.id)}">Copy link to this item</button></div>
    ${hist(it.id)}
-   <p class="note">Labels are set by KM admins. “New” shows until you open an updated item.</p></div>`;
+   <p class="note">Labels are set by KM admins. “New” shows until you open an updated item.${vc.reason==='admin'?' Views are not counted while you are logged in as an admin or looking at the admin draft.':''}</p></div>`;
   setHash('#item-'+it.id);
   render();
   document.querySelector('.drawer [data-close]').focus();

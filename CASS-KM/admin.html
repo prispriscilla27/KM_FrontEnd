@@ -89,6 +89,9 @@ h3{margin:0 0 8px;font-size:15px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .stat{padding:14px 16px;text-align:left;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:12px;box-shadow:var(--shadow);display:grid;gap:2px}
 .stat:hover{border-color:var(--brand)}
+.vstat{cursor:default}.vstat:hover{border-color:var(--line)}.vstat small{font-size:12px;color:var(--muted)}.vstat b small{font-size:14px;font-weight:600;color:var(--muted)}.vstats{margin:12px 0}
+.vchart{display:block;max-width:100%}.vchart .g{stroke:var(--line);stroke-width:1}.vchart .base{stroke:var(--muted);stroke-width:1}.vchart .ax{fill:var(--muted);font-size:11px}.vchart .ax.on{fill:var(--ink);font-weight:700}.vchart .vl{fill:var(--ink);font-size:11.5px;font-weight:700}.vchart .bar{fill:var(--brand)}.vchart .vb .hit{fill:transparent}.vchart .vb{cursor:pointer;outline:none}.vchart .vb:hover .hit,.vchart .vb:focus-visible .hit{fill:var(--brand-soft)}.vchart .vb.sel .hit{fill:var(--brand-soft)}
+.sortbtn{background:none;border:0;padding:0;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;cursor:pointer}#vTbl .tablewrap,.vwrap{position:relative}.vtbl td.num,.vtbl th.num{text-align:right;font-variant-numeric:tabular-nums}.vtbl tr.sel>td{background:var(--brand-soft)}
 .stat b{font-size:26px;font-variant-numeric:tabular-nums;line-height:1.1}
 .stat span{font-size:12.5px;color:var(--muted)}
 .list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
@@ -295,6 +298,7 @@ function loadDraft(){
   if(DR&&META.n===0&&DR.settings.version<PUB.settings.version)DR=null;      /* nothing unpublished and a newer file exists: start from it */
   if(DR&&META.n===0&&DR.settings.version===PUB.settings.version&&DR.settings.lastPublished!==PUB.settings.lastPublished)DR=null;
   if(!DR){DR=clone(PUB);META={n:0}}
+  if(!DR.views)DR.views={updated:'',sample:false,months:{}};if(!('viewsEndpoint' in DR.settings))DR.settings.viewsEndpoint='';
   saveDraft();
 }
 function saveDraft(){try{localStorage.setItem(DKEY,JSON.stringify(DR));localStorage.setItem(DMETA,JSON.stringify(META));STORE_OK=true}catch(e){STORE_OK=false}}
@@ -367,6 +371,8 @@ function can(a,action,t){
     case 'people.roles':{if(sup)return true;const o=acctOfPerson(t);if(!o)return false;if(o.id===a.id)return true;return head&&o.type!=='superadmin'&&towersOf(o).some(x=>(a.towers||[]).includes(x))}
     case 'publish':return sup||(DR&&DR.settings.publishers==='all')||head;
     case 'merge':return sup||(head&&(!t||mine(t)));
+    case 'views.manage':return sup||head;
+    case 'views.endpoint':return sup;
     default:return false;
   }
 }
@@ -383,8 +389,8 @@ const SESS='cassKM.admin',LOCKK='cassKM.lock',IDLE=30*60e3;
 const IDLE_MSG='You were signed out after 30 minutes without activity. Log in again to continue. Your draft is saved.';
 let me=null,idleTimer=null,expired=false;
 function loadSession(){try{const v=JSON.parse(ss().getItem(SESS)||'null');if(v&&Date.now()-v.t<IDLE){const a=acct(v.id);if(a&&a.active){me=v;return true}}if(v){expired=Date.now()-v.t>=IDLE;ss().removeItem(SESS)}}catch(e){}return false}
-function touch(){if(!me)return;me.t=Date.now();try{ss().setItem(SESS,JSON.stringify(me))}catch(e){}}
-function logout(msg){me=null;try{ss().removeItem(SESS)}catch(e){}closeAllLayers();clearInterval(idleTimer);renderLogin(msg||'')}
+function touch(){if(!me)return;me.t=Date.now();try{ss().setItem(SESS,JSON.stringify(me))}catch(e){}try{localStorage.setItem('cassKM.adminActive',String(me.t))}catch(e){}}   /* cassKM.adminActive: reader pages do not count views while an admin is logged in here */
+function logout(msg){me=null;try{ss().removeItem(SESS)}catch(e){}try{localStorage.removeItem('cassKM.adminActive')}catch(e){}closeAllLayers();clearInterval(idleTimer);renderLogin(msg||'')}
 function lockState(){try{return JSON.parse(ss().getItem(LOCKK)||'{"fails":0,"until":0}')}catch(e){return {fails:0,until:0}}}
 function setLock(s){try{ss().setItem(LOCKK,JSON.stringify(s))}catch(e){}}
 const topBarLogin=()=>`<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS home">CASS</a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a href="new-joiner-academy.html">New Joiner Academy</a><a class="on" href="admin.html">Admin login</a></nav></header>`;
@@ -693,7 +699,7 @@ function openLinkPicker(cb){
 
 /* ===== Chrome: shell, status strip, nav, router, permissions in the UI, publish / send / merge / import / discard ===== */
 const SECTIONS=[
-  ['dash','Dashboard'],['items','Knowledge items'],['l2','Service pages (L2)'],['people','People directory'],['gloss','Glossary'],['acad','Academy (pathway and tests)'],['log','Change log'],['help','How to use this page'],['set','Settings']
+  ['dash','Dashboard'],['items','Knowledge items'],['l2','Service pages (L2)'],['people','People directory'],['gloss','Glossary'],['acad','Academy (pathway and tests)'],['views','Views'],['log','Change log'],['help','How to use this page'],['set','Settings']
 ];
 let CUR='dash';
 const VIEWS={};
@@ -722,7 +728,7 @@ function renderStrip(){
   el.innerHTML=`<div class="st" aria-live="polite">${st}</div><div class="acts"><a class="btn" href="index.html#preview" target="_blank" rel="noopener" data-act="preview">Preview on site ↗</a>${can(a,'publish')?'<button type="button" class="btn primary" data-act="publish">Publish…</button>':'<button type="button" class="btn primary" data-act="sendChanges">Send my changes</button>'}<button type="button" class="btn" data-act="import">Import…</button>${can(a,'merge')?'<button type="button" class="btn" data-act="merge">Merge changes file…</button>':''}<button type="button" class="btn danger" data-act="discard">Discard draft</button></div><input type="file" id="importFile" accept=".js,.json,.txt" hidden><input type="file" id="mergeFile" accept=".zip,.json" multiple hidden>`;
   renderBell();
 }
-function navCount(k){switch(k){case 'items':return DR.items.length;case 'l2':return L2S().filter(x=>coverageOf(x.code)!=='none').length+'/'+L2S().length;case 'people':return DR.people.length;case 'gloss':return DR.glossary.length;case 'log':return DR.changeLog.length;default:return ''}}
+function navCount(k){switch(k){case 'items':return DR.items.length;case 'l2':return L2S().filter(x=>coverageOf(x.code)!=='none').length+'/'+L2S().length;case 'people':return DR.people.length;case 'gloss':return DR.glossary.length;case 'log':return DR.changeLog.length;case 'views':{const M=viewMonths();return nfmt(DR.items.reduce((s,i)=>s+vTotal(M,i.id),0))}default:return ''}}
 function renderNav(){const mc=$('#menuCur');if(mc)mc.textContent=(SECTIONS.find(x=>x[0]===CUR)||['',''])[1];$('#nav').classList.remove('open');const mb=$('#menuBtn');if(mb)mb.setAttribute('aria-expanded','false');$('#nav').innerHTML=SECTIONS.map(([k,n],i)=>`<a href="#${k}" class="${k===CUR?'on':''}" ${k===CUR?'aria-current="page"':''} data-nav="${k}"><span class="num">${i+1}</span>${esc(n)}<span class="n" data-cnt="${k}">${navCount(k)}</span></a>`).join('')}
 function renderNavCounts(){$$('[data-cnt]').forEach(e=>e.textContent=navCount(e.dataset.cnt));renderBell()}
 function route(){const h=location.hash.slice(1);CUR=VIEWS[h]?h:'dash';renderNav();renderView();window.scrollTo({top:0})}
@@ -775,6 +781,8 @@ function buildFile(data){
   const src=clone(data||DR),out={};KEYS.forEach(k=>{out[k]=src[k]});
   delete out.settings.adminUser;delete out.settings.adminPasswordHash;
   if(out.changeLog.length>500)out.changeLog.length=500;
+  const vw=src.views||{};out.views=vw.sample?{updated:'',sample:false,months:{}}:{updated:vw.updated||'',sample:false,months:vw.months||{}};   /* sample numbers stay in the draft only */
+  if(!('viewsEndpoint' in out.settings))out.settings.viewsEndpoint='';
   out.items.sort((a,b)=>a.l2.localeCompare(b.l2,'en',{numeric:true})||a.title.localeCompare(b.title));
   return DATA_HEADER+'window.KM_DATA = '+JSON.stringify(out,null,2)+';\n';
 }
@@ -971,7 +979,8 @@ const UI={
   people:{q:'',tw:''},
   gloss:{q:'',tower:'all',help:'',sel:new Set(),edit:null,adding:false},
   acad:{tab:'path',wk:null,tower:'',tq:'',tfTower:'',tfWeek:'',tfTest:''},
-  log:{q:'',by:'',section:'',action:'',tw:'',from:'',to:'',page:0}
+  log:{q:'',by:'',section:'',action:'',tw:'',from:'',to:'',page:0},
+  views:{month:'',tw:'',q:'',sort:'all',dir:-1,sel:null}
 };
 const DAY=864e5;
 const daysSince=d=>d?Math.floor((Date.now()-new Date(d.slice(0,10)+'T00:00:00').getTime())/DAY):9999;
@@ -1960,6 +1969,119 @@ function logFiltered(){
   const u=UI.log,q=u.q.trim().toLowerCase();
   return DR.changeLog.filter(l=>(!q||(l.summary+' '+l.section+' '+l.target+' '+(l.title||'')).toLowerCase().includes(q))&&(!u.by||l.by===u.by)&&(!u.section||l.section===u.section)&&(!u.action||l.action===u.action)&&(!u.tw||entryTower(l)===u.tw)&&(!u.from||l.at.slice(0,10)>=u.from)&&(!u.to||l.at.slice(0,10)<=u.to));
 }
+/* ---- Views: how often each knowledge entry is opened ----
+   Counts live in km-data.js under views.months = {"YYYY-MM":{"<item id>":n}}. Readers' pages count a view (once per entry per day per
+   browser, admins left out) and, if settings.viewsEndpoint is set, send it there. Admins bring the collected numbers in with
+   Import view counts, then publish. This browser's own views made after the last import are added on top, like on the reader pages. */
+const VLOC='cassKM.viewsLocal';
+const ym=d=>{d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const ymAdd=(m,n)=>{const [y,mo]=m.split('-').map(Number);return ym(new Date(y,mo-1+n,1))};
+const ymLabel=(m,long)=>{const [y,mo]=m.split('-').map(Number);return new Date(y,mo-1,1).toLocaleDateString('en-GB',long?{month:'long',year:'numeric'}:{month:'short'})};
+const isYM=m=>/^\d{4}-(0[1-9]|1[0-2])$/.test(m);
+function VW(){if(!DR.views||typeof DR.views!=='object')DR.views={updated:'',sample:false,months:{}};if(!DR.views.months)DR.views.months={};return DR.views}
+function localViews(){const up=Date.parse(VW().updated||'')||0;let l=[];try{l=JSON.parse(localStorage.getItem(VLOC)||'[]')}catch(e){}return Array.isArray(l)?l.filter(x=>x&&x.id&&x.t>up):[]}
+/* months merged with this browser's not-yet-imported views */
+function viewMonths(){const m=clone(VW().months);localViews().forEach(x=>{const k=ym(new Date(x.t));(m[k]=m[k]||{})[x.id]=(m[k][x.id]||0)+1});return m}
+const vCount=(M,month,id)=>(M[month]&&M[month][id])||0;
+const vTotal=(M,id)=>Object.values(M).reduce((s,o)=>s+((o&&o[id])||0),0);
+const vMonthSum=(M,month,ids)=>ids.reduce((s,id)=>s+vCount(M,month,id),0);
+const nfmt=n=>Number(n||0).toLocaleString('en-GB');
+VIEWS.views={
+  preset(p){Object.assign(UI.views,p)},
+  render(){
+    const a=ME(),v=VW(),M=viewMonths(),u=UI.views,cur=ym();if(!isYM(u.month))u.month=cur;
+    const ids=DR.items.map(i=>i.id),loc=localViews().length,ep=DR.settings.viewsEndpoint||'';
+    const all=ids.reduce((s,id)=>s+vTotal(M,id),0),mN=vMonthSum(M,u.month,ids),pN=vMonthSum(M,ymAdd(u.month,-1),ids);
+    const seenN=ids.filter(id=>vCount(M,u.month,id)>0).length,chg=pN?Math.round((mN-pN)/pN*100):null;
+    const months=[...new Set([...Object.keys(M),...Array.from({length:12},(_,k)=>ymAdd(cur,-k))])].filter(isYM).sort().reverse();
+    const mg=can(a,'views.manage');
+    return `<div class="row between"><div><h1>Views</h1><p class="sub">How many times each knowledge entry was opened. One person opening the same entry on the same day counts once; admins are not counted.</p></div>
+     <div class="row">${mg?`<button type="button" class="btn" data-act="viewsImport">Import view counts…</button>`:''}<button type="button" class="btn" data-act="viewsCsv">Download CSV</button></div></div>
+     <input type="file" id="viewsFile" accept=".csv,.json,.txt" hidden>
+     ${v.sample?`<div class="banner warn"><b>Sample numbers.</b> These counts are made up so you can see the page working. They are never published: readers get no view numbers from them. ${mg?'<button type="button" class="btn small" data-act="viewsClearSample">Clear sample numbers</button>':''}</div>`:''}
+     <section class="panel pad"><div class="row between"><div><b>How views are collected</b><p class="sub" style="margin:2px 0 0">${ep?`Each view is sent to <code>${esc(ep)}</code>. Import the counts from there, then publish so readers see the new numbers.`:'Not connected to the company website yet (demo mode): each browser only counts its own views. Ask IT for a view-counting address (see the README) and add it here.'} ${v.updated?`Counts last imported ${fmtDT(v.updated)}.`:'No counts imported yet.'}${loc?` Includes ${plural(loc,'view')} from this browser not in the imported counts yet.`:''}</p></div>
+      ${can(a,'views.endpoint')?`<div class="fld" style="min-width:280px;flex:1;max-width:460px"><label for="vep">View-counting address (from IT)</label><input id="vep" type="url" name="viewsEndpoint" placeholder="https://intranet.example/km-views" value="${esc(ep)}" data-on="viewsEp"></div>`:''}</div>
+      ${mg&&!v.sample&&!Object.keys(v.months).length?`<p class="hint" style="margin-top:8px">No counts imported yet. <button type="button" class="linkbtn" data-act="viewsSample">Fill with sample numbers</button> to see how the page looks (demo only).</p>`:''}</section>
+     <div class="stats vstats">
+      <div class="stat vstat"><span>Total views (overall)</span><b>${nfmt(all)}</b></div>
+      <div class="stat vstat"><span>Views in ${esc(ymLabel(u.month,true))}</span><b>${nfmt(mN)}</b><small>${chg===null?(pN?'':'No views the month before'):`${chg>=0?'+':''}${chg}% vs ${esc(ymLabel(ymAdd(u.month,-1),true))}`}</small></div>
+      <div class="stat vstat"><span>Entries viewed in ${esc(ymLabel(u.month,true))}</span><b>${seenN} <small>of ${ids.length}</small></b></div>
+     </div>
+     <section class="panel pad"><div class="row between" style="align-items:flex-end"><h3 class="sec" style="margin:0" id="vChartH"></h3><span id="vChartBack"></span></div><div id="vChart"></div></section>
+     <section class="panel pad"><div class="filters">
+      <div class="fld"><label for="vmo">Month</label><select id="vmo" name="month" data-on="viewsF">${months.map(m=>`<option value="${m}" ${m===u.month?'selected':''}>${esc(ymLabel(m,true))}</option>`).join('')}</select></div>
+      <div class="fld"><label for="vtw">Tower</label><select id="vtw" name="tw" data-on="viewsF"><option value="">All towers</option>${Object.keys(DR.towerNames||{}).map(c=>`<option value="${esc(c)}" ${u.tw===c?'selected':''}>${esc(towerName(c))}</option>`).join('')}</select></div>
+      <div class="fld grow"><label for="vq">Search entries</label><input id="vq" type="search" name="q" value="${esc(u.q)}" data-on="viewsF" placeholder="Title"></div></div>
+      <div id="vTbl"></div></section>`;
+  },
+  mount(){renderViewsChart();renderViewsTbl();
+    if(!window._vRs){window._vRs=1;let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>{if(CUR==='views'&&$('#vChart'))renderViewsChart()},150)})}
+    $('#vChart').addEventListener('keydown',e=>{const g=e.target.closest('.vb');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();g.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
+    $('#viewsFile').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)importViews(f)})}
+};
+ON.viewsF=el=>{UI.views[el.name]=el.value;if(el.name==='month'){rerender()}else renderViewsTbl()};
+ON.viewsEp=el=>{if(!need('views.endpoint'))return;const v=el.value.trim();if(v&&!/^https?:\/\/\S+$/i.test(v)){toast('Use a full web address starting with https://');el.value=DR.settings.viewsEndpoint||'';return}
+  if(v===(DR.settings.viewsEndpoint||''))return;DR.settings.viewsEndpoint=v;commit('edited','Views','viewsEndpoint',v?'View-counting address set to '+v:'View-counting address removed');toast(v?'Saved. Readers send views there once you publish.':'Removed. Back to demo mode after you publish.');rerender()};
+function renderViewsChart(){
+  const u=UI.views,M=viewMonths(),end=ym(),it=u.sel?byId(DR.items,u.sel):null;if(u.sel&&!it)u.sel=null;
+  const ids=it?[it.id]:DR.items.map(i=>i.id),ms=Array.from({length:12},(_,k)=>ymAdd(end,k-11)),vals=ms.map(m=>vMonthSum(M,m,ids));
+  $('#vChartH').textContent=it?`Views per month: ${it.title}`:'Views per month, all entries';
+  $('#vChartBack').innerHTML=it?'<button type="button" class="btn small" data-act="viewsSel" data-id="">Show all entries</button>':'';
+  const W=Math.max(300,Math.round($('#vChart').clientWidth||720)),H=230,pl=40,pr=8,pt=22,pb=30,narrow=W<520,max=Math.max(...vals,0),step=niceStep(max),top=Math.max(step*Math.ceil(max/step),step),bw=(W-pl-pr)/12;
+  const y=v=>pt+(H-pt-pb)*(1-v/top),ticks=[];for(let t=0;t<=top;t+=step)ticks.push(t);
+  const peak=vals.indexOf(max);
+  $('#vChart').innerHTML=`<svg class="vchart" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc($('#vChartH').textContent)}. ${ms.map((m,k)=>ymLabel(m,true)+' '+vals[k]).join(', ')}">
+    ${ticks.map(t=>`<line x1="${pl}" x2="${W-pr}" y1="${y(t)}" y2="${y(t)}" class="g"/><text x="${pl-6}" y="${y(t)+4}" text-anchor="end" class="ax">${nfmt(t)}</text>`).join('')}
+    ${ms.map((m,k)=>{const x=pl+k*bw+2,w=bw-4,h=y(0)-y(vals[k]),sel=m===u.month,lab=sel||(k===peak&&max>0);
+      return `<g class="vb${sel?' sel':''}" data-act="viewsMonth" data-m="${m}" tabindex="0" role="button" aria-label="${esc(ymLabel(m,true))}: ${plural(vals[k],'view')}"><title>${esc(ymLabel(m,true))}: ${plural(vals[k],'view')}</title>
+       <rect class="hit" x="${pl+k*bw}" y="${pt}" width="${bw}" height="${H-pt-pb}"/>
+       ${vals[k]?`<path class="bar" d="M${x},${y(0)} V${y(vals[k])+Math.min(4,h)} q0,-${Math.min(4,h)} ${Math.min(4,w/2)},-${Math.min(4,h)} H${x+w-Math.min(4,w/2)} q${Math.min(4,w/2)},0 ${Math.min(4,w/2)},${Math.min(4,h)} V${y(0)} Z"/>`:''}
+       ${lab&&vals[k]?`<text x="${x+w/2}" y="${y(vals[k])-6}" text-anchor="middle" class="vl">${nfmt(vals[k])}</text>`:''}
+       <text x="${x+w/2}" y="${H-pb+16}" text-anchor="middle" class="ax${sel?' on':''}">${narrow&&!sel&&(11-k)%2?'':esc(ymLabel(m))+(!narrow&&(m.endsWith('-01')||k===0)?` ’${m.slice(2,4)}`:'')}</text></g>`}).join('')}
+    <line x1="${pl}" x2="${W-pr}" y1="${y(0)}" y2="${y(0)}" class="base"/></svg>
+    <p class="hint">Last 12 months. Click a bar to see that month in the table below.${max?'':' No views in this period yet.'}</p>`;
+}
+function niceStep(max){if(max<=4)return 1;const raw=max/4,p=Math.pow(10,Math.floor(Math.log10(raw))),n=raw/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p}
+ACTS.viewsMonth=el=>{UI.views.month=el.dataset.m;rerender()};
+ACTS.viewsSel=el=>{UI.views.sel=el.dataset.id||null;renderViewsChart();if(UI.views.sel)$('#vChartH').scrollIntoView({block:'nearest',behavior:'smooth'})};
+ACTS.viewsSort=el=>{const u=UI.views,k=el.dataset.k;if(u.sort===k)u.dir=-u.dir;else{u.sort=k;u.dir=k==='title'?1:-1}renderViewsTbl()};
+function renderViewsTbl(){
+  const u=UI.views,M=viewMonths(),pm=ymAdd(u.month,-1),q=u.q.trim().toLowerCase();
+  let rows=DR.items.filter(i=>(!u.tw||itemTower(i)===u.tw)&&(!q||i.title.toLowerCase().includes(q))).map(i=>({i,m:vCount(M,u.month,i.id),p:vCount(M,pm,i.id),all:vTotal(M,i.id)}));
+  rows.sort((a,b)=>(u.sort==='title'?a.i.title.localeCompare(b.i.title):(a[u.sort]-b[u.sort]))*u.dir||b.all-a.all||a.i.title.localeCompare(b.i.title));
+  const th=(k,t,num)=>`<th${num?' class="num"':''} aria-sort="${u.sort===k?(u.dir>0?'ascending':'descending'):'none'}"><button type="button" class="sortbtn" data-act="viewsSort" data-k="${k}">${t}${u.sort===k?(u.dir>0?' ▲':' ▼'):''}</button></th>`;
+  $('#vTbl').innerHTML=`<div class="tablewrap"><table class="vtbl"><thead><tr>${th('title','Knowledge entry')}<th>Tower</th>${th('m',esc(ymLabel(u.month,true)),1)}${th('p',esc(ymLabel(pm,true)),1)}${th('all','Overall',1)}<th><span class="sr">Chart</span></th></tr></thead><tbody>
+   ${rows.map(r=>`<tr class="${u.sel===r.i.id?'sel':''}"><td><b>${esc(r.i.title)}</b><small class="muted" style="display:block">${esc(r.i.type)} · ${esc(r.i.l2)}</small></td><td>${towerPills([itemTower(r.i)])}</td><td class="num">${nfmt(r.m)}</td><td class="num">${nfmt(r.p)}</td><td class="num"><b>${nfmt(r.all)}</b></td><td><button type="button" class="btn small" data-act="viewsSel" data-id="${esc(r.i.id)}">Monthly chart</button></td></tr>`).join('')||'<tr><td colspan="6" class="muted" style="padding:18px">No entries match these filters.</td></tr>'}
+   </tbody></table></div><p class="hint">${plural(rows.length,'entry','entries')}. Click a column title to sort.</p>`;
+}
+ACTS.viewsImport=()=>{if(!need('views.manage'))return;$('#viewsFile').click()};
+/* Accepts CSV with columns item, month, views (one row per entry per month, as the counting service exports it), or JSON
+   {"months":{"YYYY-MM":{"id":n}}} / [{"item","month","views"}]. Each entry+month in the file replaces the count held here. */
+function importViews(f){
+  f.text().then(t=>{
+    let rows=[];const bad=[];const known=new Set(DR.items.map(i=>i.id));
+    try{
+      if(/^\s*[\[{]/.test(t)){const j=JSON.parse(t);if(Array.isArray(j))rows=j.map(r=>({item:r.item||r.id,month:r.month,views:r.views}));else{const m=j.months||(j.views&&j.views.months)||{};Object.entries(m).forEach(([mo,o])=>Object.entries(o||{}).forEach(([id,n])=>rows.push({item:id,month:mo,views:n})))}}
+      else{const r=parseCSV(t);const h=(r.shift()||[]).map(x=>String(x).trim().toLowerCase()),ci=h.indexOf('item')>=0?h.indexOf('item'):h.indexOf('id'),cm=h.indexOf('month'),cv=h.indexOf('views');
+        if(ci<0||cm<0||cv<0)throw new Error('The CSV needs the columns item, month and views.');rows=r.filter(x=>x.some(c=>String(c).trim())).map(x=>({item:String(x[ci]||'').trim(),month:String(x[cm]||'').trim(),views:x[cv]}))}
+    }catch(e){infoDlg('Could not read the file',`<p>${esc(e.message||'This is not a view counts file.')}</p><p class="hint">Use a CSV with the columns <code>item</code>, <code>month</code> (YYYY-MM) and <code>views</code>. Nothing was changed.</p>`);return}
+    const good=[];rows.forEach((r,k)=>{const n=Number(r.views);if(!isYM(String(r.month)))bad.push(`Row ${k+2}: month “${r.month}” is not YYYY-MM`);else if(!(n>=0)||Math.floor(n)!==n)bad.push(`Row ${k+2}: views “${r.views}” is not a whole number`);else good.push({item:r.item,month:r.month,views:n})});
+    const unknown=[...new Set(good.filter(r=>!known.has(r.item)).map(r=>r.item))],use=good.filter(r=>known.has(r.item)),mos=[...new Set(use.map(r=>r.month))].sort(),tot=use.reduce((s,r)=>s+r.views,0);
+    if(!use.length){infoDlg('Nothing to import',`<p>No rows match an entry in the Knowledge Centre.</p>${bad.length?`<ul class="ol">${bad.slice(0,8).map(b=>`<li>${esc(b)}</li>`).join('')}</ul>`:''}${unknown.length?`<p class="hint">Unknown entries: ${esc(unknown.slice(0,10).join(', '))}</p>`:''}`);return}
+    confirmDlg({title:'Import view counts?',body:`<p>${plural(use.length,'row')} for ${plural(mos.length,'month')} (${esc(ymLabel(mos[0],true))}${mos.length>1?' – '+esc(ymLabel(mos[mos.length-1],true)):''}), ${nfmt(tot)} views in total. Each entry and month in the file replaces the number held now.</p>${VW().sample?'<p>The sample numbers are removed first.</p>':''}${unknown.length?`<p class="hint">${plural(unknown.length,'entry','entries')} not in the Knowledge Centre (deleted?) skipped: ${esc(unknown.slice(0,8).join(', '))}${unknown.length>8?'…':''}</p>`:''}${bad.length?`<p class="hint">${plural(bad.length,'row')} skipped: ${esc(bad.slice(0,4).join('; '))}${bad.length>4?'…':''}</p>`:''}`,ok:'Import',
+      onOk:()=>{const v=VW();if(v.sample){v.months={};v.sample=false}use.forEach(r=>{(v.months[r.month]=v.months[r.month]||{})[r.item]=r.views});
+        Object.keys(v.months).forEach(m=>{Object.keys(v.months[m]).forEach(id=>{if(!v.months[m][id])delete v.months[m][id]});if(!Object.keys(v.months[m]).length)delete v.months[m]});
+        v.updated=new Date().toISOString();commit('imported','Views','views',`Imported view counts: ${plural(use.length,'row')}, ${plural(mos.length,'month')}, ${nfmt(tot)} views`);rerender();toast('View counts imported. Publish so readers see them.')}});
+  });
+}
+ACTS.viewsCsv=()=>{const M=viewMonths(),ms=Object.keys(M).filter(isYM).sort(),rows=[['item','title','tower','month','views']];
+  DR.items.forEach(i=>ms.forEach(m=>{const n=vCount(M,m,i.id);if(n)rows.push([i.id,i.title,towerName(itemTower(i)),m,n])}));
+  saveBlob(new Blob(['﻿'+rows.map(r=>r.map(csvQ).join(',')).join('\r\n')+'\r\n'],{type:'text/csv'}),'cass-km-views.csv');toast('Views exported.')};
+ACTS.viewsSample=()=>{if(!need('views.manage'))return;const v=VW(),cur=ym();let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+  v.months={};for(let k=11;k>=0;k--){const m=ymAdd(cur,-k),o={};DR.items.forEach((i,j)=>{const base=3+((j*7)%13),n=Math.round(base*(1+(11-k)*0.12)*(0.6+rnd()*0.8));if(n>0&&!(k>8&&j%4===0))o[i.id]=n});v.months[m]=o}
+  v.sample=true;v.updated=new Date().toISOString();commit('edited','Views','views','Sample view numbers added (demo only)');rerender();toast('Sample numbers added (demo only, never published).')};
+ACTS.viewsClearSample=()=>{if(!need('views.manage'))return;const v=VW();v.months={};v.sample=false;v.updated=new Date().toISOString();commit('deleted','Views','views','Sample view numbers cleared');rerender();toast('Sample numbers cleared.')};
+
 VIEWS.log={
   render(){
     const u=UI.log,people=[...new Set(DR.changeLog.map(l=>l.by))],secs=[...new Set(DR.changeLog.map(l=>l.section))].sort(),acts=['added','edited','approved','deleted','published','imported'];
@@ -2016,6 +2138,7 @@ VIEWS.help={render(){
   ${S('Glossary',`<ol class="ol"><li><b>+ Add term</b> with its meaning and towers (AdminPE).</li><li><b>Bulk tag</b>: tick several terms, choose Add tower, Set only this tower or Remove tower, then Apply.</li><li><b>Export CSV</b> to edit in Excel, then <b>Import CSV…</b> (you see a summary first).</li></ol>${g('gloss','Go to Glossary')}`)}
   ${S('Academy and tests',`<p>AdminPE changes a week’s materials and tower pages, marks a material “to be added”, edits checkpoints and questions, sets the pass mark and lock rules, and previews a week or test as a new joiner would see it.</p>${g('acad','Go to Academy')}`)}
   ${S('What the labels mean',`<ul class="ol"><li><span class="pill p-draft">Draft</span> being written, use with care.</li><li><span class="pill p-review">In review</span> waiting for the tower head.</li><li><span class="pill p-approved">Approved</span> signed off by the tower head or AdminPE.</li><li><span class="pill p-lock">Require access</span> restricted file (customer, bank or pricing details). Readers can request access.</li><li><span class="pill p-new">New</span> added or updated recently and not opened by the reader yet.</li></ul><p>Only admins set these labels. Use <b>“New” badge › Never show</b> for small fixes such as typos.</p>`)}
+  ${S('See how often entries are viewed',`<ol class="ol"><li>Open <b>Views</b>. Pick a month to see each entry's views that month, the month before and overall; click a bar in the chart to pick that month, or <b>Monthly chart</b> on a row to see one entry.</li><li>One view = one person opening an entry (panel and/or document) on one day. Admins are not counted.</li><li>Real totals need IT's view-counting address (README › Views). Then import the counts CSV with <b>Import view counts…</b> and publish so readers see the new numbers.</li></ol>${g('views','Go to Views')}`)}
   ${S('Publish your changes',`<ol class="ol"><li>Open the Knowledge Centre in this browser (or click <b>Preview on site</b>) and check your changes. They show straight away, search included; the orange bar shows you are looking at your unpublished draft. Other people see them only after you publish.</li><li>Click <b>Publish…</b>.</li><li><b>Publish to folder…</b> (Edge, Chrome) writes km-data.js, km-accounts.js (if accounts changed) and new files in documents/ straight into the site folder. Otherwise <b>Download .zip</b> and extract it over the site folder.</li><li>Keep the previous km-data.js as a backup (for example <code>km-data_backup_YYYY-MM-DD.js</code>) and delete the files the dialog lists as no longer used.</li><li>Open <code>index.html</code>, press Ctrl+F5 to check, and tell readers if it is a big change.</li></ol>`)}
   ${S('Send my changes / Merge changes',`<ul class="ol"><li>If your account may not publish, <b>Send my changes</b> downloads a zip with only your items and documents. Send it to your tower head.</li><li>Tower heads and AdminPE use <b>Merge changes file…</b>, review the table (rejected rows say why, for example another tower or an approval attempt), choose which version to keep when an item changed on both sides, apply, and publish.</li><li>A tower head can only merge changes for their own tower.</li></ul>`)}
   ${S('Two admins at once',`<p>Only one person should publish at a time. The next person imports the newest <code>km-data.js</code> first (or merges changes files) and works on top.</p>`)}

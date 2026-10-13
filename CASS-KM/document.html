@@ -118,6 +118,7 @@ h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
 .pop dd{margin:0;overflow-wrap:anywhere}
 .pop .close{position:absolute;top:8px;right:8px;border:0;background:none;cursor:pointer;color:var(--muted);font-size:18px;padding:4px 8px;border-radius:6px}
 .acts2{display:flex;gap:8px;flex-wrap:wrap}
+.kmviews{display:inline-flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -160,13 +161,14 @@ let id='';try{id=new URLSearchParams(location.search).get('item')||''}catch(e){}
 const it=(D.items||[]).find(i=>i.id===id);
 if(!it){document.title='Document not found · CASS';page.innerHTML=`<div class="crumb"><a href="index.html">Home</a> › Knowledge Centre › Document</div><section class="panel pad"><h2>We could not find this document</h2><p class="sub">The link may be old, or the item was removed or renamed. Search for it in the Knowledge Centre.</p><div class="actions"><a class="btn" href="index.html">Back to Knowledge Centre</a></div></section>`;return}
 const svc=L2[it.l2],owner=PEOPLE[it.owner];
+if(window.kmCountView)window.kmCountView(it.id);   /* same entry, same day = one view, whether opened from the panel or this page */
 document.title=it.title+' · CASS Knowledge Centre';
 const chip=p=>p?`<button type="button" class="person" data-person="${esc(p.id)}" aria-haspopup="dialog"><span class="av" aria-hidden="true">${esc(initials(p.name))}</span><span>${esc(p.name)}</span></button>`:'<span class="muted"><i>To be assigned</i></span>';
 const back=svc?`index.html#l2-${encodeURIComponent(it.l2)}`:'index.html';
 const head=`<div class="crumb"><a href="index.html">Home</a> › Knowledge Centre › ${svc?`<a href="${back}">${esc(it.l2+' '+svc.name)}</a>`:esc(it.l2)} › Document</div>
  <section class="panel pad"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><span class="pill p-role">${esc(it.type)}</span>${ST[it.status]?`<span class="pill ${ST[it.status]}">${esc(it.status)}</span>`:''}${it.requireAccess?'<span class="pill p-lock">Require access</span>':''}</div>
  <h2>${esc(it.title)}</h2>${it.description?`<p class="sub">${esc(it.description)}</p>`:''}
- <div class="dmeta"><div><b>Version</b>${esc(it.version||'')}</div><div><b>Last updated</b>${fmt(it.updated)}</div><div><b>Owner</b>${chip(owner)}</div><div><b>Service</b>${esc(it.l2)} ${esc(svc?svc.name:'')}</div></div></section>`;
+ <div class="dmeta"><div><b>Version</b>${esc(it.version||'')}</div><div><b>Last updated</b>${fmt(it.updated)}</div><div><b>Views</b>${window.kmEye?window.kmEye(it.id):''}</div><div><b>Owner</b>${chip(owner)}</div><div><b>Service</b>${esc(it.l2)} ${esc(svc?svc.name:'')}</div></div></section>`;
 const foot=`<div class="footnav"><a class="btn ghost" href="${back}">Back to Knowledge Centre</a></div>`;
 /* Require access items never show a viewer or a download, even if the data holds a document. */
 if(it.requireAccess){

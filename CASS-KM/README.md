@@ -22,6 +22,7 @@ The CASS Knowledge Centre is an internal website for CASS (Chandra Asri Sentral 
 | `reference/service-taxonomy.json` | The source of the taxonomy (towers, processes, services) and the L3 functions. `km-data.js` was built from it. |
 | `reference/glossary-seed.json` | The starting glossary (66 terms with tower tags). |
 | `reference/academy-sample-questions.json` | The 51 sample test questions copied into the Academy. |
+| `reference/views-endpoint-example.py` | An example view-counting service for IT (see Admin guide › Views). Not used by the site itself. |
 | `reference/mockup/` | The approved clickable mockup that the site is built from. It is reference only and is not needed to run the site. |
 
 
@@ -58,7 +59,8 @@ These are personal and stay in that person's browser only. They are never shared
 - which items you have opened (this drives the orange **New** badge, which comes back when an admin updates an item),
 - your company filter (All, APS, ACE or AMS),
 - whether the "Start here" box is open or closed,
-- your New Joiner Academy progress and test results.
+- your New Joiner Academy progress and test results,
+- which entries you opened today and the views you made (so the same entry is counted once a day, and the eye number updates straight away).
 
 If the browser blocks storage, the site still works; it just will not remember these between visits.
 
@@ -135,6 +137,24 @@ The site has no server, so publishing writes three things into the site folder: 
 - **Import…** loads a published `km-data.js` or `km-accounts.js` as your working copy (for example when you continue after someone else published). Files where a Require access item holds a document are rejected.
 - **Discard draft** throws away your unpublished changes.
 - The change log keeps the newest 500 entries, records the account and tower of each change, and is shown per item in the Knowledge Centre detail panel.
+
+### Views (how often each entry is opened)
+
+Every knowledge entry shows an eye with its number of views (overall) on the Knowledge Centre cards, in the detail panel and on the document page. Entries with no views show 0.
+
+- **What counts as one view:** opening an entry, whether you open the detail panel, the document, or both. The same person opening the same entry again on the same day still counts once.
+- **Admins are not counted** while they are logged in to `admin.html` in that browser (and for 30 minutes after their last action if they close the tab without logging out), or while they look at the admin draft.
+- **Only numbers are collected:** the entry and the month. Not who, and not the time.
+
+**Admin › Views** shows total views, views in a chosen month (with the change from the month before), how many entries were viewed, a bar chart of the last 12 months (all entries, or one entry with **Monthly chart**), and a table with the chosen month, the month before and the overall total for every entry. Filter by month and tower, search, sort by any column, and **Download CSV**. Click a bar to pick that month.
+
+**How the numbers are collected.** The site has no server, so a browser can only count its own views. To get real totals across everyone:
+
+1. IT sets up a small view-counting address on the company website. Each view arrives as a POST with the body `{"item":"<entry id>","month":"YYYY-MM"}` (sent as text/plain). The service adds 1 to that entry and month, and offers the totals as a CSV with the columns `item,month,views`. `reference/views-endpoint-example.py` is a working example IT can copy or rebuild in the intranet's own technology.
+2. AdminPE enters that address in **Admin › Views › View-counting address** and publishes. From then on every reader's views are sent there.
+3. Now and then (for example monthly), an admin downloads the CSV from the service and uses **Import view counts…**. Each entry and month in the file replaces the number held. Then **Publish** so readers see the new totals. The eye number readers see = the counts in the last published `km-data.js` + their own views since then.
+
+Until step 2 is done the page is in **demo mode**: each browser only counts its own views, and Admin › Views shows the views made in that browser. **Fill with sample numbers** shows the page with made-up data (demo only; sample numbers are never published and can be cleared).
 
 ### Be honest about what this protects
 

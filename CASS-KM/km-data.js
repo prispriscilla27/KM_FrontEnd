@@ -11,6 +11,7 @@ window.KM_DATA = {
     "passwordSalt": "cass-km-2026",
     "newBadgeDays": 30,
     "publishers": "heads",
+    "viewsEndpoint": "",
     "companies": [
       "APS",
       "ACE",
@@ -4784,5 +4785,10 @@ window.KM_DATA = {
       "target": "lc-dtp",
       "summary": "Version 0.2 → 0.3; Require access on"
     }
-  ]
+  ],
+  "views": {
+    "updated": "",
+    "sample": false,
+    "months": {}
+  }
 };

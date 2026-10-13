@@ -25,6 +25,36 @@
   /* An edit saved in admin.html in another tab of this browser: reload so this page shows it (or drops it after Publish/Discard). */
   window.addEventListener('storage',function(e){if(e.key!==META&&e.key!==DRAFT)return;if(flag==='0')return;
     var want=flag==='1'||unpublished()>0;if(want||preview){clearTimeout(window._kmRl);window._kmRl=setTimeout(function(){location.reload()},400)}});
+  /* ---- View counter ----
+     A view = opening an entry (its detail panel and/or its document), counted once per entry per day per browser.
+     Admins are left out: while this browser has an active admin login (admin.html sets cassKM.adminActive) or shows the draft.
+     If settings.viewsEndpoint is set, each view is sent there as {"item":"<id>","month":"YYYY-MM"} (text/plain POST, nothing about
+     the person). Every view is also kept in this browser, so the number shown updates at once. Shown number = the counts published in
+     km-data.js (views.months) + this browser's views made after those counts were last updated. */
+  var VLOC='cassKM.viewsLocal',VDAY='cassKM.viewedToday',AMARK='cassKM.adminActive';
+  function ymd(d){d=d||new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+  function jget(k,def){try{var v=JSON.parse(L.getItem(k)||'null');return v==null?def:v}catch(e){return def}}
+  function jset(k,v){try{L.setItem(k,JSON.stringify(v))}catch(e){}}
+  window.kmAdminActive=function(){try{var t=+L.getItem(AMARK)||0;return Date.now()-t<30*60e3}catch(e){return false}};
+  window.kmCountView=function(id){
+    if(!id||!L)return {counted:false,reason:'storage'};
+    if(preview||window.kmAdminActive())return {counted:false,reason:'admin'};
+    var d=ymd(),seen=jget(VDAY,null);if(!seen||seen.d!==d||!seen.ids)seen={d:d,ids:[]};
+    if(seen.ids.indexOf(id)>=0)return {counted:false,reason:'today'};
+    seen.ids.push(id);jset(VDAY,seen);
+    var loc=jget(VLOC,[]);if(!Array.isArray(loc))loc=[];loc.push({id:id,t:Date.now()});if(loc.length>5000)loc=loc.slice(-5000);jset(VLOC,loc);
+    var ep=(window.KM&&window.KM.settings&&window.KM.settings.viewsEndpoint)||'';
+    if(/^https?:\/\//i.test(ep)){var body=JSON.stringify({item:id,month:d.slice(0,7)});
+      try{if(!(navigator.sendBeacon&&navigator.sendBeacon(ep,new Blob([body],{type:'text/plain'}))))fetch(ep,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain'},body:body}).catch(function(){})}catch(e){}}
+    return {counted:true};
+  };
+  /* this browser's views made after the published counts were last updated: [{id,t}] */
+  window.kmLocalViews=function(){var v=(window.KM&&window.KM.views)||{},up=Date.parse(v.updated||'')||0,loc=jget(VLOC,[]);return Array.isArray(loc)?loc.filter(function(x){return x&&x.id&&x.t>up}):[]};
+  window.kmViews=function(id){var v=(window.KM&&window.KM.views)||{},m=v.months||{},n=0;for(var k in m)if(m[k]&&m[k][id])n+=+m[k][id]||0;
+    window.kmLocalViews().forEach(function(x){if(x.id===id)n++});return n};
+  window.kmViewsFmt=function(n){n=+n||0;if(n<1000)return String(n);var k=n/1000;return (k<10?(Math.round(k*10)/10):Math.round(k))+'k'};
+  window.kmEyeSvg='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false" style="vertical-align:-2px"><path d="M1 8s2.6-4.5 7-4.5S15 8 15 8s-2.6 4.5-7 4.5S1 8 1 8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>';
+  window.kmEye=function(id){var n=window.kmViews(id);return '<span class="kmviews" title="'+n.toLocaleString('en-GB')+(n===1?' view':' views')+'" aria-label="'+n.toLocaleString('en-GB')+(n===1?' view':' views')+'">'+window.kmEyeSvg+' '+window.kmViewsFmt(n)+'</span>'};
   function bar(){
     if(!window.KM){
       document.body.insertAdjacentHTML('afterbegin','<div style="padding:24px;font:15px system-ui,sans-serif"><b>km-data.js could not be loaded.</b><p>Check that km-data.js sits in the same folder as this page and reload (Ctrl+F5).</p></div>');return}
