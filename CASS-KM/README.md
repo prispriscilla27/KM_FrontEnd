@@ -18,7 +18,7 @@ The CASS Knowledge Centre is an internal website for CASS (Chandra Asri Sentral 
 | `admin.html` | The admin page: individual logins, add, edit and delete content, approvals, versions, documents, people and roles, glossary, Academy, then publish. |
 | `km-accounts.js` | The admin accounts (names, usernames, account type, towers, roles and password hashes). **Only `admin.html` loads it**; reader pages never do. |
 | `documents/` | Uploaded documents, written here when an admin publishes. Created automatically on the first publish with a document. |
-| `km-boot.js` | A small shared loader that every reader page loads right after `km-data.js`. It hands the content to the page. It also powers the admin's **Preview on site**: an admin can see unpublished changes on the real pages, with an orange bar on top. Readers never see a preview. |
+| `km-boot.js` | A small shared loader that every reader page loads right after `km-data.js`. It hands the content to the page. It also shows an admin their own unpublished changes: in a browser where changes were saved in `admin.html` and not published yet, every page (search included) uses that draft, with an orange bar on top. **Show published version** on the bar switches back for that tab. Other people's browsers never see the draft. |
 | `reference/service-taxonomy.json` | The source of the taxonomy (towers, processes, services) and the L3 functions. `km-data.js` was built from it. |
 | `reference/glossary-seed.json` | The starting glossary (66 terms with tower tags). |
 | `reference/academy-sample-questions.json` | The 51 sample test questions copied into the Academy. |
@@ -124,7 +124,7 @@ Items can hold an uploaded document as well as (or instead of) a Loop link:
 The site has no server, so publishing writes three things into the site folder: **`km-data.js`** (the content), **`km-accounts.js`** (only when accounts changed) and new files in **`documents/`**.
 
 1. **Edit.** Changes go into a working draft in your own browser. The strip at the top shows how many are not published yet.
-2. **Preview on site** opens the Knowledge Centre with your draft and an orange bar. Other readers never see it.
+2. Open the Knowledge Centre in the same browser: as soon as you save, it shows your unpublished changes (and the search bar finds them), with an orange bar. A Knowledge Centre tab that is already open refreshes by itself. **Preview on site** does the same. Other readers never see it until you publish.
 3. **Publish…** then either:
    - **Publish to folder…** (Edge and Chrome): choose the site folder once; the page writes the files straight into it and lists any old files you can delete from `documents/`; or
    - **Download .zip**: extract it over the site folder (replace existing files). There are also buttons for km-data.js or km-accounts.js on their own.
@@ -138,7 +138,7 @@ The site has no server, so publishing writes three things into the site folder: 
 
 ### Be honest about what this protects
 
-**These permissions and the approval rule are a guardrail inside the admin page, not security.** This is a static site with no server: anyone who can write to the shared folder or edit the page code can bypass them, and uploaded documents are plain files that anyone who can open the site folder (or knows a file's path) can open. Real protection comes from **folder permissions** (only the people who publish should have write access; readers read-only) and from **Loop/SharePoint permissions** for restricted content, which belongs behind Require access, never in `documents/`. The browser also cannot write into a plain shared folder without the admin choosing it (Publish to folder) or extracting the zip; until then only the admin's own browser shows the changes, through Preview.
+**These permissions and the approval rule are a guardrail inside the admin page, not security.** This is a static site with no server: anyone who can write to the shared folder or edit the page code can bypass them, and uploaded documents are plain files that anyone who can open the site folder (or knows a file's path) can open. Real protection comes from **folder permissions** (only the people who publish should have write access; readers read-only) and from **Loop/SharePoint permissions** for restricted content, which belongs behind Require access, never in `documents/`. The browser also cannot write into a plain shared folder without the admin choosing it (Publish to folder) or extracting the zip; until then only the admin's own browser shows the changes.
 
 ## Notes
 
