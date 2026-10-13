@@ -14,7 +14,10 @@ The CASS Knowledge Centre is an internal website for CASS (Chandra Asri Sentral 
 | `academy-week.html` | One week of the Academy (`academy-week.html?week=3&tower=customer-operations`): its goals and materials, which you open and mark as finished. |
 | `academy-test.html` | Every Academy test (`academy-test.html?test=cp1&tower=customer-operations`, also `cp2`, `cp3`, `final`). |
 | `academy-data.js` | Shared Academy helper used by the three Academy pages: the progress rules, the week and checkpoint locks, and the progress circle. It holds no content. |
-| `admin.html` | The admin page: log in, add, edit and delete content, people, glossary terms and Academy content, preview the changes, then download a new `km-data.js`. |
+| `document.html` | Shows one uploaded document on the page (`document.html?item=<id>`): PDFs, images, text/CSV, video and audio. Opened from “View document” in the item panel. |
+| `admin.html` | The admin page: individual logins, add, edit and delete content, approvals, versions, documents, people and roles, glossary, Academy, then publish. |
+| `km-accounts.js` | The admin accounts (names, usernames, account type, towers, roles and password hashes). **Only `admin.html` loads it**; reader pages never do. |
+| `documents/` | Uploaded documents, written here when an admin publishes. Created automatically on the first publish with a document. |
 | `km-boot.js` | A small shared loader that every reader page loads right after `km-data.js`. It hands the content to the page. It also powers the admin's **Preview on site**: an admin can see unpublished changes on the real pages, with an orange bar on top. Readers never see a preview. |
 | `reference/service-taxonomy.json` | The source of the taxonomy (towers, processes, services) and the L3 functions. `km-data.js` was built from it. |
 | `reference/glossary-seed.json` | The starting glossary (66 terms with tower tags). |
@@ -72,33 +75,70 @@ A guided 12-week onboarding pathway, one per tower. Open `new-joiner-academy.htm
 
 ## Admin guide
 
-`admin.html` is where KM admins (Process Excellence and named content owners) change the site. It has a built-in **How to use this page** guide.
+`admin.html` is where admins change the site. It has a built-in **How to use this page** guide with step-by-step help for every task below.
+
+### Accounts and what each type can do
+
+Everyone has their own login. There are three account types:
+
+| Type | Who | Can do |
+|---|---|---|
+| **Super admin** | `AdminPE` (Process Excellence) | Everything in every tower: accounts, approvals, service pages, L3 functions, people, glossary, Academy, settings, publishing. |
+| **Tower head** | Head of each tower | Items and service pages of their tower, **approving**, changing item owners, roles of their tower's people, publishing (by default) and merging changes files from their tower. |
+| **Tower editor** | Other staff | Items of their own tower(s) only: add, edit, delete, Draft or In review. The owner of a new item is set to them. Everything else is view only. |
+
+- Everyone who is logged in can see every tower's items, the dashboard and the change log. Items of other towers show a lock and open read-only.
+- **Only AdminPE** creates, edits, disables and deletes accounts and resets passwords (Settings › Accounts). New accounts get a temporary password (shown once) and must set their own at the first login. For a demo, **Create sample accounts** makes four tower heads and four editors from the sample people. Delete the sample accounts before go-live.
+- **Approving:** only AdminPE or the tower head of the item's tower can set an item (or a service page) to Approved. The item then shows “Approved by … on …” in the Knowledge Centre once it is published. If an editor later changes the content of an Approved item, it goes back to In review automatically.
+- Tower heads (and AdminPE) see a **Waiting for approval** pop-up after logging in, and a bell in the top bar reopens it. Editors see a short note when their items were approved or sent back.
+- **Roles** (Page owner, Ask the expert, Approved by, Item owner, Escalate to) are set on the **People directory** with **Edit roles**. They only decide who is suggested first in the people pickers; they never limit what someone can edit. “Approved by” is a label: approving needs a Tower head or Super admin account.
 
 ### Log in
 
 1. Open `admin.html` from the same folder (or click **Admin login** in the top bar of any page).
-2. Enter the username and password. The username is not case-sensitive. The optional "Your name for the change log" is what the change log shows; leave it empty to use the username.
+2. Enter your username and password. The username is not case-sensitive.
 3. After 5 wrong attempts in a row, login is blocked for 60 seconds. You are signed out after 30 minutes without activity, or when you click **Log out**. Your draft is kept.
 
-**Initial login: username `AdminPE`, password `PE2026`.** Change the password before go-live (it is easy to guess): **Settings › Change password** (at least 10 characters), then download and publish `km-data.js`. The new password works on your own computer straight away and for everyone once the new file is in the shared folder. The file stores only a SHA-256 hash of the password, never the password itself.
+**First login: username `AdminPE`, password `PE2026`.** Change it before go-live (it is easy to guess): **My account** (top bar) › Change password (at least 10 characters), then publish so `km-accounts.js` is updated. Passwords are stored only as salted SHA-256 hashes in `km-accounts.js`. Because that file sits in the shared folder, everyone should use a strong, unique password. **Forgot a password?** AdminPE resets it in Settings › Accounts. If AdminPE itself is locked out, restore `km-accounts.js` from a backup.
 
-**Be honest about what the password does:** This password stops casual edits. It is not a security boundary, because anyone can read the page code. Real protection comes from folder permissions: only admins should have write access to the folder that holds km-data.js. Readers should have read-only access to the shared folder.
+### Service pages and L3 functions
 
-### Draft → preview → download → replace
+Tower heads edit their own tower's service pages (coverage, status, owners, review date, process steps); editors see them read-only. **Only AdminPE** adds, edits and removes **L3 functions** on a service page. If a function is still used by process steps or items, a replacement is chosen first. L0–L2 codes and names still come from the official taxonomy (Settings › Taxonomy import).
 
-The site has no server or database, so publishing is a file swap:
+### Versions
 
-1. **Edit.** Every change goes into a **working draft** saved in your own browser. Nothing is lost on reload. The strip at the top shows how many changes are not published yet.
-2. **Preview.** **Preview on site** opens the Knowledge Centre in a new tab showing your draft, with an orange "Preview of unpublished changes" bar. Use **Exit preview** in that bar to go back to the published version. Other readers never see your draft. "View on site" next to an item or service page, and the Academy "Preview as" buttons, open the same kind of preview.
-3. **Download.** **Download km-data.js** builds the new file (version number +1, today's date and your name, and a "published" entry in the change log).
-4. **Replace.** In the shared folder, rename the old `km-data.js` to `km-data_backup_YYYY-MM-DD.js` (keep it as a backup), copy the downloaded `km-data.js` into the folder, then open `index.html` and press Ctrl+F5 to check.
+Every item keeps a version history. When you save an edit you choose **Small update** (0.3 → 0.4), **Major update** (→ 1.0) or **No new version** (typo or label only) and say what changed (filled in for you). Only the changed fields are stored, so the file stays small. The **Versions** tab shows before → after for each change, with added and removed words highlighted, and lets you view, compare and restore an older version (restoring creates a new version). Status and owner changes are recorded without a new version number. Readers only see the current version number.
 
-**One limit to know:** in a plain shared folder, the admin page cannot overwrite `km-data.js` by itself, because browsers do not allow web pages to write files. Until you replace the file, only your own browser shows the changes, through Preview.
+### Documents
 
-- **Import km-data.js** loads a published file as your working draft (for example when a second admin continues from the latest version). Always import the newest file before editing if someone else may have published since your last session. Only one person should publish at a time.
-- **Discard draft** throws away your unpublished changes and goes back to the published `km-data.js`.
-- **Backups:** keep the previous `km-data.js` files. To roll back, copy a backup back in as `km-data.js`.
-- The change log keeps the newest 500 entries and is shown per item in the Knowledge Centre detail panel.
+Items can hold an uploaded document as well as (or instead of) a Loop link:
+
+- Accepted: PDF, Word, PowerPoint, Excel, images, text/CSV, video, audio and other office files, up to **25 MB** (a warning shows above 10 MB). Programs and anything that can run in a browser (`.exe .bat .cmd .ps1 .vbs .msi .jar .dll .js .mjs .html .htm .svg .hta`) are blocked.
+- PDFs, images, text/CSV, video and audio are shown on `document.html`. **Word, PowerPoint and Excel cannot be shown inside a plain web page** (that would need a converter or an outside service, which this site does not use). Add a **PDF copy for on-page viewing** (in Office: File › Save as › PDF). Without it, readers see “Preview is not available for this file type” and a Download button.
+- **Allow download** is on by default; untick it for view-only documents.
+- **Require access items cannot hold a document.** Ticking Require access removes the document; readers contact the owner instead.
+- While you edit, uploaded files are kept in your browser (IndexedDB) and Preview shows them from there. They reach the folder when you publish.
+
+### Publishing: the files and how they get to the folder
+
+The site has no server, so publishing writes three things into the site folder: **`km-data.js`** (the content), **`km-accounts.js`** (only when accounts changed) and new files in **`documents/`**.
+
+1. **Edit.** Changes go into a working draft in your own browser. The strip at the top shows how many are not published yet.
+2. **Preview on site** opens the Knowledge Centre with your draft and an orange bar. Other readers never see it.
+3. **Publish…** then either:
+   - **Publish to folder…** (Edge and Chrome): choose the site folder once; the page writes the files straight into it and lists any old files you can delete from `documents/`; or
+   - **Download .zip**: extract it over the site folder (replace existing files). There are also buttons for km-data.js or km-accounts.js on their own.
+4. Keep the previous `km-data.js` as a backup (for example `km-data_backup_YYYY-MM-DD.js`), open `index.html` and press Ctrl+F5 to check.
+
+**Who can publish** (Settings, AdminPE): *AdminPE and tower heads only* (default) or *Every account*. Accounts that may not publish get **Send my changes** instead: a zip (`changes_{tower}_{username}_{date}.zip`) with only their own items, documents and log entries. They send it to their tower head, who uses **Merge changes file…**, reviews the table (changes for another tower or attempts to approve are rejected; items changed on both sides ask which version to keep), applies it and publishes. A tower head can only merge changes for their own tower. With *Every account*, only one person should publish at a time, and the next person imports the newest files first.
+
+- **Import…** loads a published `km-data.js` or `km-accounts.js` as your working copy (for example when you continue after someone else published). Files where a Require access item holds a document are rejected.
+- **Discard draft** throws away your unpublished changes.
+- The change log keeps the newest 500 entries, records the account and tower of each change, and is shown per item in the Knowledge Centre detail panel.
+
+### Be honest about what this protects
+
+**These permissions and the approval rule are a guardrail inside the admin page, not security.** This is a static site with no server: anyone who can write to the shared folder or edit the page code can bypass them, and uploaded documents are plain files that anyone who can open the site folder (or knows a file's path) can open. Real protection comes from **folder permissions** (only the people who publish should have write access; readers read-only) and from **Loop/SharePoint permissions** for restricted content, which belongs behind Require access, never in `documents/`. The browser also cannot write into a plain shared folder without the admin choosing it (Publish to folder) or extracting the zip; until then only the admin's own browser shows the changes, through Preview.
 
 ## Notes
 

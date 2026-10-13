@@ -1,0 +1,1393 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CASS Admin</title>
+<style>
+/* Admin page for the CASS Knowledge Centre. Same design tokens as index.html. */
+:root{
+  --bg:#f3f6fa;--surface:#ffffff;--surface-2:#eef4f9;--ink:#16324a;--muted:#5d7385;--line:#dae4ed;
+  --brand:#0a6fc2;--brand-soft:#e5f1fb;--on-brand:#ffffff;--hdr1:#052944;--hdr-ink:#ffffff;--hdr-muted:#d4ebf5;
+  --ok:#1d7f55;--ok-bg:#e3f4ec;--partial:#efcf6a;--partial-ink:#7a6210;--partial-bg:#fbf3d6;
+  --warn:#9a6411;--warn-bg:#fbf0dc;--none:#7a8896;--none-bg:#edf1f4;--bad:#b42318;--bad-bg:#fdeceb;
+  --new:#c2410c;--new-bg:#fdeee5;--lock:#7c3aed;--lock-bg:#f1eafe;--hl:#fff6d6;--hl-line:#e3c35a;
+  --t1:#be185d;--t2:#0e7490;--t3:#8a4b14;--t4:#374151;--t-ink:#ffffff;
+  --shadow:0 4px 16px rgba(18,59,90,.07);--pop-shadow:0 12px 32px rgba(10,40,70,.18);
+  --font:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;color-scheme:light
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;
+  --brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--partial:#e3c45f;--partial-ink:#efd78c;--partial-bg:#3a3218;
+  --warn:#e7b25a;--warn-bg:#3a2d14;--none:#8e9dab;--none-bg:#1e3142;--bad:#f59a8f;--bad-bg:#3d1a17;
+  --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;
+  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
+  --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;
+  --brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--partial:#e3c45f;--partial-ink:#efd78c;--partial-bg:#3a3218;
+  --warn:#e7b25a;--warn-bg:#3a2d14;--none:#8e9dab;--none-bg:#1e3142;--bad:#f59a8f;--bad-bg:#3d1a17;
+  --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;
+  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
+  --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font);font-size:14px;color:var(--ink);background:var(--bg);line-height:1.45}
+a{color:var(--brand);text-decoration:none}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+[hidden]{display:none!important}
+.wrap{padding-inline:max(16px,3vw)}
+.top{background:linear-gradient(105deg,var(--hdr1),#07527e);color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
+.top a{color:var(--hdr-ink)}
+.brand{font-weight:800;font-size:19px;letter-spacing:.4px}
+.brand small{font-weight:600;font-size:13px;margin-left:10px;color:var(--hdr-muted);letter-spacing:0}
+.nav{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.nav a,.nav button{padding:8px 12px;border-radius:8px;background:none;border:0;cursor:pointer;color:var(--hdr-ink);font-size:14px}
+.nav a:hover,.nav .on,.nav button:hover{background:rgba(255,255,255,.14)}
+.nav .who{font-size:12.5px;color:var(--hdr-muted);padding:0 8px}
+.strip{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow);display:flex;gap:10px 16px;align-items:center;flex-wrap:wrap;padding-block:9px}
+.strip .st{display:flex;flex-direction:column;min-width:200px;flex:1}
+.strip .st b{font-size:13.5px}.strip .st small{color:var(--muted);font-size:12px}
+.strip .acts{display:flex;gap:6px;flex-wrap:wrap}
+.dirty{color:var(--new)}
+.shell{display:grid;grid-template-columns:230px minmax(0,1fr);gap:20px;padding-block:20px;align-items:start}
+.side{position:sticky;top:76px;max-height:calc(100vh - 90px);overflow:auto;display:grid;gap:2px;padding:10px}
+.side a{display:flex;gap:8px;align-items:center;padding:9px 11px;border-radius:8px;color:var(--ink);font-weight:600}
+.side a:hover{background:var(--surface-2)}
+.side a.on{background:var(--brand-soft);color:var(--brand)}
+.side a .n{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
+.side a .num{width:20px;height:20px;border-radius:6px;background:var(--surface-2);display:grid;place-items:center;font-size:11px;color:var(--muted);flex:none}
+.side a.on .num{background:var(--brand);color:var(--on-brand)}
+.content{min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-content:start}
+td.tt{min-width:200px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.pad{padding:18px}
+h1{margin:0 0 4px;font-size:22px}
+h2{margin:0 0 6px;font-size:18px}
+h3{margin:0 0 8px;font-size:15px}
+.sub{color:var(--muted);margin:0;max-width:75ch}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.gap{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.p-covered,.p-approved,.p-ok{background:var(--ok-bg);color:var(--ok)}.p-partial{background:var(--partial-bg);color:var(--partial-ink)}.p-none{background:var(--none-bg);color:var(--none)}
+.p-draft{background:var(--warn-bg);color:var(--warn)}.p-review{background:var(--brand-soft);color:var(--brand)}.p-new{background:var(--new-bg);color:var(--new)}.p-lock{background:var(--lock-bg);color:var(--lock)}.p-role{background:var(--surface-2);color:var(--ink);font-weight:600}.p-bad{background:var(--bad-bg);color:var(--bad)}
+.tw-1{--tc:var(--t1)}.tw-2{--tc:var(--t2)}.tw-3{--tc:var(--t3)}.tw-4{--tc:var(--t4)}
+.pill.tw{background:var(--tc);color:var(--t-ink)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand);font-weight:700}
+.btn.primary:hover{filter:brightness(1.08);color:var(--on-brand)}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.danger.solid{background:var(--bad);color:#fff}
+.btn.small{padding:4px 9px;font-size:12px}
+.btn[disabled],.btn[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
+.linkbtn{border:0;background:none;color:var(--brand);cursor:pointer;padding:0;font-size:inherit;font-weight:600;text-align:left}
+.linkbtn:hover{text-decoration:underline}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{padding:14px 16px;text-align:left;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:12px;box-shadow:var(--shadow);display:grid;gap:2px}
+.stat:hover{border-color:var(--brand)}
+.stat b{font-size:26px;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:12.5px;color:var(--muted)}
+.list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.list li{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--surface)}
+.list li .t{flex:1;min-width:0}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--surface-2);white-space:nowrap}
+th button{border:0;background:none;font:inherit;text-transform:inherit;letter-spacing:inherit;color:inherit;cursor:pointer;padding:0;font-weight:700}
+th button:hover{color:var(--brand)}
+td.acts{min-width:150px;max-width:190px}
+td.acts .btn{margin:0 4px 4px 0}
+tr.sel td{background:var(--brand-soft)}
+td .ttl{font-weight:650;display:block}
+td small{color:var(--muted);display:block}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
+.filters .fld{min-width:0;flex:1 1 150px}
+.filters select{min-width:0;max-width:100%}
+.fld{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;align-content:start;min-width:0}
+.fld>label,.fld>.lb{font-size:12px;font-weight:700;color:var(--muted)}
+.fld .req::after{content:" *";color:var(--bad)}
+input[type=text],input[type=search],input[type=email],input[type=url],input[type=number],input[type=date],input[type=password],select,textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface);color:var(--ink)}
+textarea{min-height:76px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:0;border-color:var(--brand)}
+.fld.bad input,.fld.bad select,.fld.bad textarea{border-color:var(--bad)}
+.err{color:var(--bad);font-size:12px;min-height:0}
+.hint{color:var(--muted);font-size:12px}
+.counter{font-size:11.5px;color:var(--muted);text-align:right}
+.checks,.radios{display:flex;gap:6px 14px;flex-wrap:wrap}
+.checks label,.radios label{display:inline-flex;gap:6px;align-items:center;font-size:13px;cursor:pointer;font-weight:500;color:var(--ink)}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 11px;border-radius:999px;cursor:pointer;font-size:12.5px;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--brand)}
+.chip.on{background:var(--brand);border-color:var(--brand);color:var(--on-brand);font-weight:700}
+.chip.tchip{border-color:var(--tc)}
+.chip.tchip::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--tc);flex:none}
+.chip.tchip.on{background:var(--tc);color:var(--t-ink);border-color:var(--tc)}
+.chip.tchip.on::before{background:var(--t-ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.banner{padding:10px 14px;border-radius:10px;font-size:13px}
+.banner.warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--hl-line)}
+.banner.info{background:var(--brand-soft);color:var(--ink)}
+.banner.bad{background:var(--bad-bg);color:var(--bad)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs button{border:0;background:none;padding:10px 14px;cursor:pointer;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--brand);border-bottom-color:var(--brand)}
+.pager{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:12.5px;color:var(--muted);padding:6px 2px}
+.bulk{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--brand-soft);border-radius:10px;padding:8px 12px}
+details.acc{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+details.acc>summary{cursor:pointer;padding:12px 14px;font-weight:700;list-style:none;display:flex;gap:10px;align-items:center;justify-content:space-between}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary::after{content:"+";color:var(--muted);font-weight:700}
+details.acc[open]>summary::after{content:"–"}
+details.acc>.body{padding:4px 14px 14px;display:grid;gap:12px}
+.ol{margin:0;padding-left:20px;display:grid;gap:6px}
+/* login */
+.loginwrap{min-height:calc(100vh - 60px);display:grid;place-items:center;padding:24px 16px}
+.logincard{width:min(440px,100%);padding:26px;display:grid;gap:14px}
+.logincard h1{margin:0}
+.demo{font-size:12.5px;background:var(--hl);border:1px solid var(--hl-line);border-radius:10px;padding:9px 12px;color:var(--ink)}
+/* layers */
+.scrim{position:fixed;inset:0;background:rgba(5,20,35,.5);z-index:40}
+.sidepanel{position:fixed;top:0;right:0;bottom:0;width:min(640px,100%);background:var(--surface);z-index:41;box-shadow:-8px 0 30px rgba(0,0,0,.25);display:flex;flex-direction:column}
+.sidepanel header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}
+.sidepanel header h2{margin:0}
+.sidepanel .pbody{padding:18px 20px;overflow:auto;flex:1;display:grid;gap:14px;align-content:start}
+.sidepanel footer{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;background:var(--surface)}
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:rgba(5,20,35,.55)}
+.dlg{background:var(--surface);border-radius:14px;width:min(560px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:20px;display:grid;gap:12px;box-shadow:var(--pop-shadow)}
+.dlg.wide{width:min(760px,100%)}
+.dlg h2{margin:0}
+.dlg .acts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.toasts{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;display:grid;gap:8px;width:min(520px,calc(100% - 24px))}
+.toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;font-size:13px;display:flex;gap:12px;align-items:center;justify-content:space-between;box-shadow:var(--pop-shadow)}
+.toast button{border:0;background:rgba(255,255,255,.18);color:inherit;border-radius:7px;padding:4px 10px;cursor:pointer;font-weight:700}
+.pk{position:relative}
+.pk>button{width:100%;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface);cursor:pointer;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pk>button::after{content:"▾";color:var(--muted)}
+.pk .pop{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--pop-shadow);padding:6px;display:grid;gap:4px;max-height:280px;overflow:auto}
+.pk .opt{display:block;width:100%;text-align:left;border:0;background:none;padding:7px 9px;border-radius:7px;cursor:pointer}
+.pk .opt:hover,.pk .opt.on{background:var(--brand-soft)}
+.pk .opt small{color:var(--muted);display:block}
+.pk .add{color:var(--brand);font-weight:700}
+.person{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px 3px 3px;font-size:13px;max-width:100%}
+.person .av{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:10.5px;font-weight:800;background:var(--brand-soft);color:var(--brand)}
+.popprev{border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:8px;background:var(--surface);box-shadow:var(--shadow)}
+.popprev .ph{display:flex;gap:10px;align-items:center}
+.popprev .bigav{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--brand);color:var(--on-brand)}
+.popprev dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:12.5px}
+.popprev dt{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;padding-top:2px}
+.popprev dd{margin:0;overflow-wrap:anywhere}
+.metaprev{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 14px;font-size:12.5px;border:1px dashed var(--line);border-radius:10px;padding:10px}
+.metaprev b{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.steprow{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface-2)}
+.steprow .r1{display:grid;grid-template-columns:28px minmax(0,1fr) 150px;gap:8px;align-items:center}
+@media (max-width:560px){.steprow .r1{grid-template-columns:28px minmax(0,1fr)}.steprow .r1 select{grid-column:1/-1}}
+.matrow{display:grid;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface-2)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.mini{font-size:12px}
+.sw{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+.warnrow{color:var(--warn);font-size:12.5px}
+.okrow{color:var(--ok);font-size:12.5px}
+.navwrap{min-width:0}.menubtn{display:none}
+@media (max-width:900px){.shell{grid-template-columns:minmax(0,1fr)}.navwrap .side{position:static;display:none;margin-top:8px}.navwrap .side.open{display:grid}.menubtn{display:inline-flex;width:100%;justify-content:flex-start;font-weight:700}}
+@media (prefers-reduced-motion:no-preference){.btn,.stat,.chip{transition:border-color .15s,background-color .2s}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style></head><body>
+<div id="app"></div>
+<div id="layer"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="km-data.js"></script>
+<script>
+
+'use strict';
+/* ===== Core: helpers, SHA-256, session, draft, change log, dialogs, panels, pickers, publish ===== */
+const PUB=window.KM_DATA;
+const APP=document.getElementById('app'),LAYER=document.getElementById('layer');
+if(!PUB){APP.innerHTML='<div style="padding:24px;font:15px system-ui"><b>km-data.js could not be loaded.</b><p>Check that km-data.js is in the same folder as admin.html and press Ctrl+F5.</p></div>';throw new Error('km-data.js missing')}
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const slug=t=>String(t).toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const rid=()=>Math.random().toString(36).slice(2,6);
+const nowJ=()=>new Date(Date.now()+7*36e5).toISOString().slice(0,19)+'+07:00';
+const todayJ=()=>nowJ().slice(0,10);
+const fmtD=d=>d?new Date(d.slice(0,10)+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+const fmtDT=iso=>iso?fmtD(iso)+', '+iso.slice(11,16):'';
+const initials=n=>String(n).split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const plural=(n,a,b)=>n+' '+(n===1?a:(b||a+'s'));
+const ST={'Approved':'p-approved','Draft':'p-draft','In review':'p-review'};
+const COV={covered:'Covered',partial:'Partial',none:'Not started'};
+const STATUSES=['Draft','In review','Approved'];
+const ROLES=['CO','Finance','Procurement','HR','Sales','Bank','Customer'];
+function ls(){try{return window.localStorage}catch(e){return null}}
+function ss(){try{return window.sessionStorage}catch(e){return null}}
+let STORE_OK=true;
+(function(){try{localStorage.setItem('cassKM.t','1');localStorage.removeItem('cassKM.t')}catch(e){STORE_OK=false}})();
+
+/* ---- SHA-256 in plain JS (crypto.subtle is not available on every file:// setup) ---- */
+function sha256(msg){
+  const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const b=Array.from(new TextEncoder().encode(msg)),l=b.length*8;b.push(0x80);while(b.length%64!==56)b.push(0);
+  for(let i=7;i>=0;i--)b.push(i>3?0:(l>>>(i*8))&255);
+  let h=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const rr=(x,n)=>(x>>>n)|(x<<(32-n));
+  for(let o=0;o<b.length;o+=64){
+    const w=new Array(64);for(let i=0;i<16;i++)w[i]=(b[o+i*4]<<24)|(b[o+i*4+1]<<16)|(b[o+i*4+2]<<8)|b[o+i*4+3];
+    for(let i=16;i<64;i++){const s0=rr(w[i-15],7)^rr(w[i-15],18)^(w[i-15]>>>3),s1=rr(w[i-2],17)^rr(w[i-2],19)^(w[i-2]>>>10);w[i]=(w[i-16]+s0+w[i-7]+s1)|0}
+    let [a,b2,c,d,e,f,g,hh]=h;
+    for(let i=0;i<64;i++){const S1=rr(e,6)^rr(e,11)^rr(e,25),ch=(e&f)^(~e&g),t1=(hh+S1+ch+K[i]+w[i])|0,S0=rr(a,2)^rr(a,13)^rr(a,22),mj=(a&b2)^(a&c)^(b2&c),t2=(S0+mj)|0;hh=g;g=f;f=e;e=(d+t1)|0;d=c;c=b2;b2=a;a=(t1+t2)|0}
+    h=[(h[0]+a)|0,(h[1]+b2)|0,(h[2]+c)|0,(h[3]+d)|0,(h[4]+e)|0,(h[5]+f)|0,(h[6]+g)|0,(h[7]+hh)|0];
+  }
+  return h.map(x=>('00000000'+(x>>>0).toString(16)).slice(-8)).join('');
+}
+const hashPw=(pw,salt)=>sha256(salt+'|'+pw);
+
+/* ---- Draft (working copy kept in this browser) ---- */
+const DKEY='cassKM.draft',DMETA='cassKM.draftMeta';
+let DR=null,META={n:0};
+function loadDraft(){
+  try{const v=localStorage.getItem(DKEY);if(v){DR=JSON.parse(v);META=JSON.parse(localStorage.getItem(DMETA)||'{"n":0}')}}catch(e){DR=null}
+  if(!DR||!DR.taxonomy||!DR.items||!DR.academy)DR=null;
+  if(DR&&META.n===0&&DR.settings.version<PUB.settings.version)DR=null;      /* nothing unpublished and a newer file exists: start from it */
+  if(DR&&META.n===0&&DR.settings.version===PUB.settings.version&&DR.settings.lastPublished!==PUB.settings.lastPublished)DR=null;
+  if(!DR){DR=clone(PUB);META={n:0}}
+  saveDraft();
+}
+function saveDraft(){try{localStorage.setItem(DKEY,JSON.stringify(DR));localStorage.setItem(DMETA,JSON.stringify(META));STORE_OK=true}catch(e){STORE_OK=false}}
+function commit(action,section,target,summary){
+  DR.changeLog.unshift({at:nowJ(),by:me?me.name:'Admin',action,section,target:target||'',summary});
+  if(DR.changeLog.length>500)DR.changeLog.length=500;
+  META.n++;saveDraft();renderStrip();renderNavCounts();
+}
+const byId=(arr,id)=>arr.find(x=>x.id===id);
+const person=id=>byId(DR.people,id);
+const personName=id=>{if(!id)return 'To be assigned';const p=person(id);return p?p.name:'Unknown person'};
+
+/* ---- Taxonomy lookups ---- */
+let _l2c=null,_l2k=null;
+function L2S(){if(_l2k!==DR.taxonomy){_l2k=DR.taxonomy;_l2c=[];DR.taxonomy.forEach(a=>a.l1.forEach(b=>b.l2.forEach(x=>_l2c.push({code:x.code,name:x.name,l0:a,l1:b}))))}return _l2c}
+const l2Info=c=>L2S().find(x=>x.code===c);
+const l2Label=c=>{const x=l2Info(c);return x?x.code+' '+x.name:(c||'')};
+const towerPill=l0=>l0?`<span class="pill tw tw-${esc(l0.code)}">${esc(l0.name)}</span>`:'';
+const statusPill=s=>`<span class="pill ${ST[s]||'p-role'}">${esc(s)}</span>`;
+const covPill=c=>`<span class="pill p-${c}">${COV[c]||c}</span>`;
+const page=c=>DR.l2Pages[c]||null;
+const coverageOf=c=>(page(c)||{}).coverage||'none';
+
+/* ---- Session, login, lockout ---- */
+const SESS='cassKM.admin',LOCKK='cassKM.lock',IDLE=30*60e3;
+let me=null,idleTimer=null;
+const IDLE_MSG='You were signed out after 30 minutes without activity. Log in again to continue. Your draft is saved.';
+let expired=false;
+function loadSession(){try{const v=JSON.parse(ss().getItem(SESS)||'null');if(v&&Date.now()-v.t<IDLE){me=v;return true}if(v){expired=true;ss().removeItem(SESS)}}catch(e){}return false}
+function touch(){if(!me)return;me.t=Date.now();try{ss().setItem(SESS,JSON.stringify(me))}catch(e){}}
+function logout(msg){me=null;try{ss().removeItem(SESS)}catch(e){}closeAllLayers();clearInterval(idleTimer);renderLogin(msg||'')}
+function lockState(){try{return JSON.parse(ss().getItem(LOCKK)||'{"fails":0,"until":0}')}catch(e){return {fails:0,until:0}}}
+function setLock(s){try{ss().setItem(LOCKK,JSON.stringify(s))}catch(e){}}
+function renderLogin(msg){
+  document.title='CASS Admin login';
+  APP.innerHTML=`<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS home">CASS</a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a href="new-joiner-academy.html">New Joiner Academy</a><a class="on" href="admin.html">Admin login</a></nav></header>
+  <div class="loginwrap"><form class="panel logincard" id="loginForm" autocomplete="off" novalidate>
+   <div><h1>Admin login</h1><p class="sub">For KM admins in Process Excellence and named content owners.</p></div>
+   ${msg?`<div class="banner info" role="status">${esc(msg)}</div>`:''}
+   <div class="fld"><label for="lu" class="req">Username</label><input id="lu" name="u" type="text" autocomplete="username" autofocus></div>
+   <div class="fld"><label for="lp" class="req">Password</label><input id="lp" name="p" type="password" autocomplete="current-password"></div>
+   <div class="fld"><label for="ln">Your name for the change log (optional)</label><input id="ln" name="n" type="text" placeholder="e.g. Jules Pemberton" list="adminNames" autocomplete="off"><datalist id="adminNames">${(PUB.settings.adminNames||[]).map(x=>`<option value="${esc(x)}">`).join('')}</datalist><span class="hint">Leave empty to use the username.</span></div>
+   <div class="err" id="loginErr" role="alert"></div>
+   <button type="submit" class="btn primary" id="loginBtn" style="justify-content:center;padding:10px">Log in</button>
+   <p class="hint" style="margin:0">This password stops casual edits. It is not a security boundary, because anyone can read the page code. Real protection comes from folder permissions: only admins should have write access to the folder that holds km-data.js.</p>
+  </form></div>`;
+  tickLock();
+  $('#loginForm').addEventListener('submit',e=>{e.preventDefault();doLogin()});
+}
+let lockTimer=null;
+function tickLock(){
+  clearInterval(lockTimer);const err=$('#loginErr'),btn=$('#loginBtn');if(!err)return;
+  const s=lockState(),left=Math.ceil((s.until-Date.now())/1000);
+  if(left>0){btn.disabled=true;err.textContent='Too many wrong attempts. Try again in '+left+' seconds.';lockTimer=setInterval(()=>{const l=Math.ceil((lockState().until-Date.now())/1000);if(l<=0){clearInterval(lockTimer);btn.disabled=false;err.textContent=''}else err.textContent='Too many wrong attempts. Try again in '+l+' seconds.'},1000)}
+}
+function doLogin(){
+  const s=lockState();if(s.until>Date.now()){tickLock();return}
+  const u=$('#lu').value.trim(),p=$('#lp').value,n=$('#ln').value.trim(),err=$('#loginErr');
+  if(!u||!p){err.textContent=!u?'Enter your username.':'Enter your password.';return}
+  const st=PUB.settings,userOk=u.toLowerCase()===String(st.adminUser).toLowerCase();
+  const h=hashPw(p,st.passwordSalt);
+  /* the published hash always works; a password changed in this browser's draft works here straight away */
+  let dh=null;try{const d=JSON.parse(localStorage.getItem(DKEY)||'null');dh=d&&d.settings&&d.settings.adminPasswordHash}catch(e){}
+  const pwOk=h===st.adminPasswordHash||(dh&&h===dh);
+  if(userOk&&pwOk){setLock({fails:0,until:0});me={user:st.adminUser,name:n||st.adminUser,t:Date.now()};touch();startApp();return}
+  s.fails=(s.fails||0)+1;
+  if(s.fails>=5){s.fails=0;s.until=Date.now()+60000;setLock(s);tickLock();return}
+  setLock(s);err.textContent='That username or password is not correct. Ask Process Excellence if you need access.';$('#lp').value='';$('#lp').focus();
+}
+function startApp(){
+  loadDraft();renderShell();
+  clearInterval(idleTimer);idleTimer=setInterval(()=>{if(me&&Date.now()-me.t>=IDLE)logout(IDLE_MSG)},20000);
+}
+
+/* ---- Layers: panels and dialogs (focus trap, Escape) ---- */
+const LAYERS=[];
+function closeAllLayers(){while(LAYERS.length){const l=LAYERS.pop();l.el.remove()}}
+function pushLayer(el,opts){
+  const rec={el,opener:document.activeElement,tryClose:opts.tryClose||null};LAYERS.push(rec);LAYER.appendChild(el);
+  setTimeout(()=>{const f=opts.focus?$(opts.focus,el):$$('input:not([type=hidden]),select,textarea,button',el).find(x=>!x.closest('.pk .pop')&&!x.disabled);(f||el).focus&&(f||el).focus()},30);return rec;
+}
+function popLayer(rec){const i=LAYERS.indexOf(rec);if(i>=0)LAYERS.splice(i,1);rec.el.remove();if(rec.opener&&document.body.contains(rec.opener)&&rec.opener.focus)rec.opener.focus()}
+document.addEventListener('keydown',e=>{
+  if(!LAYERS.length)return;const top=LAYERS[LAYERS.length-1];
+  if(e.key==='Escape'){const pk=$('.pk .pop:not([hidden])',top.el);if(pk){pk.hidden=true;return}e.preventDefault();top.tryClose&&top.tryClose()}
+  else if(e.key==='Tab'){const f=$$('a[href],button:not([disabled]),input:not([type=hidden]):not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[tabindex="0"]',top.el).filter(x=>x.offsetParent!==null);if(!f.length)return;const a=f[0],z=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}
+});
+function modal(html,opts={}){
+  const el=document.createElement('div');el.className='modal';el.innerHTML=`<div class="dlg ${opts.wide?'wide':''}" role="dialog" aria-modal="true" aria-label="${esc(opts.label||'Dialog')}">${html}</div>`;
+  const rec=pushLayer(el,{focus:opts.focus,tryClose:()=>close()});
+  const close=()=>{popLayer(rec)};rec.close=close;
+  el.addEventListener('mousedown',e=>{if(e.target===el&&!opts.sticky)close()});
+  return rec;
+}
+function confirmDlg({title,body,ok='Confirm',danger,onOk,cancel='Cancel'}){
+  const m=modal(`<h2>${esc(title)}</h2><div>${body||''}</div><div class="acts"><button type="button" class="btn" data-x="c">${esc(cancel)}</button><button type="button" class="btn ${danger?'danger solid':'primary'}" data-x="o">${esc(ok)}</button></div>`,{label:title,focus:'[data-x=c]'});
+  m.el.addEventListener('click',e=>{const b=e.target.closest('[data-x]');if(!b)return;if(b.dataset.x==='c')m.close();else{m.close();onOk&&onOk()}});
+  return m;
+}
+function infoDlg(title,body,wide){const m=modal(`<h2>${esc(title)}</h2><div class="gap">${body}</div><div class="acts"><button type="button" class="btn primary" data-x="c">Close</button></div>`,{label:title,wide});m.el.addEventListener('click',e=>{if(e.target.closest('[data-x=c]'))m.close()});return m}
+
+/* Side panel with a form. cfg: {title, body, saveLabel, validate(values)->{field:msg}, onSave(values)->false to stay open, wide, extra footer} */
+function openPanel(cfg){
+  const el=document.createElement('div');
+  el.innerHTML=`<div class="scrim" data-x="scrim"></div><aside class="sidepanel" role="dialog" aria-modal="true" aria-label="${esc(cfg.title)}"><header><h2>${esc(cfg.title)}</h2><button type="button" class="btn small" data-x="close" aria-label="Close">Close</button></header><form class="pbody" novalidate>${cfg.body}</form><footer><span class="hint grow" id="pHint"></span><button type="button" class="btn" data-x="close">Cancel</button><button type="button" class="btn primary" data-x="save">${esc(cfg.saveLabel||'Save')}</button></footer></aside>`;
+  let dirty=false;const form=$('form',el),saveBtn=$('[data-x=save]',el);
+  const rec=pushLayer(el,{tryClose:()=>attempt()});rec.form=form;
+  function attempt(){if(!dirty)return popLayer(rec);confirmDlg({title:'Discard your changes?',body:'<p class="sub">You have unsaved changes in this form.</p>',ok:'Discard changes',danger:true,cancel:'Keep editing',onOk:()=>popLayer(rec)})}
+  const touched=new Set();
+  function check(showAll){
+    if(!cfg.validate){return {}}
+    const v=readForm(form),errs=cfg.validate(v)||{};
+    $$('.fld[data-f]',form).forEach(f=>{const k=f.dataset.f,msg=errs[k],show=msg&&(showAll||touched.has(k));f.classList.toggle('bad',!!show);const e=$('.err',f);if(e)e.textContent=show?msg:''});
+    saveBtn.disabled=Object.keys(errs).length>0;return errs;
+  }
+  form.addEventListener('input',e=>{dirty=true;const f=e.target.closest('.fld[data-f]');if(f)touched.add(f.dataset.f);cfg.onInput&&cfg.onInput(e,form);check(false)});
+  form.addEventListener('change',e=>{dirty=true;const f=e.target.closest('.fld[data-f]');if(f)touched.add(f.dataset.f);cfg.onChange&&cfg.onChange(e,form);check(false)});
+  form.addEventListener('submit',e=>{e.preventDefault();saveBtn.click()});
+  el.addEventListener('click',e=>{
+    const b=e.target.closest('[data-x]');
+    if(b){const x=b.dataset.x;if(x==='close'||x==='scrim')attempt();else if(x==='save'){const errs=check(true);if(Object.keys(errs).length){const first=$('.fld.bad',form);first&&first.scrollIntoView({block:'center'});return}
+      const r=cfg.onSave(readForm(form),rec);if(r!==false){dirty=false;popLayer(rec)}}}
+  });
+  rec.markDirty=()=>{dirty=true;check(false)};rec.check=check;rec.close=()=>popLayer(rec);
+  cfg.onOpen&&cfg.onOpen(rec,form);check(false);
+  return rec;
+}
+function readForm(f){const o={};$$('[name]',f).forEach(el=>{const n=el.name;if(el.type==='checkbox'){if(el.dataset.bool!==undefined)o[n]=el.checked;else{o[n]=o[n]||[];if(el.checked)o[n].push(el.value)}}else if(el.type==='radio'){if(el.checked)o[n]=el.value;else if(!(n in o))o[n]=''}else o[n]=el.value});return o}
+const fld=(name,label,input,{req,hint,counter}={})=>`<div class="fld" data-f="${name}"><label for="f_${name}" class="${req?'req':''}">${label}</label>${input}${counter?`<div class="counter" data-counter="${name}"></div>`:''}${hint?`<div class="hint">${hint}</div>`:''}<div class="err"></div></div>`;
+const inp=(name,val,attrs='')=>`<input type="text" id="f_${name}" name="${name}" value="${esc(val)}" ${attrs}>`;
+function sel(name,opts,val,attrs=''){return `<select id="f_${name}" name="${name}" ${attrs}>${opts.map(o=>{const [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}" ${String(v)===String(val)?'selected':''}>${esc(l)}</option>`}).join('')}</select>`}
+
+/* ---- Toasts ---- */
+function toast(msg,undo){
+  const t=document.createElement('div');t.className='toast';t.innerHTML=`<span>${esc(msg)}</span>${undo?'<button type="button">Undo</button>':''}`;
+  $('#toasts').appendChild(t);const kill=()=>t.remove();const h=setTimeout(kill,undo?10000:3200);
+  if(undo)$('button',t).addEventListener('click',()=>{clearTimeout(h);kill();undo()});
+}
+
+/* ---- People picker (searchable, with "+ Add new person") ---- */
+function pk(name,val,{optional,label}={}){
+  return `<div class="pk" data-pk="${name}" ${optional?'data-opt="1"':''}><input type="hidden" name="${name}" value="${esc(val||'')}"><button type="button" class="pkb" aria-haspopup="listbox" aria-label="${esc(label||name)}">${pkLabel(val)}</button><div class="pop" hidden></div></div>`;
+}
+const pkLabel=id=>{if(!id)return '<span class="muted">To be assigned</span>';const p=person(id);return p?`${esc(p.name)} <span class="muted small">· ${esc(p.role)}</span>`:'<span class="pill p-bad">Unknown person</span>'};
+function pkRender(box,q){
+  const pop=$('.pop',box),cur=$('input[type=hidden]',box).value,Q=(q||'').toLowerCase();
+  const list=DR.people.filter(p=>!Q||(p.name+' '+p.role+' '+p.team).toLowerCase().includes(Q));
+  pop.innerHTML=`<input type="search" class="pks" placeholder="Search name or role" aria-label="Search people" value="${esc(q||'')}">${box.dataset.opt?`<button type="button" class="opt ${!cur?'on':''}" data-v="">To be assigned</button>`:''}${list.map(p=>`<button type="button" class="opt ${p.id===cur?'on':''}" data-v="${esc(p.id)}">${esc(p.name)}<small>${esc(p.role)} · ${esc(p.team)}</small></button>`).join('')||'<span class="muted small" style="padding:6px">No one matches.</span>'}<button type="button" class="opt add" data-add="1">+ Add new person</button>`;
+}
+function pkSet(box,id){const h=$('input[type=hidden]',box);h.value=id||'';$('.pkb',box).innerHTML=pkLabel(id);$('.pop',box).hidden=true;h.dispatchEvent(new Event('input',{bubbles:true}))}
+document.addEventListener('click',e=>{
+  const open=$$('.pk .pop:not([hidden])');open.forEach(p=>{if(!p.closest('.pk').contains(e.target))p.hidden=true});
+  const box=e.target.closest('.pk');if(!box)return;
+  if(e.target.closest('.pkb')){const pop=$('.pop',box);if(pop.hidden){pkRender(box,'');pop.hidden=false;$('.pks',pop).focus()}else pop.hidden=true}
+  else if(e.target.closest('.opt[data-v]')){pkSet(box,e.target.closest('.opt').dataset.v)}
+  else if(e.target.closest('[data-add]')){$('.pop',box).hidden=true;openPersonForm(null,id=>pkSet(box,id))}
+});
+document.addEventListener('input',e=>{if(e.target.classList.contains('pks')){const box=e.target.closest('.pk');pkRender(box,e.target.value);const s=$('.pks',box);s.focus();s.setSelectionRange(s.value.length,s.value.length)}});
+
+/* ---- Link picker: builds Knowledge Centre deep links (L2, optional step, optional item) ---- */
+function openLinkPicker(cb){
+  const l2opts=()=>DR.taxonomy.map(a=>a.l1.map(b=>`<optgroup label="${esc(a.code+' '+a.name+' › '+b.code+' '+b.name)}">${b.l2.map(x=>`<option value="${x.code}">${x.code} ${esc(x.name)}</option>`).join('')}</optgroup>`).join('')).join('');
+  const m=modal(`<h2>Pick a Knowledge Centre link</h2><p class="sub">Choose a service, then optionally a process step or a single item. The link is filled in for you.</p>
+   <div class="fld"><label for="lk2">Service (L2)</label><select id="lk2"><option value="">Choose a service…</option>${l2opts()}</select></div>
+   <div class="fld"><label for="lks">Process step (optional)</label><select id="lks"><option value="">Whole service</option></select></div>
+   <div class="fld"><label for="lki">Item (optional)</label><select id="lki"><option value="">No single item</option></select></div>
+   <div class="fld"><label>Link</label><code id="lkOut" style="word-break:break-all">index.html</code></div>
+   <div class="acts"><button type="button" class="btn" data-x="c">Cancel</button><button type="button" class="btn primary" data-x="o" disabled>Use this link</button></div>`,{label:'Link picker',wide:false,focus:'#lk2'});
+  const el=m.el;let href='';
+  function upd(){
+    const c=$('#lk2',el).value,stp=$('#lks',el).value,it=$('#lki',el).value;
+    const pg=page(c),steps=(pg&&pg.steps)||[];
+    /* rebuild the step list only when the service changes, so a chosen step is kept */
+    if($('#lks',el).dataset.c!==c){$('#lks',el).innerHTML='<option value="">Whole service</option>'+steps.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');$('#lks',el).dataset.c=c}
+    const sv=$('#lks',el).value;
+    const items=DR.items.filter(i=>i.l2===c&&(!sv||(steps.find(s=>s.id===sv)||{}).name===i.step));
+    const cur=$('#lki',el).value;$('#lki',el).innerHTML='<option value="">No single item</option>'+items.map(i=>`<option value="${esc(i.id)}" ${i.id===cur?'selected':''}>${esc(i.title)}</option>`).join('');
+    const itv=$('#lki',el).value;
+    href=!c?'':itv?'index.html#item-'+itv:sv?'index.html#l2-'+c+'/'+sv:'index.html#l2-'+c;
+    $('#lkOut',el).textContent=href||'index.html';$('[data-x=o]',el).disabled=!href;
+  }
+  el.addEventListener('change',upd);
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-x]');if(!b)return;if(b.dataset.x==='c')m.close();else if(href){m.close();cb(href)}});
+}
+
+/* ===== Chrome: shell, status strip, nav, router, publish / import / discard ===== */
+const SECTIONS=[
+  ['dash','Dashboard'],['items','Knowledge items'],['l2','Service pages (L2)'],['people','People directory'],['gloss','Glossary'],['acad','Academy (pathway and tests)'],['log','Change log'],['help','How to use this page'],['set','Settings']
+];
+let CUR='dash';
+const VIEWS={};   /* each: {render()->html, mount?()} filled by the section files */
+function renderShell(){
+  document.title='CASS Admin';
+  APP.innerHTML=`<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS home">CASS<small>Admin</small></a>
+   <nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a href="new-joiner-academy.html">New Joiner Academy</a><a class="on" href="admin.html" aria-current="page">Admin</a><span class="who">Signed in as ${esc(me.name)}</span><button type="button" data-act="logout">Log out</button></nav></header>
+   ${STORE_OK?'':'<div class="banner warn" style="border-radius:0">Your browser is blocking storage, so drafts cannot be saved. Use Edge or Chrome without private mode.</div>'}
+   <div class="strip wrap" id="strip"></div>
+   <div class="shell wrap"><div class="navwrap"><button type="button" class="btn menubtn" id="menuBtn" aria-expanded="false" aria-controls="nav">☰ Menu · <span id="menuCur"></span></button><nav class="panel side" id="nav" aria-label="Admin sections"></nav></div><main class="content" id="view"></main></div>`;
+  renderStrip();renderNav();route();
+}
+function renderStrip(){
+  const el=$('#strip');if(!el)return;
+  const pv=PUB.settings.version,dv=DR.settings.version;
+  let st;
+  if(pv>dv)st=`<b class="dirty">A newer km-data.js (version ${pv}) is published</b><small>Your draft is based on version ${dv}. Import the newest file or discard your draft.</small>`;
+  else if(META.n>0)st=`<b class="dirty">${plural(META.n,'unpublished change')}</b><small>Last published ${fmtD(PUB.settings.lastPublished)} by ${esc(PUB.settings.lastPublishedBy)} · version ${pv}</small>`;
+  else if(dv>pv)st=`<b>Version ${dv} downloaded</b><small>Replace km-data.js in the shared folder with the downloaded file to publish it.</small>`;
+  else st=`<b>No unpublished changes</b><small>Last published ${fmtD(PUB.settings.lastPublished)} by ${esc(PUB.settings.lastPublishedBy)} · version ${pv}</small>`;
+  el.innerHTML=`<div class="st" aria-live="polite">${st}</div><div class="acts"><a class="btn" href="index.html#preview" target="_blank" rel="noopener" data-act="preview">Preview on site ↗</a><button type="button" class="btn primary" data-act="download">Download km-data.js</button><button type="button" class="btn" data-act="import">Import…</button><button type="button" class="btn danger" data-act="discard">Discard draft</button></div><input type="file" id="importFile" accept=".js,.json,.txt" hidden>`;
+}
+function navCount(k){switch(k){case 'items':return DR.items.length;case 'l2':return L2S().filter(x=>coverageOf(x.code)!=='none').length+'/'+L2S().length;case 'people':return DR.people.length;case 'gloss':return DR.glossary.length;case 'log':return DR.changeLog.length;default:return ''}}
+function renderNav(){const mc=$('#menuCur');if(mc)mc.textContent=(SECTIONS.find(x=>x[0]===CUR)||['',''])[1];$('#nav').classList.remove('open');const mb=$('#menuBtn');if(mb)mb.setAttribute('aria-expanded','false');$('#nav').innerHTML=SECTIONS.map(([k,n],i)=>`<a href="#${k}" class="${k===CUR?'on':''}" ${k===CUR?'aria-current="page"':''} data-nav="${k}"><span class="num">${i+1}</span>${esc(n)}<span class="n" data-cnt="${k}">${navCount(k)}</span></a>`).join('')}
+function renderNavCounts(){$$('[data-cnt]').forEach(e=>e.textContent=navCount(e.dataset.cnt))}
+function route(){
+  const h=location.hash.slice(1);CUR=VIEWS[h]?h:'dash';renderNav();renderView();window.scrollTo({top:0});
+}
+function renderView(){const v=VIEWS[CUR];$('#view').innerHTML=v.render();v.mount&&v.mount()}
+function rerender(){const y=window.scrollY;renderView();window.scrollTo({top:y})}
+function goto(k,preset){if(preset&&VIEWS[k].preset)VIEWS[k].preset(preset);if(location.hash==='#'+k)route();else location.hash='#'+k}
+addEventListener('hashchange',()=>{if(me)route()});
+
+/* ---- Publish / import / discard ---- */
+const KEYS=['settings','taxonomy','l3','people','itemTypes','l2Pages','items','towerNames','glossary','synonyms','popularSearches','academy','changeLog'];
+function buildFile(){
+  const src=clone(DR),out={};KEYS.forEach(k=>{out[k]=src[k]});
+  if(out.changeLog.length>500)out.changeLog.length=500;
+  out.items.sort((a,b)=>a.l2.localeCompare(b.l2,'en',{numeric:true})||a.title.localeCompare(b.title));
+  const header=`/* CASS Knowledge Centre: all site content in one file.
+   The Knowledge Centre, the New Joiner Academy and the admin page read this file (window.KM_DATA).
+   It is valid JSON inside the assignment, so admin.html can import it safely. Do not edit by hand: use admin.html, then Download km-data.js and replace this file.
+   Sample people, dates and content in this pilot are fictional. */
+`;
+  return header+'window.KM_DATA = '+JSON.stringify(out,null,2)+';\n';
+}
+function download(){
+  if(PUB.settings.version>DR.settings.version){toast('A newer km-data.js is published. Import it first, or discard your draft.');return}
+  const nv=Math.max(PUB.settings.version,DR.settings.version)+(META.n>0||DR.settings.version===PUB.settings.version?1:0);
+  const done=todayJ();
+  DR.settings.version=nv;DR.settings.lastPublished=done;DR.settings.lastPublishedBy=me.name;
+  DR.changeLog.unshift({at:nowJ(),by:me.name,action:'published',section:'Publish',target:'km-data.js',summary:'Downloaded version '+nv+' ('+plural(META.n,'change')+')'});
+  META.n=0;saveDraft();
+  const blob=new Blob([buildFile()],{type:'text/javascript'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='km-data.js';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  renderStrip();renderNavCounts();if(CUR==='dash'||CUR==='log')rerender();
+  infoDlg('km-data.js downloaded',`<p>Version ${nv} is ready. The site does not change until you replace the file:</p><ol class="ol"><li>Rename the current <code>km-data.js</code> in the shared folder to <code>km-data_backup_${done}.js</code> (keep it as a backup).</li><li>Copy the downloaded <code>km-data.js</code> into the same folder.</li><li>Open <code>index.html</code> and press <b>Ctrl+F5</b> to check it.</li><li>Tell readers if it is a big change.</li></ol><div class="banner warn">This page cannot overwrite km-data.js in the shared folder by itself: browsers do not allow it. Until you replace the file, only your own browser shows the changes, through Preview.</div><p class="hint">Only one person should publish at a time. A second admin should import the newest km-data.js first.</p>`);
+}
+function importFile(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    let data;
+    try{const t=String(r.result),m=/window\.KM_DATA\s*=/.exec(t),a=t.indexOf('{',m?m.index:0),b=t.lastIndexOf('}');if(a<0||b<a)throw 0;data=JSON.parse(t.slice(a,b+1));if(!data||typeof data!=='object'||Array.isArray(data))throw 0}catch(e){infoDlg('That file could not be read','<p>It is not valid JSON inside <code>window.KM_DATA = …;</code>. Pick the km-data.js that this admin page downloaded.</p>');return}
+    const need=['settings','taxonomy','l3','people','itemTypes','l2Pages','items','towerNames','glossary','synonyms','popularSearches','academy','changeLog'],miss=need.filter(k=>!(k in data));
+    if(miss.length||!data.settings.version||!Array.isArray(data.items)){infoDlg('That file is not a valid km-data.js','<p>Missing: '+esc(miss.join(', ')||'version')+'.</p>');return}
+    confirmDlg({title:'Replace your working draft?',body:`<p>This loads <b>version ${data.settings.version}</b> (${plural(data.items.length,'item')}, ${plural(data.people.length,'person','people')}, ${plural(data.glossary.length,'glossary term')}) as your working draft. Your current draft is replaced.</p>`,ok:'Import file',onOk:()=>{
+      DR=data;META.n=0;DR.changeLog.unshift({at:nowJ(),by:me.name,action:'imported',section:'Publish',target:'km-data.js',summary:'Imported km-data.js version '+data.settings.version});META.n=1;saveDraft();_l2k=null;renderStrip();renderNav();rerender();toast('Imported version '+data.settings.version+'.')}});
+  };
+  r.readAsText(file);
+}
+function discardDraft(){
+  confirmDlg({title:'Discard your draft?',body:`<p>Your ${plural(META.n,'unpublished change')} will be lost and the draft goes back to the published <code>km-data.js</code> (version ${PUB.settings.version}).</p>`,ok:'Discard draft',danger:true,onOk:()=>{DR=clone(PUB);META={n:0};_l2k=null;saveDraft();renderStrip();renderNav();rerender();toast('Draft discarded.')}});
+}
+
+/* ---- Global actions ---- */
+document.addEventListener('click',e=>{if(e.target.closest('#menuBtn')){const n=$('#nav'),o=!n.classList.contains('open');n.classList.toggle('open',o);$('#menuBtn').setAttribute('aria-expanded',String(o))}});
+const ACTS={
+  logout:()=>logout('You are logged out.'),
+  download,discard:discardDraft,
+  import:()=>$('#importFile').click(),
+};
+document.addEventListener('click',e=>{
+  if(me)touch();
+  const el=e.target.closest('[data-act]');if(!el)return;const f=ACTS[el.dataset.act];if(f){if(el.tagName==='A'&&el.dataset.act==='preview')return;f(el,e)}
+});
+document.addEventListener('change',e=>{
+  if(e.target.id==='importFile'&&e.target.files[0]){importFile(e.target.files[0]);e.target.value=''}
+  const on=e.target.closest('[data-on]');if(on&&ON[on.dataset.on])ON[on.dataset.on](on,e);
+});
+document.addEventListener('input',e=>{const on=e.target.closest('[data-oninput]');if(on&&ON[on.dataset.oninput])ON[on.dataset.oninput](on,e)});
+document.addEventListener('keydown',()=>{if(me)touch()});
+const ON={};
+
+/* ===== UI state (filters survive re-renders) ===== */
+const UI={
+  items:{q:'',l0:'',l2:'',type:'',status:'',co:'',special:'',sort:'up',dir:-1,page:0,sel:new Set()},
+  l2:{q:'',cov:'',filter:'',sel:new Set()},
+  people:{q:''},
+  gloss:{q:'',tower:'all',help:'',sel:new Set(),edit:null,adding:false},
+  acad:{tab:'path',wk:null,tower:'',tq:'',tfTower:'',tfWeek:'',tfTest:''},
+  log:{q:'',by:'',section:'',action:'',from:'',to:'',page:0}
+};
+const DAY=864e5;
+const daysSince=d=>d?Math.floor((Date.now()-new Date(d.slice(0,10)+'T00:00:00').getTime())/DAY):9999;
+function peopleRefs(){
+  const refs=[];
+  DR.items.forEach(i=>{if(i.owner)refs.push({id:i.owner,kind:'Item owner',label:i.title,go:['items',{q:i.title}]});if(i.escalateTo)refs.push({id:i.escalateTo,kind:'Item escalate to',label:i.title,go:['items',{q:i.title}]})});
+  Object.entries(DR.l2Pages).forEach(([c,p])=>{[['owner','Page owner'],['expert','Ask the expert'],['approver','Approved by']].forEach(([k,n])=>{if(p[k])refs.push({id:p[k],kind:n,label:l2Label(c),go:['l2',{q:c}]})})});
+  return refs;
+}
+function attention(){
+  const out=[];
+  const stale=Object.entries(DR.l2Pages).filter(([c,p])=>p.coverage!=='none'&&daysSince(p.lastReviewed)>180);
+  if(stale.length)out.push({n:stale.length,t:'Service pages not reviewed in the last 180 days',d:stale.map(([c])=>c).join(', '),go:['l2',{filter:'stale'}]});
+  const nolink=DR.items.filter(i=>!i.link);
+  if(nolink.length)out.push({n:nolink.length,t:'Items with no link to the content yet',d:'Readers cannot open them until a Loop or SharePoint link is added.',go:['items',{special:'nolink'}]});
+  const noown=DR.items.filter(i=>i.status==='Approved'&&!i.owner);
+  if(noown.length)out.push({n:noown.length,t:'Approved items with no owner',d:'',go:['items',{special:'approvednoowner'}]});
+  const noesc=DR.items.filter(i=>i.type==='Exception Handling'&&!i.escalateTo);
+  if(noesc.length)out.push({n:noesc.length,t:'Exception Handling items without an “Escalate to” person',d:'',go:['items',{special:'noesc'}]});
+  const noroles=Object.entries(DR.l2Pages).filter(([c,p])=>p.coverage!=='none'&&(!p.owner||!p.expert||!p.approver));
+  if(noroles.length)out.push({n:noroles.length,t:'Service pages with content but no page owner, expert or approver',d:noroles.map(([c])=>c).join(', '),go:['l2',{filter:'noroles'}]});
+  const dang=peopleRefs().filter(r=>!person(r.id));
+  if(dang.length)out.push({n:dang.length,t:'References to people who are no longer in the directory',d:'Pick a new person for each.',go:['people',{}],dang:true});
+  const nomean=DR.glossary.filter(g=>!g.meaning).length;
+  if(nomean)out.push({n:nomean,t:'Glossary terms with no meaning yet',d:'',go:['gloss',{help:'nomean'}]});
+  const notw=DR.glossary.filter(g=>!g.towers.length).length;
+  if(notw)out.push({n:notw,t:'Glossary terms not assigned to a tower',d:'Tower heads can confirm these.',go:['gloss',{help:'notower'}]});
+  const tba=Object.values(DR.academy.weekContent).reduce((s,w)=>s+w.materials.filter(m=>m.tba).length,0);
+  if(tba)out.push({n:tba,t:'Academy materials marked “to be added”',d:'',go:['acad',{tab:'path'}]});
+  return out;
+}
+VIEWS.dash={render(){
+  const it=DR.items,cnt=s=>it.filter(i=>i.status===s).length,all=L2S();
+  const cov=k=>all.filter(x=>coverageOf(x.code)===k).length;
+  const recent=it.filter(i=>daysSince(i.updated)<=30).length;
+  const att=attention();
+  return `<div><h1>Dashboard</h1><p class="sub">What is in the Knowledge Centre draft and what needs your attention. Click a number to open the list behind it.</p></div>
+  <div class="stats" role="list">
+   <button type="button" class="stat" data-act="goto" data-k="items" data-p='{"status":"Draft"}'><span>Draft items</span><b>${cnt('Draft')}</b></button>
+   <button type="button" class="stat" data-act="goto" data-k="items" data-p='{"status":"In review"}'><span>In review</span><b>${cnt('In review')}</b></button>
+   <button type="button" class="stat" data-act="goto" data-k="items" data-p='{"status":"Approved"}'><span>Approved</span><b>${cnt('Approved')}</b></button>
+   <button type="button" class="stat" data-act="goto" data-k="items" data-p='{"special":"recent","sort":"up","dir":-1}'><span>Updated in the last 30 days</span><b>${recent}</b></button>
+  </div>
+  <div class="stats">
+   <button type="button" class="stat" data-act="goto" data-k="l2" data-p='{"cov":"covered"}'><span>L2 covered</span><b>${cov('covered')}<small class="muted" style="font-size:13px"> / ${all.length}</small></b></button>
+   <button type="button" class="stat" data-act="goto" data-k="l2" data-p='{"cov":"partial"}'><span>L2 partial</span><b>${cov('partial')}<small class="muted" style="font-size:13px"> / ${all.length}</small></b></button>
+   <button type="button" class="stat" data-act="goto" data-k="l2" data-p='{"cov":"none"}'><span>L2 not started</span><b>${cov('none')}<small class="muted" style="font-size:13px"> / ${all.length}</small></b></button>
+   <button type="button" class="stat" data-act="goto" data-k="people"><span>People in directory</span><b>${DR.people.length}</b></button>
+  </div>
+  <section class="panel pad"><div class="row between"><h2>Needs attention</h2><span class="muted small">${att.length?plural(att.length,'topic'):''}</span></div>
+   ${att.length?`<ul class="list">${att.map((a,i)=>`<li><div class="t"><b>${esc(a.t)}</b>${a.d?`<div class="muted small">${esc(a.d)}</div>`:''}</div><span class="pill ${a.dang?'p-bad':'p-draft'}">${a.n}</span><button type="button" class="btn small" data-act="attn" data-i="${i}">Review</button></li>`).join('')}</ul>`:'<p class="okrow">Nothing needs attention right now.</p>'}</section>
+  <section class="panel pad"><div class="row between"><h2>Latest changes</h2><button type="button" class="btn small" data-act="goto" data-k="log">Open the change log</button></div>
+   ${DR.changeLog.length?`<ul class="list" style="margin-top:8px">${DR.changeLog.slice(0,10).map(l=>`<li><div class="t"><b>${esc(l.section)}</b> · ${esc(l.summary)}<div class="muted small">${fmtDT(l.at)} · ${esc(l.by)}</div></div><span class="pill ${l.action==='deleted'?'p-bad':l.action==='added'?'p-ok':l.action==='published'?'p-review':'p-role'}">${esc(l.action)}</span></li>`).join('')}</ul>`:'<p class="muted">No changes yet.</p>'}</section>`;
+}};
+ACTS.goto=el=>{let p=null;try{p=el.dataset.p?JSON.parse(el.dataset.p):null}catch(e){}goto(el.dataset.k,p)};
+ACTS.attn=el=>{const a=attention()[+el.dataset.i];if(!a)return;if(a.dang){showDangling();return}goto(a.go[0],a.go[1])};
+function showDangling(){
+  const d=peopleRefs().filter(r=>!person(r.id));
+  infoDlg('References to missing people',`<p class="sub">These records point to someone who is no longer in the People directory. They show as “Unknown person” until you pick someone new. Open each record and choose a person.</p><ul class="list">${d.map(r=>`<li><div class="t"><b>${esc(r.kind)}</b> · ${esc(r.label)}</div></li>`).join('')}</ul>`,true);
+}
+
+/* ===== 2. Knowledge items ===== */
+const PAGE=25;
+const FLABEL={title:'Title',type:'Type',l2:'Service',step:'Step',l3:'Function',status:'Status',owner:'Owner',escalateTo:'Escalate to',complexity:'Complexity',version:'Version',link:'Link',description:'Description',duration:'Duration',requireAccess:'Require access',newBadge:'New badge',companies:'Companies'};
+const NB={auto:'Automatic',show:'Always show',hide:'Never show'};
+const nbNorm=v=>v==='always'?'show':v==='never'?'hide':(NB[v]?v:'auto');
+function itemFiltered(){
+  const u=UI.items,q=u.q.trim().toLowerCase();
+  let r=DR.items.filter(i=>{
+    const info=l2Info(i.l2);
+    if(q&&!(i.title+' '+i.id+' '+i.description+' '+personName(i.owner)).toLowerCase().includes(q))return false;
+    if(u.l0&&(!info||info.l0.code!==u.l0))return false;
+    if(u.l2&&i.l2!==u.l2)return false;
+    if(u.type&&i.type!==u.type)return false;
+    if(u.status&&i.status!==u.status)return false;
+    if(u.co&&!i.companies.includes(u.co))return false;
+    if(u.special==='nolink'&&i.link)return false;
+    if(u.special==='noesc'&&!(i.type==='Exception Handling'&&!i.escalateTo))return false;
+    if(u.special==='approvednoowner'&&!(i.status==='Approved'&&!i.owner))return false;
+    if(u.special==='recent'&&daysSince(i.updated)>30)return false;
+    return true;
+  });
+  const d=u.dir;
+  r.sort((a,b)=>u.sort==='title'?d*a.title.localeCompare(b.title):d*(a.updated.localeCompare(b.updated)||a.title.localeCompare(b.title)));
+  return r;
+}
+VIEWS.items={
+  preset(p){Object.assign(UI.items,{q:'',l0:'',l2:'',type:'',status:'',co:'',special:'',page:0},p||{});UI.items.sel=new Set()},
+  render(){
+    const u=UI.items;
+    const l2opts='<option value="">All services</option>'+DR.taxonomy.map(a=>a.l1.map(b=>`<optgroup label="${esc(a.code+' '+a.name+' › '+b.code+' '+b.name)}">${b.l2.map(x=>`<option value="${x.code}" ${u.l2===x.code?'selected':''}>${x.code} ${esc(x.name)}</option>`).join('')}</optgroup>`).join('')).join('');
+    const o=(arr,v,all)=>`<option value="">${all}</option>`+arr.map(x=>{const [a,b]=Array.isArray(x)?x:[x,x];return `<option value="${esc(a)}" ${v===a?'selected':''}>${esc(b)}</option>`}).join('');
+    return `<div class="row between"><div><h1>Knowledge items</h1><p class="sub">Documents, videos and guides shown in the Knowledge Centre. SAP how-tos are normal items under their service and process step.</p></div><button type="button" class="btn primary" data-act="itemAdd">+ Add item</button></div>
+    <section class="panel pad gap"><div class="filters">
+      <div class="fld" style="flex:1;min-width:200px"><label for="iq">Search</label><input id="iq" type="search" value="${esc(u.q)}" placeholder="Title, description or owner" data-oninput="itemsF" name="q"></div>
+      <div class="fld"><label for="il0">Tower (L0)</label><select id="il0" name="l0" data-on="itemsF">${o(DR.taxonomy.map(a=>[a.code,a.name]),u.l0,'All towers')}</select></div>
+      <div class="fld"><label for="il2">Service (L2)</label><select id="il2" name="l2" data-on="itemsF">${l2opts}</select></div>
+      <div class="fld"><label for="ity">Type</label><select id="ity" name="type" data-on="itemsF">${o(DR.itemTypes.map(t=>t.name),u.type,'All types')}</select></div>
+      <div class="fld"><label for="ist">Status</label><select id="ist" name="status" data-on="itemsF">${o(STATUSES,u.status,'All statuses')}</select></div>
+      <div class="fld"><label for="ico">Company</label><select id="ico" name="co" data-on="itemsF">${o(DR.settings.companies,u.co,'All companies')}</select></div>
+    </div>
+    ${u.special?`<div class="banner info">Showing: ${{recent:'items updated in the last 30 days',nolink:'items with no link',noesc:'Exception Handling items without an Escalate to person',approvednoowner:'Approved items with no owner'}[u.special]} <button type="button" class="linkbtn" data-act="itemsClear">Show all items</button></div>`:''}
+    <div id="bulkBar"></div><div id="itbl"></div></section>`;
+  },
+  mount(){renderItemsTbl()}
+};
+ON.itemsF=el=>{const u=UI.items;u[el.name]=el.value;u.page=0;renderItemsTbl()};
+function renderItemsTbl(){
+  const u=UI.items,list=itemFiltered(),pages=Math.max(1,Math.ceil(list.length/PAGE));if(u.page>=pages)u.page=pages-1;
+  const rows=list.slice(u.page*PAGE,u.page*PAGE+PAGE);
+  const allSel=rows.length&&rows.every(r=>u.sel.has(r.id));
+  const arrow=k=>u.sort===k?(u.dir<0?' ▼':' ▲'):'';
+  $('#itbl').innerHTML=`<div class="tablewrap"><table><thead><tr><th><input type="checkbox" data-act="itemSelAll" aria-label="Select all rows on this page" ${allSel?'checked':''}></th><th><button type="button" data-act="itemSort" data-k="title">Title${arrow('title')}</button></th><th>Type</th><th>Tower</th><th>Service</th><th>Step</th><th>Status</th><th><button type="button" data-act="itemSort" data-k="up">Updated${arrow('up')}</button></th><th>Owner</th><th>Actions</th></tr></thead><tbody>
+  ${rows.map(i=>{const info=l2Info(i.l2);return `<tr class="${u.sel.has(i.id)?'sel':''}"><td><input type="checkbox" data-act="itemSel" data-id="${esc(i.id)}" aria-label="Select ${esc(i.title)}" ${u.sel.has(i.id)?'checked':''}></td><td class="tt"><span class="ttl">${esc(i.title)}</span>${i.requireAccess?'<span class="pill p-lock">Require access</span> ':''}${i.link?'':'<small class="warnrow">No link yet</small>'}</td><td>${esc(i.type)}</td><td>${towerPill(info&&info.l0)}</td><td>${esc(i.l2)}<small>${esc(info?info.name:'')}</small></td><td>${esc(i.step||'Whole service')}</td><td>${statusPill(i.status)}</td><td>${fmtD(i.updated)}</td><td>${i.owner?esc(personName(i.owner)):'<span class="muted">—</span>'}</td><td class="acts"><a class="btn small" href="index.html?preview=1#item-${encodeURIComponent(i.id)}" target="_blank" rel="noopener">View on site ↗</a><button type="button" class="btn small" data-act="itemEdit" data-id="${esc(i.id)}">Edit</button><button type="button" class="btn small" data-act="itemDup" data-id="${esc(i.id)}">Duplicate</button><button type="button" class="btn small danger" data-act="itemDel" data-id="${esc(i.id)}">Delete</button></td></tr>`}).join('')||`<tr><td colspan="10" class="muted" style="padding:18px">No items match these filters.</td></tr>`}
+  </tbody></table></div>
+  <div class="pager"><span>${list.length?`Showing ${u.page*PAGE+1}–${u.page*PAGE+rows.length} of ${list.length}`:'0 items'}</span><span class="row"><button type="button" class="btn small" data-act="itemPage" data-d="-1" ${u.page===0?'disabled':''}>← Previous</button><span>Page ${u.page+1} of ${pages}</span><button type="button" class="btn small" data-act="itemPage" data-d="1" ${u.page>=pages-1?'disabled':''}>Next →</button></span></div>`;
+  const n=u.sel.size;
+  $('#bulkBar').innerHTML=n?`<div class="bulk"><b>${plural(n,'item')} selected</b>
+   <select aria-label="Set status" id="bkStatus"><option value="">Set status…</option>${STATUSES.map(s=>`<option>${s}</option>`).join('')}</select><button type="button" class="btn small" data-act="bulkStatus">Apply</button>
+   <select aria-label="Require access" id="bkLock"><option value="">Require access…</option><option value="on">Turn on</option><option value="off">Turn off</option></select><button type="button" class="btn small" data-act="bulkLock">Apply</button>
+   <select aria-label="New badge" id="bkNb"><option value="">New badge…</option>${Object.entries(NB).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select><button type="button" class="btn small" data-act="bulkNb">Apply</button>
+   <button type="button" class="btn small danger" data-act="bulkDel">Delete selected</button><button type="button" class="linkbtn" data-act="bulkClear">Clear selection</button></div>`:'';
+}
+ACTS.itemsClear=()=>{UI.items.special='';rerender()};
+ACTS.itemSort=el=>{const u=UI.items,k=el.dataset.k;if(u.sort===k)u.dir=-u.dir;else{u.sort=k;u.dir=k==='title'?1:-1}renderItemsTbl()};
+ACTS.itemPage=el=>{UI.items.page+=+el.dataset.d;renderItemsTbl()};
+ACTS.itemSel=el=>{const s=UI.items.sel;el.checked?s.add(el.dataset.id):s.delete(el.dataset.id);renderItemsTbl()};
+ACTS.itemSelAll=el=>{const u=UI.items,list=itemFiltered().slice(u.page*PAGE,u.page*PAGE+PAGE);list.forEach(i=>el.checked?u.sel.add(i.id):u.sel.delete(i.id));renderItemsTbl()};
+ACTS.bulkClear=()=>{UI.items.sel.clear();renderItemsTbl()};
+function selItems(){return DR.items.filter(i=>UI.items.sel.has(i.id))}
+function bulkApply(label,fn,section){
+  const its=selItems();if(!its.length)return;its.forEach(i=>{fn(i);i.updated=todayJ();i.updatedBy=me.name});
+  commit('edited','Knowledge items',its.length===1?its[0].id:'bulk',`Bulk: ${label} for ${plural(its.length,'item')} (${its.slice(0,3).map(i=>i.title).join('; ')}${its.length>3?'…':''})`);
+  UI.items.sel.clear();renderItemsTbl();toast(label+' · '+plural(its.length,'item'));
+}
+ACTS.bulkStatus=()=>{const v=$('#bkStatus').value;if(!v)return toast('Choose a status first.');bulkApply('status → '+v,i=>i.status=v)};
+ACTS.bulkLock=()=>{const v=$('#bkLock').value;if(!v)return toast('Choose on or off first.');bulkApply('Require access '+v,i=>i.requireAccess=v==='on')};
+ACTS.bulkNb=()=>{const v=$('#bkNb').value;if(!v)return toast('Choose a New badge option first.');bulkApply('New badge → '+NB[v],i=>i.newBadge=v)};
+ACTS.bulkDel=()=>{
+  const its=selItems();if(!its.length)return;
+  confirmDlg({title:`Delete ${plural(its.length,'item')}?`,body:`<p class="sub">This removes them from the Knowledge Centre when you publish. The files in Loop or SharePoint are not deleted.</p><ul class="ol">${its.slice(0,6).map(i=>`<li>${esc(i.title)}</li>`).join('')}${its.length>6?`<li>…and ${its.length-6} more</li>`:''}</ul>`,ok:'Delete',danger:true,onOk:()=>deleteItems(its)});
+};
+function deleteItems(its){
+  const keep=its.map(i=>({i:clone(i),idx:DR.items.indexOf(i)}));
+  DR.items=DR.items.filter(x=>!its.includes(x));UI.items.sel.clear();
+  commit('deleted','Knowledge items',its.length===1?its[0].id:'bulk',its.length===1?`Deleted “${its[0].title}”`:`Deleted ${plural(its.length,'item')}`);
+  renderItemsTbl();
+  toast(its.length===1?'Item deleted.':plural(its.length,'item')+' deleted.',()=>{
+    keep.sort((a,b)=>a.idx-b.idx).forEach(k=>DR.items.splice(Math.min(k.idx,DR.items.length),0,k.i));
+    commit('added','Knowledge items','restore','Restored '+plural(keep.length,'deleted item'));renderItemsTbl();toast('Restored.');
+  });
+}
+ACTS.itemDel=el=>{const it=byId(DR.items,el.dataset.id);if(!it)return;confirmDlg({title:`Delete “${it.title}”?`,body:'<p class="sub">This removes it from the Knowledge Centre when you publish. The file in Loop or SharePoint is not deleted.</p>',ok:'Delete',danger:true,onOk:()=>deleteItems([it])})};
+ACTS.itemDup=el=>{
+  const it=byId(DR.items,el.dataset.id);if(!it)return;const c=clone(it);c.title='Copy of '+it.title;c.title=c.title.slice(0,120);c.id=slug(c.title).slice(0,40)+'-'+rid();c.status='Draft';c.updated=todayJ();c.updatedBy=me.name;c.version='0.1';
+  DR.items.push(c);commit('added','Knowledge items',c.id,`Duplicated “${it.title}” as “${c.title}” (Draft)`);renderItemsTbl();toast('Copy created as Draft.');
+};
+ACTS.itemAdd=()=>itemForm(null);
+ACTS.itemEdit=el=>{const it=byId(DR.items,el.dataset.id);if(it)itemForm(it)};
+function itemForm(it){
+  const isNew=!it;
+  const o=it?Object.assign({},it,{newBadge:nbNorm(it.newBadge)}):{title:'',type:DR.itemTypes[0].name,l2:'',step:'',l3:'',status:'Draft',owner:'',escalateTo:'',complexity:'Low',version:'0.1',link:'',description:'',duration:'',requireAccess:false,newBadge:'auto',companies:[...DR.settings.companies]};
+  const info=l2Info(o.l2);
+  const body=`
+   ${fld('title','Title',inp('title',o.title,'maxlength="120" autocomplete="off"'),{req:1,counter:1})}
+   ${fld('type','Type',sel('type',DR.itemTypes.map(t=>t.name),o.type),{req:1})}
+   <div class="fld" data-f="l2"><span class="lb req">Service</span><div class="g3"><select name="l0" id="f_l0" aria-label="Tower (L0)"></select><select name="l1" id="f_l1" aria-label="Process (L1)"></select><select name="l2" id="f_l2" aria-label="Service (L2)"></select></div><div class="hint">Choose tower, then process, then service. There is no separate SAP or Systems &amp; Tools section.</div><div class="err"></div></div>
+   <div id="stepWrap">${fld('step','Process step','<select id="f_step" name="step"></select>')}</div>
+   <div id="l3Wrap">${fld('l3','Function (L3, optional)','<select id="f_l3" name="l3"></select>',{hint:'Read-only list of the functions for this service.'})}</div>
+   <div class="fld" data-f="status"><span class="lb">Status</span><div class="radios">${STATUSES.map(s=>`<label><input type="radio" name="status" value="${s}" ${o.status===s?'checked':''}> ${statusPill(s)}</label>`).join('')}</div><div class="err"></div></div>
+   ${fld('owner','Owner',pk('owner',o.owner,{label:'Owner'}),{req:1})}
+   <div id="excWrap" class="g2"><div class="fld" data-f="escalateTo"><label class="lb">Escalate to</label>${pk('escalateTo',o.escalateTo,{optional:1,label:'Escalate to'})}<div class="err"></div></div>${fld('complexity','Complexity',sel('complexity',['Low','Medium','High'],o.complexity))}</div>
+   <div class="g2">${fld('version','Version',inp('version',o.version,'maxlength="12"'))}<div id="durWrap">${fld('duration','Duration (videos)',inp('duration',o.duration,'placeholder="e.g. 04:30"'))}</div></div>
+   ${fld('link','Link to the content',`<input type="url" id="f_link" name="link" value="${esc(o.link)}" placeholder="https://…" autocomplete="off">`,{hint:'Paste the link from Loop: Share › Copy link. Must start with https://'})}
+   ${fld('description','Description',`<textarea id="f_description" name="description" maxlength="300">${esc(o.description)}</textarea>`,{req:1,counter:1})}
+   <div class="fld" data-f="requireAccess"><label class="checks"><span><input type="checkbox" name="requireAccess" data-bool value="1" ${o.requireAccess?'checked':''}> <b>Require access</b></span></label><div class="hint">Tick for anything with customer, bank or pricing details. Readers will see a Require access label and a Request access button.</div></div>
+   <div class="fld" data-f="newBadge"><span class="lb">“New” badge</span><div class="radios">${Object.entries(NB).map(([k,v])=>`<label><input type="radio" name="newBadge" value="${k}" ${o.newBadge===k?'checked':''}> ${v}</label>`).join('')}</div><div class="hint">Automatic shows “New” for ${DR.settings.newBadgeDays} days after each update, until a reader opens the item. Use “Never show” for small fixes such as typos.</div></div>
+   <div class="fld" data-f="companies"><span class="lb req">Companies</span><div class="checks">${DR.settings.companies.map(c=>`<label><input type="checkbox" name="companies" value="${esc(c)}" ${o.companies.includes(c)?'checked':''}> ${esc(c)}</label>`).join('')}</div><div class="err"></div></div>`;
+  const rec=openPanel({title:isNew?'Add item':'Edit item',body,saveLabel:isNew?'Add item':'Save changes',
+    validate(v){
+      const e={};
+      if(!v.title.trim())e.title='Enter a title.';else if(v.title.length>120)e.title='Keep the title under 120 characters.';
+      if(!v.l2)e.l2='Choose a service.';
+      if(!v.owner)e.owner='Choose an owner.';
+      if(!v.description.trim())e.description='Add a one-sentence description.';else if(v.description.length>300)e.description='Keep the description under 300 characters.';
+      if(v.link&&!/^https:\/\/\S+$/i.test(v.link.trim()))e.link='The link must start with https://';
+      else if(!v.link&&v.status!=='Draft')e.link='Add the link before moving past Draft.';
+      if(!v.companies.length)e.companies='Choose at least one company.';
+      return e;
+    },
+    onOpen(rec,form){cascade(form,o,true);counters(form);linkWarn(form)},
+    onChange(e,form){if(['l0','l1','l2','type','status'].includes(e.target.name))cascade(form,null,false);linkWarn(form)},
+    onInput(e,form){counters(form);linkWarn(form)},
+    onSave(v){
+      const next={title:v.title.trim(),type:v.type,l2:v.l2,step:v.step||'',l3:v.l3||'',status:v.status,owner:v.owner,escalateTo:v.type==='Exception Handling'?(v.escalateTo||''):'',complexity:v.type==='Exception Handling'?v.complexity:'',version:v.version.trim(),link:v.link.trim(),description:v.description.trim(),duration:v.type==='Video'?v.duration.trim():'',requireAccess:!!v.requireAccess,newBadge:v.newBadge||'auto',companies:v.companies};
+      if(isNew){const n={id:slug(next.title).slice(0,40)+'-'+rid(),...next,updated:todayJ(),updatedBy:me.name};DR.items.push(n);commit('added','Knowledge items',n.id,`Added “${n.title}” under ${n.l2} as ${n.status}`);toast('Item added.')}
+      else{const ch=itemDiff(it,next);if(!ch.length){toast('No changes to save.');return}Object.assign(it,next,{updated:todayJ(),updatedBy:me.name});commit('edited','Knowledge items',it.id,ch.join('; '));toast('Item saved.')}
+      renderItemsTbl();
+    }});
+}
+/* An empty link is allowed while Draft, with a warning (readers see "Link not added yet"). */
+function linkWarn(form){const v=readForm(form),h=form.closest('.sidepanel')&&form.closest('.sidepanel').querySelector('#pHint');if(h)h.innerHTML=!v.link.trim()&&v.status==='Draft'?'<span class="warnrow">No link yet: readers will see “Link not added yet”.</span>':''}
+function counters(form){$$('[data-counter]',form).forEach(c=>{const f=$('[name='+c.dataset.counter+']',form);const max=f.getAttribute('maxlength');c.textContent=f.value.length+(max?' / '+max:'')})}
+/* Cascading selects: tower → process → service → step and function. first=true keeps the stored values. */
+function cascade(form,o,first){
+  const g=n=>$('[name='+n+']',form),v=o||readForm(form);
+  const info=first?l2Info(o.l2):null;
+  const l0v=first?(info?info.l0.code:''):g('l0').value;
+  g('l0').innerHTML='<option value="">Choose tower…</option>'+DR.taxonomy.map(a=>`<option value="${a.code}" ${a.code===l0v?'selected':''}>${esc(a.name)}</option>`).join('');
+  const a0=DR.taxonomy.find(a=>a.code===g('l0').value);
+  const l1v=first?(info?info.l1.code:''):(a0&&a0.l1.find(b=>b.code===g('l1').value)?g('l1').value:'');
+  g('l1').innerHTML='<option value="">Choose process…</option>'+(a0?a0.l1.map(b=>`<option value="${b.code}" ${b.code===l1v?'selected':''}>${b.code} ${esc(b.name)}</option>`).join(''):'');
+  const b1=a0&&a0.l1.find(b=>b.code===g('l1').value);
+  const l2v=first?o.l2:(b1&&b1.l2.find(x=>x.code===g('l2').value)?g('l2').value:'');
+  g('l2').innerHTML='<option value="">Choose service…</option>'+(b1?b1.l2.map(x=>`<option value="${x.code}" ${x.code===l2v?'selected':''}>${x.code} ${esc(x.name)}</option>`).join(''):'');
+  const c=g('l2').value,pg=page(c),steps=(pg&&pg.steps)||[];
+  const stepV=first?o.step:g('step').value;
+  $('#stepWrap',form).hidden=!steps.length;
+  g('step').innerHTML='<option value="">Whole service</option>'+steps.map(s=>`<option value="${esc(s.name)}" ${s.name===stepV?'selected':''}>${esc(s.name)}</option>`).join('');
+  const l3=(DR.l3[c]||[]),l3v=first?o.l3:g('l3').value;
+  $('#l3Wrap',form).hidden=!l3.length;
+  g('l3').innerHTML='<option value="">No specific function</option>'+l3.map(f=>`<option value="${f.code}" ${f.code===l3v?'selected':''}>${f.code} ${esc(f.name.length>70?f.name.slice(0,68)+'…':f.name)}</option>`).join('');
+  const ty=g('type').value;$('#excWrap',form).hidden=ty!=='Exception Handling';$('#durWrap',form).hidden=ty!=='Video';
+}
+function itemDiff(a,b){
+  const ch=[];
+  Object.keys(FLABEL).forEach(k=>{
+    const x=a[k],y=b[k];if(JSON.stringify(x)===JSON.stringify(y))return;
+    const L=FLABEL[k];
+    if(k==='owner'||k==='escalateTo')ch.push(`${L} ${personName(x)} → ${personName(y)}`);
+    else if(k==='link')ch.push(!x?'Link added':!y?'Link removed':'Link changed');
+    else if(k==='description')ch.push('Description edited');
+    else if(k==='requireAccess')ch.push('Require access '+(y?'on':'off'));
+    else if(k==='newBadge'){if(nbNorm(x)!==nbNorm(y))ch.push(`New badge ${NB[nbNorm(x)]} → ${NB[nbNorm(y)]}`)}
+    else if(k==='companies')ch.push(`Companies ${x.join(', ')} → ${y.join(', ')}`);
+    else if(k==='l2')ch.push(`Service ${x} → ${y}`);
+    else ch.push(`${L} ${x||'none'} → ${y||'none'}`);
+  });
+  return ch;
+}
+
+/* ===== 3. Service pages (L2) ===== */
+const newPage=()=>({coverage:'none',status:'Draft',owner:'',expert:'',approver:'',lastReviewed:'',intro:''});
+function l2Match(x){
+  const u=UI.l2,q=u.q.trim().toLowerCase(),p=page(x.code);
+  if(q&&!(x.code+' '+x.name+' '+x.l1.name+' '+x.l0.name).toLowerCase().includes(q))return false;
+  if(u.cov&&coverageOf(x.code)!==u.cov)return false;
+  if(u.filter==='stale'&&!(p&&p.coverage!=='none'&&daysSince(p.lastReviewed)>180))return false;
+  if(u.filter==='noroles'&&!(p&&p.coverage!=='none'&&(!p.owner||!p.expert||!p.approver)))return false;
+  return true;
+}
+VIEWS.l2={
+  preset(p){Object.assign(UI.l2,{q:'',cov:'',filter:''},p||{});if(p&&p.q)UI.l2.q=p.q;UI.l2.sel=new Set()},
+  render(){
+    const u=UI.l2;
+    return `<div><h1>Service pages (L2)</h1><p class="sub">Set coverage, status, owner, expert and approver for each service, and edit its process steps. Codes and names come from the official service taxonomy and are read-only.</p></div>
+    <section class="panel pad gap"><div class="filters">
+     <div class="fld" style="flex:1;min-width:200px"><label for="lq">Search</label><input id="lq" type="search" value="${esc(u.q)}" placeholder="Code, service or process" data-oninput="l2F" name="q"></div>
+     <div class="fld"><label for="lc">Coverage</label><select id="lc" name="cov" data-on="l2F"><option value="">All</option>${Object.entries(COV).map(([k,v])=>`<option value="${k}" ${u.cov===k?'selected':''}>${v}</option>`).join('')}</select></div></div>
+     ${u.filter?`<div class="banner info">Showing: ${u.filter==='stale'?'pages not reviewed in 180 days':'pages with content but no owner, expert or approver'} <button type="button" class="linkbtn" data-act="l2Clear">Show all services</button></div>`:''}
+     <div id="l2bulk"></div><div id="l2tbl"></div>
+     <p class="note hint">Need a code or name changed? Changes to the taxonomy go through Process Excellence and are made by importing an updated taxonomy in Settings (it shows a diff first).</p></section>`;
+  },
+  mount(){renderL2Tbl()}
+};
+ON.l2F=el=>{UI.l2[el.name]=el.value;renderL2Tbl()};
+ACTS.l2Clear=()=>{UI.l2.filter='';rerender()};
+function renderL2Tbl(){
+  const u=UI.l2;let html='',n=0;
+  DR.taxonomy.forEach(a=>a.l1.forEach(b=>{
+    const rows=b.l2.map(x=>({code:x.code,name:x.name,l0:a,l1:b})).filter(l2Match);if(!rows.length)return;n+=rows.length;
+    const allSel=rows.every(r=>u.sel.has(r.code));
+    html+=`<tr class="grp"><td><input type="checkbox" data-act="l2SelGrp" data-g="${b.code}" aria-label="Select all in ${esc(b.name)}" ${allSel?'checked':''}></td><td colspan="8" style="background:var(--surface-2)">${towerPill(a)} <b>${b.code} ${esc(b.name)}</b></td></tr>`;
+    rows.forEach(r=>{const p=page(r.code),cnt=DR.items.filter(i=>i.l2===r.code).length;
+      html+=`<tr class="${u.sel.has(r.code)?'sel':''}"><td><input type="checkbox" data-act="l2Sel" data-c="${r.code}" aria-label="Select ${esc(r.name)}" ${u.sel.has(r.code)?'checked':''}></td><td><b>${r.code}</b></td><td>${esc(r.name)}</td><td>${covPill(coverageOf(r.code))}</td><td>${p&&p.coverage!=='none'?statusPill(p.status):'<span class="muted">—</span>'}</td><td>${p&&p.owner?esc(personName(p.owner)):'<span class="muted">To be assigned</span>'}${p&&p.owner&&!person(p.owner)?' <span class="pill p-bad">Unknown</span>':''}</td><td>${p&&p.lastReviewed?fmtD(p.lastReviewed):'<span class="muted">Not yet</span>'}${p&&p.lastReviewed&&daysSince(p.lastReviewed)>180?' <span class="pill p-draft">Over 180 days</span>':''}</td><td>${cnt?`<button type="button" class="linkbtn" data-act="goto" data-k="items" data-p='{"l2":"${r.code}"}'>${plural(cnt,'item')}</button>`:'<span class="muted">0</span>'}</td><td class="acts"><button type="button" class="btn small" data-act="l2Edit" data-c="${r.code}">Edit</button><a class="btn small" href="index.html?preview=1#l2-${r.code}" target="_blank" rel="noopener">View on site ↗</a></td></tr>`});
+  }));
+  $('#l2tbl').innerHTML=`<div class="tablewrap"><table><thead><tr><th></th><th>Code</th><th>Service</th><th>Coverage</th><th>Status</th><th>Page owner</th><th>Last reviewed</th><th>Items</th><th>Actions</th></tr></thead><tbody>${html||'<tr><td colspan="9" class="muted" style="padding:18px">No services match.</td></tr>'}</tbody></table></div><div class="pager"><span>${plural(n,'service')} shown</span></div>`;
+  const s=u.sel.size;
+  $('#l2bulk').innerHTML=s?`<div class="bulk" style="align-items:flex-start;flex-direction:column"><b>Bulk assign · ${plural(s,'service')} selected</b><div class="g3" style="width:100%">${[['bo','Page owner'],['be','Ask the expert'],['ba','Approved by']].map(([k,l])=>`<div class="fld"><label class="checks"><span><input type="checkbox" id="${k}On"> Set ${l}</span></label>${pk(k,'',{optional:1,label:l})}</div>`).join('')}</div><div class="row"><button type="button" class="btn small primary" data-act="l2Bulk">Apply to selected</button><button type="button" class="linkbtn" data-act="l2SelClear">Clear selection</button></div></div>`:'';
+}
+ACTS.l2Sel=el=>{el.checked?UI.l2.sel.add(el.dataset.c):UI.l2.sel.delete(el.dataset.c);renderL2Tbl()};
+ACTS.l2SelGrp=el=>{DR.taxonomy.forEach(a=>a.l1.forEach(b=>{if(b.code===el.dataset.g)b.l2.forEach(x=>{if(l2Match({code:x.code,name:x.name,l0:a,l1:b}))el.checked?UI.l2.sel.add(x.code):UI.l2.sel.delete(x.code)})}));renderL2Tbl()};
+ACTS.l2SelClear=()=>{UI.l2.sel.clear();renderL2Tbl()};
+ACTS.l2Bulk=()=>{
+  const set=[['bo','owner','page owner'],['be','expert','expert'],['ba','approver','approver']].filter(([k])=>$('#'+k+'On').checked);
+  if(!set.length)return toast('Tick what you want to set first.');
+  const codes=[...UI.l2.sel];
+  codes.forEach(c=>{const p=DR.l2Pages[c]||(DR.l2Pages[c]=newPage());set.forEach(([k,f])=>p[f]=$('[name='+k+']').value)});
+  commit('edited','Service pages','bulk',`Bulk assign: ${set.map(([k,f,l])=>`${l} → ${personName($('[name='+k+']').value)}`).join(', ')} for ${plural(codes.length,'service')} (${codes.slice(0,4).join(', ')}${codes.length>4?'…':''})`);
+  UI.l2.sel.clear();renderL2Tbl();toast('Assigned for '+plural(codes.length,'service')+'.');
+};
+ACTS.l2Edit=el=>l2Form(el.dataset.c);
+function metaPreview(v){
+  const chip=id=>id?`<span class="person"><span class="av">${esc(initials(personName(id)))}</span>${esc(personName(id))}</span>`:'<span class="muted"><i>To be assigned</i></span>';
+  return `<div class="metaprev"><div><b>Page owner</b>${chip(v.owner)}</div><div><b>Ask the expert</b>${chip(v.expert)}</div><div><b>Approved by</b>${chip(v.approver)}${v.approver&&v.status!=='Approved'?' <span class="pill p-draft">Pending</span>':''}</div><div><b>Last reviewed</b>${v.lastReviewed?fmtD(v.lastReviewed):'<i class="muted">Not yet</i>'}</div></div>`;
+}
+function l2Form(code){
+  const info=l2Info(code),pg0=page(code)||newPage(),o=clone(pg0);
+  let steps=clone(o.steps||[]),moves={};const origNames={};steps.forEach(s=>origNames[s.id]=s.name);
+  const l3=DR.l3[code]||[];
+  const stepHtml=()=>(steps.length?`<label class="checks"><span><input type="radio" name="kmstep" data-km value="" ${steps.some(s=>s.km)?'':'checked'}> No step highlighted</span></label>`:'')+(steps.length?steps.map((s,i)=>`<div class="steprow" data-sid="${s.id}"><div class="r1"><b>${i+1}</b><input type="text" data-k="name" value="${esc(s.name)}" aria-label="Step name" placeholder="Step name"><select data-k="l3" aria-label="L3 function"><option value="">No L3</option>${l3.map(f=>`<option value="${f.code}" ${s.l3===f.code?'selected':''}>${f.code}</option>`).join('')}</select></div>
+     <div class="chips" role="group" aria-label="Roles">${ROLES.map(r=>`<button type="button" class="chip ${s.who.includes(r)?'on':''}" data-role="${r}" aria-pressed="${s.who.includes(r)}">${r}</button>`).join('')}${s.who.filter(w=>!ROLES.includes(w)).map(w=>`<button type="button" class="chip on" data-role="${esc(w)}">${esc(w)}</button>`).join('')}<input type="text" data-k="extra" placeholder="+ role" style="width:90px;padding:4px 8px" aria-label="Add a role"></div>
+     <div class="row between"><label class="checks"><span><input type="radio" name="kmstep" data-km value="${s.id}" ${s.km?'checked':''}> Covered by current KM</span></label><span class="row"><button type="button" class="btn small" data-mv="-1" ${i===0?'disabled':''} aria-label="Move up">↑</button><button type="button" class="btn small" data-mv="1" ${i===steps.length-1?'disabled':''} aria-label="Move down">↓</button><button type="button" class="btn small danger" data-del>Delete</button></span></div></div>`).join(''):'<p class="muted small">No steps yet. Without steps, the page shows all knowledge for the service together.</p>');
+  const body=`<div class="banner info">${towerPill(info.l0)} ${esc(info.l1.code+' '+info.l1.name)} › <b>${esc(code+' '+info.name)}</b><br><span class="small">Code and name are read-only (taxonomy).</span></div>
+   <div class="g2">${fld('coverage','Coverage',sel('coverage',Object.entries(COV),o.coverage))}${fld('status','Status',sel('status',STATUSES,o.status))}</div>
+   <div class="g3"><div class="fld" data-f="owner"><label class="lb">Page owner</label>${pk('owner',o.owner,{optional:1,label:'Page owner'})}<div class="err"></div></div><div class="fld" data-f="expert"><label class="lb">Ask the expert</label>${pk('expert',o.expert,{optional:1,label:'Ask the expert'})}<div class="err"></div></div><div class="fld" data-f="approver"><label class="lb">Approved by</label>${pk('approver',o.approver,{optional:1,label:'Approved by'})}<div class="err"></div></div></div>
+   <div class="fld" data-f="lastReviewed"><label for="f_lastReviewed">Last reviewed</label><div class="row"><input type="date" id="f_lastReviewed" name="lastReviewed" value="${esc(o.lastReviewed)}" style="max-width:180px"><button type="button" class="btn small" data-act="markToday">Mark reviewed today</button></div><div class="err"></div></div>
+   ${fld('intro','Intro',`<textarea id="f_intro" name="intro" maxlength="400">${esc(o.intro)}</textarea>`,{counter:1})}
+   <div><span class="lb muted small"><b>How the meta row looks on the site</b></span><div id="mprev" style="margin-top:6px"></div></div>
+   <div><h3>Process steps</h3><p class="hint">Add, rename, reorder or delete steps. Only one step can be highlighted as covered by the current KM pilot.</p><div id="steps" class="gap" style="margin-top:8px">${stepHtml()}</div><div style="margin-top:8px"><button type="button" class="btn small" data-addstep>+ Add step</button></div><div class="err" id="stepErr"></div></div>
+   <details class="acc"><summary>Functions (L3) · ${l3.length} · read-only</summary><div class="body">${l3.length?`<ul class="ol">${l3.map(f=>`<li><b>${f.code}</b> ${esc(f.name)}${f.details?`<div class="muted small">${esc(f.details.join('; '))}</div>`:''}</li>`).join('')}</ul>`:'<p class="muted small">No functions in the taxonomy for this service.</p>'}<p class="hint">Request taxonomy change: contact Process Excellence. Changes are made by importing an updated taxonomy in Settings.</p></div></details>`;
+  let panelRec;
+  openPanel({title:'Edit service page',body,
+    validate(v){const e={};if(v.intro.length>400)e.intro='Keep the intro under 400 characters.';return e},
+    onOpen(rec,form){
+      panelRec=rec;const upd=()=>{$('#mprev',form).innerHTML=metaPreview(readForm(form))};upd();form.addEventListener('input',upd);form.addEventListener('change',upd);counters(form);
+      const wrap=$('#steps',form);
+      const redraw=()=>{wrap.innerHTML=stepHtml();rec.markDirty()};
+      const find=e=>{const r=e.target.closest('.steprow');return r?steps.find(s=>s.id===r.dataset.sid):null};
+      wrap.addEventListener('input',e=>{const s=find(e),k=e.target.dataset.k;if(s&&k==='name')s.name=e.target.value});
+      wrap.addEventListener('change',e=>{const s=find(e),k=e.target.dataset.k;if(!s)return;if(k==='l3')s.l3=e.target.value;if(e.target.dataset.km!==undefined){steps.forEach(x=>x.km=x.id===e.target.value)}});
+      wrap.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.k==='extra'){e.preventDefault();const s=find(e),w=e.target.value.trim();if(s&&w&&!s.who.includes(w)){s.who.push(w);redraw()}}});
+      wrap.addEventListener('click',e=>{
+        const s=find(e);if(!s)return;
+        if(e.target.dataset.role){const r=e.target.dataset.role;s.who=s.who.includes(r)?s.who.filter(x=>x!==r):[...s.who,r];redraw()}
+        else if(e.target.dataset.mv){const i=steps.indexOf(s),j=i+ +e.target.dataset.mv;if(j>=0&&j<steps.length){[steps[i],steps[j]]=[steps[j],steps[i]];redraw()}}
+        else if(e.target.hasAttribute('data-del')){
+          const used=DR.items.filter(i=>i.l2===code&&i.step===origNames[s.id]);
+          const doDel=target=>{if(used.length)moves[s.id]={from:origNames[s.id],to:target};steps=steps.filter(x=>x!==s);redraw()};
+          if(!used.length)return doDel('');
+          const others=steps.filter(x=>x!==s);
+          const m=modal(`<h2>Move ${plural(used.length,'item')} first</h2><p class="sub">“${esc(s.name||'This step')}” still has ${plural(used.length,'item')}. Choose where they should go. The move happens when you save the page.</p><div class="fld"><label for="mvTo">Move items to</label><select id="mvTo"><option value="">Whole service</option>${others.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></div><div class="acts"><button type="button" class="btn" data-x="c">Cancel</button><button type="button" class="btn danger solid" data-x="o">Move items and delete step</button></div>`,{label:'Move items',focus:'#mvTo'});
+          m.el.addEventListener('click',ev=>{const b=ev.target.closest('[data-x]');if(!b)return;if(b.dataset.x==='c')return m.close();const t=$('#mvTo',m.el).value,tn=t?(steps.find(x=>x.id===t)||{}).name:'';m.close();doDel(tn)});
+        }
+      });
+      $('[data-addstep]',form).addEventListener('click',()=>{const seq=(o.stepSeq||Math.max(0,...steps.map(s=>+s.id.replace('step-','')||0)))+1;o.stepSeq=seq;steps.push({id:'step-'+seq,name:'',l3:'',who:[],km:false});redraw();const rows=$$('.steprow input[data-k=name]',wrap);rows[rows.length-1].focus()});
+    },
+    onSave(v){
+      if(steps.some(s=>!s.name.trim())){$('#stepErr',panelRec.form).textContent='Give every step a name.';return false}
+      const p=DR.l2Pages[code]||(DR.l2Pages[code]=newPage());
+      const before=clone(p);
+      /* renamed or deleted steps: keep items attached */
+      steps.forEach(s=>{const was=origNames[s.id];if(was&&was!==s.name.trim())DR.items.forEach(i=>{if(i.l2===code&&i.step===was)i.step=s.name.trim()})});
+      Object.values(moves).forEach(m=>DR.items.forEach(i=>{if(i.l2===code&&i.step===m.from)i.step=m.to}));
+      Object.assign(p,{coverage:v.coverage,status:v.status,owner:v.owner,expert:v.expert,approver:v.approver,lastReviewed:v.lastReviewed,intro:v.intro.trim()});
+      const clean=steps.map(s=>({id:s.id,name:s.name.trim(),l3:s.l3||'',who:s.who,km:!!s.km}));
+      if(clean.length){p.steps=clean;p.stepSeq=o.stepSeq||Math.max(...clean.map(s=>+s.id.replace('step-','')||0))}else delete p.steps;
+      const ch=[];
+      if(before.coverage!==p.coverage)ch.push(`Coverage ${COV[before.coverage]} → ${COV[p.coverage]}`);
+      if(before.status!==p.status)ch.push(`Status ${before.status} → ${p.status}`);
+      [['owner','Page owner'],['expert','Expert'],['approver','Approver']].forEach(([k,l])=>{if(before[k]!==p[k])ch.push(`${l} ${personName(before[k])} → ${personName(p[k])}`)});
+      if(before.lastReviewed!==p.lastReviewed)ch.push('Last reviewed '+(p.lastReviewed?fmtD(p.lastReviewed):'cleared'));
+      if(before.intro!==p.intro)ch.push('Intro edited');
+      if(JSON.stringify(before.steps||[])!==JSON.stringify(p.steps||[]))ch.push(`Process steps changed (${plural(clean.length,'step')})`);
+      if(Object.keys(moves).length)ch.push('Moved items from deleted steps');
+      if(!ch.length){toast('No changes to save.');return}
+      commit('edited','Service pages',code,`${code} ${info.name}: ${ch.join('; ')}`);toast('Service page saved.');renderL2Tbl();
+    }});
+}
+ACTS.markToday=el=>{const f=el.closest('form').querySelector('[name=lastReviewed]');f.value=todayJ();f.dispatchEvent(new Event('input',{bubbles:true}))};
+
+/* ===== 4. People directory ===== */
+const usage=id=>peopleRefs().filter(r=>r.id===id);
+VIEWS.people={
+  preset(p){UI.people.q=(p&&p.q)||''},
+  render(){return `<div class="row between"><div><h1>People directory</h1><p class="sub">The people shown as Page owner, Ask the expert, Approved by, item Owner and Escalate to. Pages and items store only the person, so editing someone here updates every place they appear.</p></div><button type="button" class="btn primary" data-act="personAdd">+ Add person</button></div>
+   <section class="panel pad gap"><div class="banner warn">The seeded people (cass-example.co.id) are fictional samples. Replace them with real staff before go-live.</div>
+   <div class="filters"><div class="fld" style="flex:1;min-width:220px"><label for="pq">Search</label><input id="pq" type="search" value="${esc(UI.people.q)}" placeholder="Name, role, team or email" data-oninput="peopleF"></div></div><div id="ptbl"></div></section>`},
+  mount(){renderPeople()}
+};
+ON.peopleF=el=>{UI.people.q=el.value;renderPeople()};
+function renderPeople(){
+  const q=UI.people.q.trim().toLowerCase(),list=DR.people.filter(p=>!q||(p.name+' '+p.role+' '+p.team+' '+p.email).toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+  $('#ptbl').innerHTML=`<div class="tablewrap"><table><thead><tr><th>Name</th><th>Role</th><th>Team</th><th>Email</th><th>Used on</th><th>Actions</th></tr></thead><tbody>${list.map(p=>{const n=usage(p.id).length;return `<tr><td><span class="person"><span class="av">${esc(initials(p.name))}</span>${esc(p.name)}</span></td><td>${esc(p.role)}</td><td>${esc(p.team)}</td><td>${esc(p.email)}</td><td>${n?`<button type="button" class="linkbtn" data-act="personUse" data-id="${esc(p.id)}">${plural(n,'place')}</button>`:'<span class="muted">Not used</span>'}</td><td class="acts"><button type="button" class="btn small" data-act="personEdit" data-id="${esc(p.id)}">Edit</button><button type="button" class="btn small danger" data-act="personDel" data-id="${esc(p.id)}">Delete</button></td></tr>`}).join('')||'<tr><td colspan="6" class="muted" style="padding:18px">No one matches.</td></tr>'}</tbody></table></div><div class="pager"><span>${plural(list.length,'person','people')}</span></div>`;
+}
+ACTS.personAdd=()=>openPersonForm(null);
+ACTS.personEdit=el=>openPersonForm(person(el.dataset.id));
+ACTS.personUse=el=>{const p=person(el.dataset.id),u=usage(p.id);infoDlg(`Where ${p.name} is used`,`<ul class="list">${u.map(r=>`<li><div class="t"><b>${esc(r.kind)}</b> · ${esc(r.label)}</div></li>`).join('')}</ul>`,true)};
+function popPreview(v){
+  return `<div class="popprev"><div class="ph"><span class="bigav">${esc(initials(v.name||'?'))}</span><div><b>${esc(v.name||'Name')}</b><div class="muted small">${esc(v.role||'Role')}</div></div></div><dl><dt>Team</dt><dd>${esc(v.team||'—')}</dd><dt>Email</dt><dd>${esc(v.email||'—')}</dd><dt>Phone</dt><dd>${esc(v.phone||'—')}</dd><dt>Office</dt><dd>${esc(v.location||'—')}</dd><dt>Hours</dt><dd>${esc(v.hours||'—')}</dd></dl><div class="muted small">${esc(v.about||'')}</div></div>`;
+}
+function openPersonForm(p,onSaved){
+  const isNew=!p,o=p||{name:'',role:'',team:'',email:'',phone:'',location:'',hours:'Mon–Fri, 08:00–17:00 WIB',about:''};
+  const body=`${fld('name','Name',inp('name',o.name,'autocomplete="off"'),{req:1})}${fld('role','Role',inp('role',o.role),{req:1})}${fld('team','Team',inp('team',o.team,'placeholder="e.g. Finance & Accounting · Order to Cash"'))}
+   ${fld('email','Work email',`<input type="email" id="f_email" name="email" value="${esc(o.email)}" autocomplete="off">`,{req:1})}
+   <div class="g2">${fld('phone','Phone',inp('phone',o.phone))}${fld('location','Office location',inp('location',o.location))}</div>${fld('hours','Working hours',inp('hours',o.hours))}
+   ${fld('about','About (one line)',`<textarea id="f_about" name="about" maxlength="160" style="min-height:56px">${esc(o.about)}</textarea>`,{counter:1})}
+   <div><span class="lb muted small"><b>How the pop-up looks to readers</b></span><div id="ppv" style="margin-top:6px"></div></div>`;
+  openPanel({title:isNew?'Add person':'Edit person',body,saveLabel:isNew?'Add person':'Save changes',
+    validate(v){const e={};if(!v.name.trim())e.name='Enter a name.';if(!v.role.trim())e.role='Enter a role.';
+      if(!v.email.trim())e.email='Enter a work email.';else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim()))e.email='Enter a valid email address.';
+      else if(DR.people.some(x=>x!==p&&x.email.toLowerCase()===v.email.trim().toLowerCase()))e.email='Someone else already has this email.';
+      if(v.about.length>160)e.about='Keep it under 160 characters.';return e},
+    onOpen(rec,form){const u=()=>{$('#ppv',form).innerHTML=popPreview(readForm(form))};u();form.addEventListener('input',u);counters(form)},
+    onSave(v){
+      const val={name:v.name.trim(),role:v.role.trim(),team:v.team.trim(),email:v.email.trim(),phone:v.phone.trim(),location:v.location.trim(),hours:v.hours.trim(),about:v.about.trim()};
+      if(isNew){let id=slug(val.name),n=2;while(person(id))id=slug(val.name)+'-'+n++;DR.people.push({id,...val});commit('added','People directory',id,`Added ${val.name} (${val.role})`);toast(val.name+' added.');onSaved&&onSaved(id)}
+      else{const ch=Object.keys(val).filter(k=>p[k]!==val[k]).map(k=>k==='email'?`Email ${p.email} → ${val.email}`:k==='name'?`Name ${p.name} → ${val.name}`:`${k[0].toUpperCase()+k.slice(1)} edited`);if(!ch.length){toast('No changes to save.');return}Object.assign(p,val);commit('edited','People directory',p.id,`${val.name}: ${ch.join('; ')}`);toast('Saved. Every page and item that shows this person is updated.')}
+      if(CUR==='people')renderPeople();return true;
+    }});
+}
+function replaceRefs(oldId,newId){
+  DR.items.forEach(i=>{if(i.owner===oldId)i.owner=newId;if(i.escalateTo===oldId)i.escalateTo=newId});
+  Object.values(DR.l2Pages).forEach(pg=>['owner','expert','approver'].forEach(k=>{if(pg[k]===oldId)pg[k]=newId}));
+}
+ACTS.personDel=el=>{
+  const p=person(el.dataset.id),u=usage(p.id);
+  const finish=(rep)=>{
+    const snap={p:clone(p),idx:DR.people.indexOf(p),refs:u.length?clone({items:DR.items,pages:DR.l2Pages}):null};
+    if(u.length)replaceRefs(p.id,rep);DR.people=DR.people.filter(x=>x!==p);
+    commit('deleted','People directory',p.id,`Deleted ${p.name}${u.length?` (${plural(u.length,'reference')} moved to ${personName(rep)})`:''}`);renderPeople();
+    toast(p.name+' deleted.',()=>{DR.people.splice(Math.min(snap.idx,DR.people.length),0,snap.p);if(snap.refs){DR.items=snap.refs.items;DR.l2Pages=snap.refs.pages}commit('added','People directory',p.id,'Restored '+p.name);renderPeople();toast('Restored.')});
+  };
+  if(!u.length)return confirmDlg({title:`Delete ${p.name}?`,body:'<p class="sub">Nothing refers to this person.</p>',ok:'Delete',danger:true,onOk:()=>finish('')});
+  const m=modal(`<h2>${esc(p.name)} is still used</h2><p class="sub">They appear in ${plural(u.length,'place')}:</p><ul class="ol" style="max-height:160px;overflow:auto">${u.map(r=>`<li><b>${esc(r.kind)}</b> · ${esc(r.label)}</li>`).join('')}</ul>
+   <div class="fld"><label for="repl">Replace them with</label><select id="repl"><option value="">To be assigned</option>${DR.people.filter(x=>x!==p).map(x=>`<option value="${esc(x.id)}">${esc(x.name)} · ${esc(x.role)}</option>`).join('')}</select></div>
+   <div class="acts"><button type="button" class="btn" data-x="c">Cancel</button><button type="button" class="btn danger solid" data-x="o">Replace and delete</button></div>`,{label:'Replace person',focus:'#repl'});
+  m.el.addEventListener('click',e=>{const b=e.target.closest('[data-x]');if(!b)return;if(b.dataset.x==='c')return m.close();const r=$('#repl',m.el).value;m.close();finish(r)});
+};
+
+/* ===== 5. Glossary ===== */
+const TW=()=>DR.towerNames;
+const gTowerText=g=>g.towers.includes('all')?'All towers':g.towers.map(c=>TW()[c]).join(', ');
+const gPills=g=>!g.towers.length?'<span class="muted"><i>Not assigned yet</i></span>':g.towers.includes('all')?'<span class="pill p-role">All towers</span>':g.towers.map(c=>`<span class="pill tw tw-${c}">${esc(TW()[c])}</span>`).join(' ');
+function gFiltered(){
+  const u=UI.gloss,q=u.q.trim().toLowerCase();
+  return DR.glossary.filter(g=>{
+    if(u.tower==='none'){if(g.towers.length)return false}else if(u.tower!=='all'&&!(g.towers.includes(u.tower)||g.towers.includes('all')))return false;
+    if(u.help==='notower'&&g.towers.length)return false;if(u.help==='nomean'&&g.meaning)return false;
+    return !q||(g.term+' '+g.meaning+' '+gTowerText(g)).toLowerCase().includes(q);
+  }).sort((a,b)=>a.term.localeCompare(b.term,'en',{numeric:true,sensitivity:'base'}));
+}
+VIEWS.gloss={
+  preset(p){Object.assign(UI.gloss,{q:'',tower:'all',help:'',edit:null,adding:false},p||{});UI.gloss.sel=new Set()},
+  render(){
+    const u=UI.gloss;
+    return `<div class="row between"><div><h1>Glossary</h1><p class="sub">Acronyms and terms with the towers they relate to. A term can belong to several towers. Leave Towers empty if unknown: it shows as “Not assigned yet” on the site.</p></div><div class="row"><button type="button" class="btn" data-act="gCsvOut">Export CSV</button><button type="button" class="btn" data-act="gCsvIn">Import CSV…</button><button type="button" class="btn primary" data-act="gAdd">+ Add term</button></div></div>
+    <input type="file" id="csvFile" accept=".csv,.txt" hidden>
+    <section class="panel pad gap"><div class="filters"><div class="fld" style="flex:1;min-width:220px"><label for="gq">Search</label><input id="gq" type="search" value="${esc(u.q)}" placeholder="Term, meaning or tower" data-oninput="glF"></div></div>
+     <div class="chips" role="group" aria-label="Filter by tower"><button type="button" class="chip ${u.tower==='all'?'on':''}" data-act="gTower" data-t="all">All towers</button>${Object.entries(TW()).map(([k,n])=>`<button type="button" class="chip tchip tw-${k} ${u.tower===k?'on':''}" data-act="gTower" data-t="${k}">${esc(n)}</button>`).join('')}<button type="button" class="chip ${u.tower==='none'?'on':''}" data-act="gTower" data-t="none">Not assigned yet</button></div>
+     <div class="row"><button type="button" class="chip ${u.help==='notower'?'on':''}" data-act="gHelp" data-h="notower">Show terms with no tower</button><button type="button" class="chip ${u.help==='nomean'?'on':''}" data-act="gHelp" data-h="nomean">Show terms with no meaning</button><span class="muted small" id="gcount"></span></div>
+     <div id="gbulk"></div><div id="gtbl"></div></section>`;
+  },
+  mount(){renderGloss()}
+};
+ON.glF=el=>{UI.gloss.q=el.value;renderGloss()};
+ACTS.gTower=el=>{UI.gloss.tower=el.dataset.t;rerender()};
+ACTS.gHelp=el=>{UI.gloss.help=UI.gloss.help===el.dataset.h?'':el.dataset.h;rerender()};
+const gKey=t=>t.toLowerCase();
+function gEditRow(g){
+  const t=g?g.towers:[];
+  return `<tr id="gedit"><td></td><td><div class="fld"><input type="text" name="gterm" value="${esc(g?g.term:'')}" aria-label="Term" maxlength="40"><div class="err" id="gErr"></div></div></td><td><textarea name="gmean" aria-label="Meaning" style="min-height:52px">${esc(g?g.meaning:'')}</textarea></td><td><div class="checks" style="flex-direction:column;gap:4px">${Object.entries(TW()).map(([k,n])=>`<label><input type="checkbox" name="gtw" value="${k}" ${t.includes(k)?'checked':''}> <span class="pill tw tw-${k}">${esc(n)}</span></label>`).join('')}<label><input type="checkbox" name="gtw" value="all" ${t.includes('all')?'checked':''}> <span class="pill p-role">All towers</span></label></div></td><td class="acts"><button type="button" class="btn small primary" data-act="gSave">Save</button><button type="button" class="btn small" data-act="gCancel">Cancel</button></td></tr>`;
+}
+function renderGloss(){
+  const u=UI.gloss,list=gFiltered();
+  $('#gcount').textContent=plural(list.length,'term')+(list.length!==DR.glossary.length?' of '+DR.glossary.length:'');
+  const allSel=list.length&&list.every(g=>u.sel.has(gKey(g.term)));
+  $('#gtbl').innerHTML=`<div class="tablewrap"><table><thead><tr><th><input type="checkbox" data-act="gSelAll" aria-label="Select all shown terms" ${allSel?'checked':''}></th><th>Term</th><th>Meaning</th><th>Towers</th><th>Actions</th></tr></thead><tbody>${u.adding?gEditRow(null):''}${list.map(g=>(u.edit&&gKey(g.term)===gKey(u.edit))?gEditRow(g):`<tr class="${u.sel.has(gKey(g.term))?'sel':''}"><td><input type="checkbox" data-act="gSel" data-t="${esc(g.term)}" aria-label="Select ${esc(g.term)}" ${u.sel.has(gKey(g.term))?'checked':''}></td><td><b>${esc(g.term)}</b></td><td>${g.meaning?esc(g.meaning):'<i class="muted">Meaning to be added</i>'}</td><td>${gPills(g)}</td><td class="acts"><button type="button" class="btn small" data-act="gEdit" data-t="${esc(g.term)}">Edit</button><button type="button" class="btn small danger" data-act="gDel" data-t="${esc(g.term)}">Delete</button></td></tr>`).join('')||(u.adding?'':'<tr><td colspan="5" class="muted" style="padding:18px">No terms match.</td></tr>')}</tbody></table></div>`;
+  const n=u.sel.size;
+  $('#gbulk').innerHTML=n?`<div class="bulk"><b>${plural(n,'term')} selected</b><select id="gbMode" aria-label="Bulk action"><option value="add">Add tower</option><option value="set">Set only this tower</option><option value="remove">Remove tower</option></select><select id="gbTower" aria-label="Tower">${Object.entries(TW()).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('')}<option value="all">All towers</option></select><button type="button" class="btn small primary" data-act="gBulk">Apply</button><button type="button" class="linkbtn" data-act="gSelClear">Clear selection</button></div>`:'';
+}
+ACTS.gSel=el=>{el.checked?UI.gloss.sel.add(gKey(el.dataset.t)):UI.gloss.sel.delete(gKey(el.dataset.t));renderGloss()};
+ACTS.gSelAll=el=>{gFiltered().forEach(g=>el.checked?UI.gloss.sel.add(gKey(g.term)):UI.gloss.sel.delete(gKey(g.term)));renderGloss()};
+ACTS.gSelClear=()=>{UI.gloss.sel.clear();renderGloss()};
+ACTS.gAdd=()=>{UI.gloss.adding=true;UI.gloss.edit=null;renderGloss();const i=$('[name=gterm]');i&&i.focus()};
+ACTS.gEdit=el=>{UI.gloss.edit=el.dataset.t;UI.gloss.adding=false;renderGloss();$('[name=gterm]').focus()};
+ACTS.gCancel=()=>{UI.gloss.edit=null;UI.gloss.adding=false;renderGloss()};
+ACTS.gSave=()=>{
+  const u=UI.gloss,row=$('#gedit'),term=$('[name=gterm]',row).value.trim(),meaning=$('[name=gmean]',row).value.trim();
+  let tw=$$('[name=gtw]:checked',row).map(x=>x.value);if(tw.includes('all'))tw=['all'];
+  const old=u.edit?DR.glossary.find(g=>gKey(g.term)===gKey(u.edit)):null;
+  const err=$('#gErr');
+  if(!term){err.textContent='Enter a term.';return}
+  if(DR.glossary.some(g=>g!==old&&gKey(g.term)===gKey(term))){err.textContent='This term already exists.';return}
+  if(old){const ch=[];if(old.term!==term)ch.push(`Term ${old.term} → ${term}`);if(old.meaning!==meaning)ch.push('Meaning edited');if(JSON.stringify(old.towers)!==JSON.stringify(tw))ch.push(`Towers ${old.towers.length?gTowerText(old):'none'} → ${tw.length?gTowerText({towers:tw}):'none'}`);
+    if(!ch.length){u.edit=null;renderGloss();return}Object.assign(old,{term,meaning,towers:tw});commit('edited','Glossary',term,`${term}: ${ch.join('; ')}`);}
+  else{DR.glossary.push({term,meaning,towers:tw});commit('added','Glossary',term,`Added term ${term}${tw.length?' ('+gTowerText({towers:tw})+')':' (no tower yet)'}`)}
+  u.edit=null;u.adding=false;renderGloss();toast(old?'Term saved.':'Term added.');
+};
+ACTS.gDel=el=>{
+  const g=DR.glossary.find(x=>x.term===el.dataset.t);if(!g)return;
+  confirmDlg({title:`Delete “${g.term}”?`,body:'<p class="sub">This removes the term from the glossary when you publish.</p>',ok:'Delete',danger:true,onOk:()=>{
+    const idx=DR.glossary.indexOf(g);DR.glossary.splice(idx,1);UI.gloss.sel.delete(gKey(g.term));commit('deleted','Glossary',g.term,`Deleted term ${g.term}`);renderGloss();
+    toast('Term deleted.',()=>{DR.glossary.splice(idx,0,g);commit('added','Glossary',g.term,'Restored term '+g.term);renderGloss()})}});
+};
+ACTS.gBulk=()=>{
+  const mode=$('#gbMode').value,t=$('#gbTower').value,terms=DR.glossary.filter(g=>UI.gloss.sel.has(gKey(g.term)));
+  terms.forEach(g=>{
+    if(mode==='set')g.towers=[t];
+    else if(mode==='add'){if(t==='all')g.towers=['all'];else if(!g.towers.includes('all')&&!g.towers.includes(t))g.towers=[...g.towers,t].sort()}
+    else g.towers=g.towers.filter(x=>x!==t);
+  });
+  const name=t==='all'?'All towers':TW()[t];
+  commit('edited','Glossary','bulk',`Bulk tag: ${mode==='add'?'added':mode==='set'?'set only':'removed'} ${name} for ${plural(terms.length,'term')} (${terms.slice(0,4).map(g=>g.term).join(', ')}${terms.length>4?'…':''})`);
+  UI.gloss.sel.clear();renderGloss();toast('Updated '+plural(terms.length,'term')+'.');
+};
+/* CSV */
+const csvQ=s=>'"'+String(s).replace(/"/g,'""')+'"';
+ACTS.gCsvOut=()=>{
+  const rows=[['term','meaning','towers'],...DR.glossary.slice().sort((a,b)=>a.term.localeCompare(b.term)).map(g=>[g.term,g.meaning,g.towers.includes('all')?'All towers':g.towers.map(c=>TW()[c]).join(';')])];
+  const blob=new Blob(['﻿'+rows.map(r=>r.map(csvQ).join(',')).join('\r\n')+'\r\n'],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cass-glossary.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Glossary exported.');
+};
+ACTS.gCsvIn=()=>$('#csvFile').click();
+function parseCSV(t){const rows=[];let r=[],f='',q=false;t=t.replace(/^﻿/,'');for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}else if(c==='"')q=true;else if(c===','){r.push(f);f=''}else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;r.push(f);f='';if(r.some(x=>x!==''))rows.push(r);r=[]}else f+=c}r.push(f);if(r.some(x=>x!==''))rows.push(r);return rows}
+document.addEventListener('change',e=>{
+  if(e.target.id!=='csvFile'||!e.target.files[0])return;
+  const file=e.target.files[0];e.target.value='';const fr=new FileReader();
+  fr.onload=()=>{
+    const rows=parseCSV(String(fr.result));if(rows.length&&/^term$/i.test(rows[0][0].trim()))rows.shift();
+    const byName={};Object.entries(TW()).forEach(([k,n])=>byName[n.toLowerCase()]=k);byName['all towers']='all';
+    const errs=[],good=[];
+    rows.forEach((r,i)=>{const term=(r[0]||'').trim(),meaning=(r[1]||'').trim(),names=(r[2]||'').split(';').map(x=>x.trim()).filter(Boolean);
+      if(!term){errs.push(`Row ${i+1}: term is empty`);return}
+      const tw=[];let bad=false;names.forEach(n=>{const c=byName[n.toLowerCase()];if(!c){errs.push(`Row ${i+1} (${term}): unknown tower “${n}”`);bad=true}else if(!tw.includes(c))tw.push(c)});
+      if(!bad)good.push({term,meaning,towers:tw.includes('all')?['all']:tw})});
+    const add=good.filter(g=>!DR.glossary.some(x=>gKey(x.term)===gKey(g.term))),upd=good.length-add.length;
+    const m=modal(`<h2>Import glossary CSV</h2><p>${plural(add.length,'new term')}, ${plural(upd,'term')} to update, ${plural(errs.length,'row')} with problems.</p>${errs.length?`<div class="banner warn"><b>These rows are skipped:</b><ul class="ol">${errs.slice(0,8).map(x=>`<li>${esc(x)}</li>`).join('')}${errs.length>8?`<li>…and ${errs.length-8} more</li>`:''}</ul></div>`:''}<p class="hint">Existing terms are matched by term, ignoring capitals, and replaced by the CSV row.</p><div class="acts"><button type="button" class="btn" data-x="c">Cancel</button><button type="button" class="btn primary" data-x="o" ${good.length?'':'disabled'}>Apply import</button></div>`,{label:'Import glossary'});
+    m.el.addEventListener('click',ev=>{const b=ev.target.closest('[data-x]');if(!b)return;if(b.dataset.x==='c')return m.close();
+      good.forEach(g=>{const o=DR.glossary.find(x=>gKey(x.term)===gKey(g.term));if(o)Object.assign(o,g);else DR.glossary.push(g)});
+      commit('imported','Glossary','csv',`Imported glossary CSV: ${plural(add.length,'term')} added, ${upd} updated`);m.close();renderGloss();toast('Glossary imported.')});
+  };
+  fr.readAsText(file);
+});
+
+/* ===== 6. Academy (pathway and tests) ===== */
+const AC=()=>DR.academy;
+const range=ws=>{ws=[...ws].sort((a,b)=>a-b);if(!ws.length)return 'no weeks';const out=[];let s=ws[0],p=s;for(let i=1;i<=ws.length;i++){if(ws[i]===p+1){p=ws[i];continue}out.push(s===p?String(s):s+'–'+p);s=ws[i];p=s}return (ws.length>1?'Weeks ':'Week ')+out.join(', ')};
+const coversText=t=>t.id==='final'?`${range(t.weeks)}, with extra weight on ${range(AC().settings.finalRecentWeeks).toLowerCase()}`:range(t.weeks);
+const MTYPES=()=>[...DR.itemTypes.map(t=>t.name),'Glossary','Service page'];
+const tSlug=t=>slug(t.name);
+const previewWeek=(n,t)=>`academy-week.html?week=${n}&tower=${tSlug(t)}&as=admin#preview`;
+const previewTest=(id,t)=>`academy-test.html?test=${id}&tower=${tSlug(t)}&as=admin#preview`;
+VIEWS.acad={
+  preset(p){if(p&&p.tab)UI.acad.tab=p.tab},
+  render(){
+    const u=UI.acad;
+    return `<div><h1>Academy (pathway and tests)</h1><p class="sub">Edit what new joiners see in the New Joiner Academy: the weeks, their materials, the checkpoint tests and the question bank. Readers cannot change any of this.</p></div>
+    <div class="tabs" role="tablist"><button type="button" role="tab" class="${u.tab==='path'?'on':''}" aria-selected="${u.tab==='path'}" data-act="acTab" data-t="path">Pathway</button><button type="button" role="tab" class="${u.tab==='tests'?'on':''}" aria-selected="${u.tab==='tests'}" data-act="acTab" data-t="tests">Tests</button><button type="button" role="tab" class="${u.tab==='rules'?'on':''}" aria-selected="${u.tab==='rules'}" data-act="acTab" data-t="rules">Rules</button></div>
+    ${u.tab==='path'?pathHtml():u.tab==='rules'?rulesHtml():testsHtml()}`;
+  },
+  mount(){if(UI.acad.tab==='tests')renderQbank()}
+};
+ACTS.acTab=el=>{UI.acad.tab=el.dataset.t;rerender()};
+/* ---- Rules (read-only explanation) ---- */
+function rulesHtml(){
+  const s=AC().settings,on=b=>b?'<span class="pill p-ok">On</span>':'<span class="pill p-role">Off</span>';
+  return `<section class="panel pad gap"><h2>How progress works for joiners</h2><ol class="ol">
+   <li>A joiner picks a tower and only sees that tower’s 12-week path.</li>
+   <li>Each week has materials. The joiner opens a material, then marks it as finished. The week’s circle fills as materials are finished.</li>
+   <li>Materials marked “to be added” are greyed and not counted. A week with nothing to count has a “Mark week as done” button.</li>
+   <li>A week is complete when every counted material is finished. Then the next week opens.</li>
+   <li>A checkpoint test unlocks after the weeks it covers. Once a joiner takes it (even with a low score), the weeks it covers are frozen and can no longer be changed. Retakes are allowed.</li>
+   <li>Progress and test results are saved in the joiner’s own browser only.</li></ol></section>
+  <section class="panel pad gap"><h2>Current switches</h2><ul class="list">
+   <li><div class="t"><b>Lock weeks in order</b><div class="muted small">Week n opens only after every material in week n−1 is finished.</div></div>${on(s.lockWeeksInOrder)}</li>
+   <li><div class="t"><b>Lock weeks after a checkpoint is taken</b><div class="muted small">The weeks a checkpoint covers can no longer be changed once the joiner has taken it.</div></div>${on(s.lockAfterCheckpoint)}</li>
+   <li><div class="t"><b>Require passing the test to unlock the next week</b><div class="muted small">When on, the week after a checkpoint stays locked until that checkpoint is passed.</div></div>${on(s.requirePassToUnlockNextWeek)}</li></ul>
+   <p class="hint">Change the first two on the Pathway tab and the third on the Tests tab. Edits here only change the Academy in your draft; readers cannot change any of it.</p></section>`;
+}
+/* ---- Pathway ---- */
+function pathHtml(){
+  const s=AC().settings;
+  return `<section class="panel pad gap"><h2>Rules</h2>
+   <label class="sw"><input type="checkbox" data-on="acSw" name="lockWeeksInOrder" ${s.lockWeeksInOrder?'checked':''}><span><b>Lock weeks in order</b><br><span class="hint">Week n opens only after every material in week n−1 is finished.</span></span></label>
+   <label class="sw"><input type="checkbox" data-on="acSw" name="lockAfterCheckpoint" ${s.lockAfterCheckpoint?'checked':''}><span><b>Lock weeks after a checkpoint is taken</b><br><span class="hint">The weeks a checkpoint covers can no longer be changed once the joiner has taken it.</span></span></label></section>
+  <section class="panel pad gap"><h2>Towers</h2><p class="sub">Names follow the service taxonomy. The description shows on the tower cards.</p>
+   <div class="gap">${AC().towers.map((t,i)=>`<div class="matrow"><div class="row between"><span class="pill tw tw-${t.code}">${esc(t.name)}</span><span class="row"><button type="button" class="btn small primary" data-act="acTowerSave" data-i="${i}">Save description</button></span></div><textarea aria-label="Description for ${esc(t.name)}" id="td${i}" style="min-height:52px">${esc(t.desc)}</textarea></div>`).join('')}</div></section>
+  <section class="panel pad gap"><h2>Weeks</h2><p class="sub">Each week has learning goals, materials every tower sees, and Knowledge Centre pages for each tower. Preview shows the draft as a new joiner would see it.</p>
+   <div class="tablewrap"><table><thead><tr><th>Week</th><th>Materials</th><th>Tower pages</th><th>Preview as</th><th>Actions</th></tr></thead><tbody>${AC().weeks.map(w=>{const c=AC().weekContent[w.n]||{materials:[]};const tl=AC().towers.map(t=>(t.links[w.n]||[]).length);
+    return `<tr><td><b>Week ${w.n}</b> · ${esc(w.title)}<small>${esc(w.hours)} · ${esc(w.desc)}</small></td><td>${c.materials.length}${c.materials.some(m=>m.tba)?` <span class="pill p-draft">${c.materials.filter(m=>m.tba).length} to be added</span>`:''}</td><td>${tl.some(x=>x)?AC().towers.map((t,i)=>tl[i]?`<span class="pill tw tw-${t.code}" title="${esc(t.name)}">${tl[i]}</span>`:'').join(' '):'<span class="muted">None</span>'}</td><td><div class="chips">${AC().towers.map(t=>`<a class="chip tchip tw-${t.code}" href="${previewWeek(w.n,t)}" target="_blank" rel="noopener" title="Preview week ${w.n} as ${esc(t.name)}">${esc(t.name.split(' ')[0].replace('&',''))}</a>`).join('')}</div></td><td class="acts"><button type="button" class="btn small" data-act="acWeek" data-n="${w.n}">Edit week</button></td></tr>`}).join('')}</tbody></table></div></section>`;
+}
+ON.acSw=el=>{AC().settings[el.name]=el.checked;commit('edited','Academy','rules',`${el.name==='lockWeeksInOrder'?'Lock weeks in order':'Lock weeks after a checkpoint is taken'} ${el.checked?'on':'off'}`);toast('Saved.')};
+ACTS.acTowerSave=el=>{const t=AC().towers[+el.dataset.i],v=$('#td'+el.dataset.i).value.trim();if(!v)return toast('The description cannot be empty.');if(v===t.desc)return toast('No changes to save.');t.desc=v;commit('edited','Academy',t.code,`Tower description edited: ${t.name}`);toast('Description saved.')};
+ACTS.acWeek=el=>weekForm(+el.dataset.n);
+function weekForm(n){
+  const w=AC().weeks.find(x=>x.n===n),c0=AC().weekContent[n]||{goals:[],materials:[]};
+  let mats=clone(c0.materials),links={};AC().towers.forEach(t=>links[t.code]=clone(t.links[n]||[]));let tw=AC().towers[0].code;
+  const matHtml=()=>mats.length?mats.map((m,i)=>`<div class="matrow" data-i="${i}"><div class="g2"><div class="fld"><label class="lb">Type</label><select data-k="type">${MTYPES().map(t=>`<option ${t===m.type?'selected':''}>${esc(t)}</option>`).join('')}</select></div><div class="fld"><label class="lb">Time</label><input type="text" data-k="time" value="${esc(m.time)}" placeholder="e.g. 20 min"></div></div>
+     <div class="fld"><label class="lb">Title</label><input type="text" data-k="title" value="${esc(m.title)}"></div><div class="fld"><label class="lb">Description</label><input type="text" data-k="desc" value="${esc(m.desc)}"></div>
+     <div class="fld"><label class="lb">Link (empty = placeholder content)</label><div class="row"><input type="text" data-k="href" value="${esc(m.href||'')}" class="grow" placeholder="index.html#l2-… or https://…"><button type="button" class="btn small" data-pickl="m">Pick Knowledge Centre link</button></div></div>
+     <div class="row between"><label class="checks"><span><input type="checkbox" data-k="tba" ${m.tba?'checked':''}> To be added (not counted for progress)</span></label><span class="row"><button type="button" class="btn small" data-mv="-1" ${i===0?'disabled':''} aria-label="Move up">↑</button><button type="button" class="btn small" data-mv="1" ${i===mats.length-1?'disabled':''} aria-label="Move down">↓</button><button type="button" class="btn small danger" data-del>Delete</button></span></div></div>`).join(''):'<p class="muted small">No materials yet.</p>';
+  const linkHtml=()=>`<div class="chips" role="tablist">${AC().towers.map(t=>`<button type="button" class="chip tchip tw-${t.code} ${t.code===tw?'on':''}" data-tw="${t.code}">${esc(t.name)}</button>`).join('')}</div><div class="gap" style="margin-top:8px">${links[tw].map((l,i)=>`<div class="matrow" data-i="${i}"><div class="fld"><label class="lb">Label</label><input type="text" data-k="title" value="${esc(l.title)}"></div><div class="fld"><label class="lb">Link</label><div class="row"><input type="text" data-k="href" value="${esc(l.href)}" class="grow"><button type="button" class="btn small" data-pickl="l">Pick Knowledge Centre link</button></div></div><div><button type="button" class="btn small danger" data-ldel>Delete</button></div></div>`).join('')||'<p class="muted small">No Knowledge Centre pages for this tower this week.</p>'}</div><div style="margin-top:8px"><button type="button" class="btn small" data-ladd>+ Add page</button></div>`;
+  const body=`<div class="g2">${fld('title','Title',inp('title',w.title),{req:1})}${fld('hours','Hours (about)',inp('hours',w.hours,'placeholder="e.g. 2 h"'))}</div>${fld('desc','Description',`<textarea id="f_desc" name="desc" style="min-height:56px">${esc(w.desc)}</textarea>`)}
+   ${fld('goals','Learning goals (one per line)',`<textarea id="f_goals" name="goals" style="min-height:90px">${esc(c0.goals.join('\n'))}</textarea>`)}
+   <div><h3>Materials every tower sees</h3><p class="banner warn small" style="margin:0 0 8px">Joiners’ finished materials are saved by id. Deleting a material, or replacing it with a new one, changes joiners’ progress for this week. To change the content of a material, edit it instead.</p><div id="mats" class="gap">${matHtml()}</div><div style="margin-top:8px"><button type="button" class="btn small" data-madd>+ Add material</button></div></div>
+   <div><h3>Knowledge Centre pages per tower</h3><p class="hint">These are added to the materials for that tower only.</p><div id="tlinks">${linkHtml()}</div></div>`;
+  openPanel({title:`Edit week ${n}`,body,
+    validate(v){const e={};if(!v.title.trim())e.title='Enter a title.';return e},
+    onOpen(rec,form){
+      const mw=$('#mats',form),lw=$('#tlinks',form);
+      const redrawM=()=>{mw.innerHTML=matHtml();rec.markDirty()},redrawL=()=>{lw.innerHTML=linkHtml();rec.markDirty()};
+      const rowOf=(e,wrap)=>{const r=e.target.closest('.matrow');return r&&wrap.contains(r)?+r.dataset.i:-1};
+      mw.addEventListener('input',e=>{const i=rowOf(e,mw),k=e.target.dataset.k;if(i>=0&&k&&k!=='tba')mats[i][k]=e.target.value});
+      mw.addEventListener('change',e=>{const i=rowOf(e,mw),k=e.target.dataset.k;if(i<0||!k)return;if(k==='tba'){mats[i].tba=e.target.checked}else mats[i][k]=e.target.value});
+      mw.addEventListener('click',e=>{const i=rowOf(e,mw);if(i<0)return;
+        if(e.target.dataset.mv){const j=i+ +e.target.dataset.mv;if(j>=0&&j<mats.length){[mats[i],mats[j]]=[mats[j],mats[i]];redrawM()}}
+        else if(e.target.hasAttribute('data-del')){mats.splice(i,1);redrawM()}
+        else if(e.target.dataset.pickl){openLinkPicker(h=>{mats[i].href=h;redrawM()})}});
+      $('[data-madd]',form).addEventListener('click',()=>{mats.push({id:'',type:'Training Material',title:'',time:'15 min',desc:'',href:'',tba:false});redrawM();const r=$$('.matrow input[data-k=title]',mw);r[r.length-1].focus()});
+      lw.addEventListener('input',e=>{const r=e.target.closest('.matrow');if(r&&e.target.dataset.k)links[tw][+r.dataset.i][e.target.dataset.k]=e.target.value});
+      lw.addEventListener('click',e=>{
+        if(e.target.dataset.tw){tw=e.target.dataset.tw;redrawL();return}
+        if(e.target.hasAttribute('data-ladd')){links[tw].push({title:'',href:''});redrawL();return}
+        const r=e.target.closest('.matrow');if(!r)return;const i=+r.dataset.i;
+        if(e.target.hasAttribute('data-ldel')){links[tw].splice(i,1);redrawL()}
+        else if(e.target.dataset.pickl){openLinkPicker(h=>{links[tw][i].href=h;if(!links[tw][i].title){const m=h.match(/#l2-([0-9.]+)/);if(m)links[tw][i].title=l2Label(m[1])}redrawL()})}});
+    },
+    onSave(v,rec){
+      if(mats.some(m=>!m.title.trim())||AC().towers.some(t=>links[t.code].some(l=>!l.title.trim()||!l.href.trim()))){toast('Every material and page needs a title (pages also need a link).');return false}
+      const allIds=new Set();Object.values(AC().weekContent).forEach(c=>c.materials.forEach(m=>allIds.add(m.id)));
+      /* new ids get a random part so an id that was deleted is never handed out again (joiners' progress is saved by id) */
+      mats.forEach(m=>{if(!m.id){let id;do{id=`w${n}-m${rid()}${rid()}`}while(allIds.has(id));m.id=id;allIds.add(id)}});
+      const goals=v.goals.split('\n').map(x=>x.trim()).filter(Boolean);
+      const cleanM=mats.map(m=>({id:m.id,type:m.type,title:m.title.trim(),time:(m.time||'').trim(),desc:(m.desc||'').trim(),href:(m.href||'').trim(),tba:!!m.tba}));
+      const ch=[];
+      if(w.title!==v.title.trim())ch.push('title');if(w.desc!==v.desc.trim())ch.push('description');if(w.hours!==v.hours.trim())ch.push('hours');
+      if(JSON.stringify(c0.goals)!==JSON.stringify(goals))ch.push('goals');
+      if(JSON.stringify(c0.materials)!==JSON.stringify(cleanM))ch.push(`materials (${cleanM.length})`);
+      AC().towers.forEach(t=>{const nl=links[t.code].map(l=>({title:l.title.trim(),href:l.href.trim()}));if(JSON.stringify(t.links[n]||[])!==JSON.stringify(nl)){ch.push('pages for '+t.name);if(nl.length)t.links[n]=nl;else delete t.links[n]}});
+      if(!ch.length){toast('No changes to save.');return}
+      w.title=v.title.trim();w.desc=v.desc.trim();w.hours=v.hours.trim();AC().weekContent[n]={goals,materials:cleanM};
+      commit('edited','Academy','week-'+n,`Week ${n}: ${ch.join(', ')} edited`);toast('Week saved.');rerender();
+    }});
+}
+/* ---- Tests ---- */
+function poolFor(t,tw){return AC().questions.filter(q=>(q.tower==='All'||q.tower===tw.name)&&t.weeks.includes(q.week))}
+function testsHtml(){
+  const s=AC().settings,sh=Math.round(s.finalRecentShare*100);
+  const rows=AC().tests.map(t=>{
+    const warns=[];AC().towers.forEach(tw=>{const p=poolFor(t,tw);if(p.length<t.count)warns.push(`${tw.name.split(' ')[0].replace('&','')}: ${p.length} of ${t.count} questions`);
+      if(t.id==='final'){const need=Math.round(t.count*s.finalRecentShare),rc=p.filter(q=>s.finalRecentWeeks.includes(q.week)).length;if(rc<need)warns.push(`${tw.name.split(' ')[0].replace('&','')}: only ${rc} questions from weeks ${s.finalRecentWeeks[0]}–${s.finalRecentWeeks[s.finalRecentWeeks.length-1]} (need ${need})`)}});
+    return `<tr><td><b>${esc(t.title)}</b><small>${esc(t.covers)}</small></td><td>After week ${t.after}</td><td>${t.needs?esc((byId2(AC().tests,t.needs)||{}).title||t.needs):'<span class="muted">—</span>'}</td><td>${t.count}</td><td><span class="small">${AC().towers.map(tw=>`${esc(tw.name.split(' ')[0].replace('&',''))} ${poolFor(t,tw).length}`).join(' · ')}</span><br>${warns.length?`<span class="warnrow">${warns.map(esc).join('<br>')}</span>`:'<span class="okrow">Enough questions for every tower</span>'}</td><td><div class="chips">${AC().towers.map(tw=>`<a class="chip tchip tw-${tw.code}" href="${previewTest(t.id,tw)}" target="_blank" rel="noopener" title="Preview ${esc(t.title)} as ${esc(tw.name)}">${esc(tw.name.split(' ')[0].replace('&',''))}</a>`).join('')}</div></td><td class="acts"><button type="button" class="btn small" data-act="acTest" data-id="${t.id}">Edit</button>${t.id==='final'?'':`<button type="button" class="btn small danger" data-act="acTestDel" data-id="${t.id}">Delete</button>`}</td></tr>`}).join('');
+  return `<section class="panel pad gap"><h2>Test settings</h2><p class="sub">The test format is not decided yet, so this edits the placeholder structure: checkpoints, a pass mark and sample multiple-choice questions.</p>
+   <div class="g3"><div class="fld"><label for="pm">Pass mark (%)</label><input id="pm" type="number" min="1" max="100" value="${s.passMark}" data-on="acPass"></div><div class="fld"><label for="fm">Format note</label><input id="fm" type="text" value="${esc(s.format)}" data-on="acFmt"></div></div>
+   <label class="sw"><input type="checkbox" data-on="acSw" name="requirePassToUnlockNextWeek" ${s.requirePassToUnlockNextWeek?'checked':''}><span><b>Require passing the test to unlock the next week</b><br><span class="hint">Off by default. When on, the week after a checkpoint stays locked until that checkpoint is passed.</span></span></label></section>
+  <section class="panel pad gap"><div class="row between"><h2>Checkpoints</h2><button type="button" class="btn small primary" data-act="acTestAdd">+ Add checkpoint</button></div>
+   <div class="tablewrap"><table><thead><tr><th>Checkpoint</th><th>Unlocks</th><th>Needs first</th><th>Questions</th><th>Bank per tower</th><th>Preview as</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <p class="hint">The Final checkpoint takes about ${sh}% of its questions from ${range(s.finalRecentWeeks).toLowerCase()}. Change that in the Final checkpoint’s edit form.</p></section>
+  <section class="panel pad gap"><div class="row between"><h2>Question bank</h2><button type="button" class="btn small primary" data-act="qAdd">+ Add question</button></div>
+   <div class="filters"><div class="fld" style="flex:1;min-width:200px"><label for="qq">Search</label><input id="qq" type="search" value="${esc(UI.acad.tq)}" placeholder="Question text" data-oninput="qF"></div>
+   <div class="fld"><label for="qt">Tower</label><select id="qt" data-on="qFt"><option value="">All</option><option value="All" ${UI.acad.tfTower==='All'?'selected':''}>Every tower</option>${AC().towers.map(t=>`<option ${UI.acad.tfTower===t.name?'selected':''}>${esc(t.name)}</option>`).join('')}</select></div>
+   <div class="fld"><label for="qw">Week</label><select id="qw" data-on="qFw"><option value="">All</option>${[1,2,3,4,5,6,7,8,9,10,11,12].map(x=>`<option ${String(UI.acad.tfWeek)===String(x)?'selected':''}>${x}</option>`).join('')}</select></div>
+   <div class="fld"><label for="qs">Test</label><select id="qs" data-on="qFs"><option value="">All</option>${AC().tests.map(t=>`<option value="${t.id}" ${UI.acad.tfTest===t.id?'selected':''}>${esc(t.title)}</option>`).join('')}</select></div></div>
+   <div id="qtbl"></div></section>`;
+}
+const byId2=(arr,id)=>arr.find(x=>x.id===id);
+ON.acPass=el=>{const v=Math.round(+el.value);if(!(v>=1&&v<=100)){toast('Pass mark must be between 1 and 100.');el.value=AC().settings.passMark;return}if(v===AC().settings.passMark)return;AC().settings.passMark=v;commit('edited','Academy','tests',`Pass mark → ${v}%`);toast('Saved.')};
+ON.acFmt=el=>{AC().settings.format=el.value.trim();commit('edited','Academy','tests','Test format note edited');toast('Saved.')};
+ON.qF=el=>{UI.acad.tq=el.value;renderQbank()};ON.qFt=el=>{UI.acad.tfTower=el.value;renderQbank()};ON.qFw=el=>{UI.acad.tfWeek=el.value;renderQbank()};ON.qFs=el=>{UI.acad.tfTest=el.value;renderQbank()};
+function renderQbank(){
+  const u=UI.acad,q=u.tq.trim().toLowerCase(),T=u.tfTest?byId2(AC().tests,u.tfTest):null;
+  const list=AC().questions.filter(x=>(!q||x.q.toLowerCase().includes(q))&&(!u.tfTower||x.tower===u.tfTower)&&(!u.tfWeek||x.week===+u.tfWeek)&&(!T||T.weeks.includes(x.week)));
+  const el=$('#qtbl');if(!el)return;
+  el.innerHTML=`<div class="tablewrap"><table><thead><tr><th>Wk</th><th>Tower</th><th>Question</th><th>Options</th><th>Actions</th></tr></thead><tbody>${list.sort((a,b)=>a.week-b.week||a.tower.localeCompare(b.tower)).map(x=>{const tw=AC().towers.find(t=>t.name===x.tower);return `<tr><td>${x.week}</td><td>${tw?`<span class="pill tw tw-${tw.code}">${esc(tw.name)}</span>`:'<span class="pill p-role">Every tower</span>'}</td><td>${esc(x.q)}<small>Answer: ${esc(x.o[x.a])}</small></td><td>${x.o.length}</td><td class="acts"><button type="button" class="btn small" data-act="qEdit" data-id="${esc(x.id)}">Edit</button><button type="button" class="btn small" data-act="qDup" data-id="${esc(x.id)}">Duplicate</button><button type="button" class="btn small danger" data-act="qDel" data-id="${esc(x.id)}">Delete</button></td></tr>`}).join('')||'<tr><td colspan="5" class="muted" style="padding:18px">No questions match.</td></tr>'}</tbody></table></div><div class="pager"><span>${plural(list.length,'question')} of ${AC().questions.length}</span></div>`;
+}
+ACTS.qDel=el=>{const x=byId2(AC().questions,el.dataset.id);if(!x)return;confirmDlg({title:'Delete this question?',body:`<p class="sub">${esc(x.q)}</p>`,ok:'Delete',danger:true,onOk:()=>{const i=AC().questions.indexOf(x);AC().questions.splice(i,1);commit('deleted','Academy',x.id,`Deleted question: ${x.q.slice(0,60)}`);rerender();toast('Question deleted.',()=>{AC().questions.splice(i,0,x);commit('added','Academy',x.id,'Restored question');rerender();toast('Restored.')})}})};
+ACTS.qDup=el=>{const x=byId2(AC().questions,el.dataset.id);if(!x)return;const c=clone(x);c.id='q-'+rid();c.q='Copy of '+x.q;AC().questions.push(c);commit('added','Academy',c.id,'Duplicated question: '+x.q.slice(0,60));rerender();toast('Copy added. Edit it to change the text.')};
+ACTS.qAdd=()=>qForm(null);ACTS.qEdit=el=>qForm(byId2(AC().questions,el.dataset.id));
+function qForm(x){
+  const isNew=!x,o=x?clone(x):{tower:'All',week:1,qtype:'Multiple choice',q:'',o:['',''],a:0,why:''};let opts=o.o,ans=o.a;
+  const optHtml=()=>opts.map((t,i)=>`<div class="row" data-i="${i}"><input type="radio" name="ans" value="${i}" ${ans===i?'checked':''} aria-label="Option ${i+1} is correct"><input type="text" data-k="opt" value="${esc(t)}" class="grow" placeholder="Option ${i+1}" aria-label="Option ${i+1}"><button type="button" class="btn small danger" data-odel ${opts.length<=2?'disabled':''} aria-label="Remove option ${i+1}">✕</button></div>`).join('');
+  const body=`<div class="g3">${fld('tower','Tower',sel('tower',[['All','Every tower'],...AC().towers.map(t=>[t.name,t.name])],o.tower))}${fld('week','Week',sel('week',[1,2,3,4,5,6,7,8,9,10,11,12].map(w=>[w,'Week '+w]),o.week))}${fld('qtype','Question type',sel('qtype',['Multiple choice'],o.qtype))}</div>
+   ${fld('q','Question',`<textarea id="f_q" name="q" style="min-height:70px">${esc(o.q)}</textarea>`,{req:1})}
+   <div class="fld" data-f="opts"><span class="lb req">Options (2 to 5) · tick the correct one</span><div id="opts" class="gap">${optHtml()}</div><div><button type="button" class="btn small" data-oadd>+ Add option</button></div><div class="err"></div></div>
+   ${fld('why','Explanation (one line)',inp('why',o.why))}`;
+  openPanel({title:isNew?'Add question':'Edit question',body,saveLabel:isNew?'Add question':'Save changes',
+    validate(v){const e={};if(!v.q.trim())e.q='Enter the question.';
+      const filled=opts.filter(t=>t.trim());if(opts.length<2||opts.some(t=>!t.trim()))e.opts='Every option needs text, and there must be at least 2.';else if(!(ans>=0&&ans<opts.length))e.opts='Tick the correct option.';else if(new Set(opts.map(t=>t.trim().toLowerCase())).size<opts.length)e.opts='Options must be different.';return e},
+    onOpen(rec,form){
+      const w=$('#opts',form),redraw=()=>{w.innerHTML=optHtml();rec.markDirty()};
+      w.addEventListener('input',e=>{if(e.target.dataset.k==='opt'){opts[+e.target.closest('.row').dataset.i]=e.target.value}});
+      w.addEventListener('change',e=>{if(e.target.name==='ans'){ans=+e.target.value}});
+      w.addEventListener('click',e=>{if(e.target.hasAttribute('data-odel')){const i=+e.target.closest('.row').dataset.i;opts.splice(i,1);if(ans===i)ans=0;else if(ans>i)ans--;redraw()}});
+      $('[data-oadd]',form).addEventListener('click',()=>{if(opts.length>=5)return toast('Five options at most.');opts.push('');redraw()});
+    },
+    onSave(v){
+      const next={tower:v.tower,week:+v.week,qtype:v.qtype,q:v.q.trim(),o:opts.map(t=>t.trim()),a:ans,why:v.why.trim()};
+      if(isNew){const n={id:'q-'+rid(),...next};AC().questions.push(n);commit('added','Academy',n.id,`Added question (week ${n.week}, ${n.tower==='All'?'every tower':n.tower}): ${n.q.slice(0,60)}`);toast('Question added.')}
+      else{if(JSON.stringify(next)===JSON.stringify({tower:x.tower,week:x.week,qtype:x.qtype,q:x.q,o:x.o,a:x.a,why:x.why})){toast('No changes to save.');return}Object.assign(x,next);commit('edited','Academy',x.id,'Edited question: '+next.q.slice(0,60));toast('Question saved.')}
+      rerender();
+    }});
+}
+ACTS.acTestAdd=()=>testForm(null);ACTS.acTest=el=>testForm(byId2(AC().tests,el.dataset.id));
+ACTS.acTestDel=el=>{const t=byId2(AC().tests,el.dataset.id);confirmDlg({title:`Delete ${t.title}?`,body:'<p class="sub">Joiners will no longer see this checkpoint. Questions stay in the bank.</p>',ok:'Delete',danger:true,onOk:()=>{const i=AC().tests.indexOf(t);AC().tests.splice(i,1);AC().tests.forEach(x=>{if(x.needs===t.id)x.needs=''});commit('deleted','Academy',t.id,`Deleted ${t.title}`);rerender();toast('Checkpoint deleted.',()=>{AC().tests.splice(i,0,t);commit('added','Academy',t.id,'Restored '+t.title);rerender();toast('Restored.')})}})};
+function testForm(t){
+  const isNew=!t,o=t?clone(t):{id:'',title:'',covers:'',weeks:[],after:4,needs:'',count:6},final=t&&t.id==='final',S=AC().settings;
+  const wk=(name,arr)=>`<div class="checks">${[1,2,3,4,5,6,7,8,9,10,11,12].map(w=>`<label><input type="checkbox" name="${name}" value="${w}" ${arr.includes(w)?'checked':''}> ${w}</label>`).join('')}</div>`;
+  const body=`${fld('title','Title',inp('title',o.title),{req:1})}
+   <div class="g3">${fld('after','Unlocks after week',sel('after',[1,2,3,4,5,6,7,8,9,10,11,12].map(w=>[w,'Week '+w]),o.after,final?'disabled':''))}${fld('needs','Needs first',sel('needs',[['','Nothing'],...AC().tests.filter(x=>x!==t&&x.id!=='final').map(x=>[x.id,x.title])],o.needs))}${fld('count','Number of questions',`<input type="number" id="f_count" name="count" min="1" max="30" value="${o.count}">`,{req:1})}</div>
+   <div class="fld" data-f="weeks"><span class="lb req">Weeks covered</span>${wk('weeks',o.weeks)}<div class="err"></div></div>
+   ${final?`<div class="fld" data-f="recent"><span class="lb">Recent weeks (extra weight)</span>${wk('recent',S.finalRecentWeeks)}<div class="err"></div></div>${fld('share','Share of questions from the recent weeks (%)',`<input type="number" id="f_share" name="share" min="0" max="100" value="${Math.round(S.finalRecentShare*100)}">`)}`:''}`;
+  openPanel({title:isNew?'Add checkpoint':'Edit '+t.title,body,saveLabel:isNew?'Add checkpoint':'Save changes',
+    validate(v){const e={};if(!v.title.trim())e.title='Enter a title.';if(!v.weeks.length)e.weeks='Choose at least one week.';
+      const n=+v.count;if(!(n>=1&&n<=30))e.count='Use a number from 1 to 30.';
+      const after=final?12:+v.after;if(!final&&AC().tests.some(x=>x!==t&&x.id!=='final'&&x.after===after))e.after='Another checkpoint already unlocks after this week.';
+      if(final&&!(v.recent||[]).length)e.recent='Choose at least one recent week.';return e},
+    onSave(v){
+      const next={title:v.title.trim(),weeks:v.weeks.map(Number).sort((a,b)=>a-b),after:final?12:+v.after,needs:v.needs||'',count:+v.count};
+      if(final){S.finalRecentWeeks=v.recent.map(Number).sort((a,b)=>a-b);S.finalRecentShare=Math.max(0,Math.min(100,+v.share||0))/100}
+      if(isNew){let k=1;while(byId2(AC().tests,'cp'+k))k++;const n={id:'cp'+k,covers:'',...next};n.covers=coversText(n);const fi=AC().tests.findIndex(x=>x.id==='final');AC().tests.splice(fi<0?AC().tests.length:fi,0,n);AC().tests.sort((a,b)=>(a.id==='final')-(b.id==='final')||a.after-b.after);commit('added','Academy',n.id,`Added ${n.title} (after week ${n.after}, ${n.covers})`);toast('Checkpoint added.')}
+      else{Object.assign(t,next);t.covers=coversText(t);AC().tests.sort((a,b)=>(a.id==='final')-(b.id==='final')||a.after-b.after);commit('edited','Academy',t.id,`${t.title} edited (${t.covers}, ${t.count} questions)`);toast('Checkpoint saved.')}
+      rerender();
+    }});
+}
+
+/* ===== 7. Change log ===== */
+function logFiltered(){
+  const u=UI.log,q=u.q.trim().toLowerCase();
+  return DR.changeLog.filter(l=>(!q||(l.summary+' '+l.section+' '+l.target).toLowerCase().includes(q))&&(!u.by||l.by===u.by)&&(!u.section||l.section===u.section)&&(!u.action||l.action===u.action)&&(!u.from||l.at.slice(0,10)>=u.from)&&(!u.to||l.at.slice(0,10)<=u.to));
+}
+VIEWS.log={
+  render(){
+    const u=UI.log,people=[...new Set(DR.changeLog.map(l=>l.by))],secs=[...new Set(DR.changeLog.map(l=>l.section))].sort(),acts=['added','edited','deleted','published','imported'];
+    return `<div class="row between"><div><h1>Change log</h1><p class="sub">Every save, delete, import and publish, with who did it and what changed. The newest 500 entries are kept in km-data.js. The Knowledge Centre item panel shows the history of each item from this log.</p></div><button type="button" class="btn" data-act="logCsv">Export CSV</button></div>
+    <section class="panel pad gap"><div class="filters"><div class="fld" style="flex:1;min-width:200px"><label for="lgq">Search</label><input id="lgq" type="search" value="${esc(u.q)}" placeholder="Summary, section or target" data-oninput="logF" name="q"></div>
+     <div class="fld"><label for="lgb">Person</label><select id="lgb" name="by" data-on="logF"><option value="">Everyone</option>${people.map(p=>`<option ${u.by===p?'selected':''}>${esc(p)}</option>`).join('')}</select></div>
+     <div class="fld"><label for="lgs">Section</label><select id="lgs" name="section" data-on="logF"><option value="">All sections</option>${secs.map(x=>`<option ${u.section===x?'selected':''}>${esc(x)}</option>`).join('')}</select></div>
+     <div class="fld"><label for="lga">Action</label><select id="lga" name="action" data-on="logF"><option value="">All</option>${acts.map(a=>`<option ${u.action===a?'selected':''}>${a}</option>`).join('')}</select></div>
+     <div class="fld"><label for="lgf">From</label><input id="lgf" type="date" name="from" value="${esc(u.from)}" data-on="logF"></div>
+     <div class="fld"><label for="lgt">To</label><input id="lgt" type="date" name="to" value="${esc(u.to)}" data-on="logF"></div></div><div id="logtbl"></div></section>`;
+  },
+  mount(){renderLog()}
+};
+ON.logF=el=>{UI.log[el.name]=el.value;UI.log.page=0;renderLog()};
+function renderLog(){
+  const u=UI.log,list=logFiltered(),pages=Math.max(1,Math.ceil(list.length/PAGE));if(u.page>=pages)u.page=pages-1;
+  const rows=list.slice(u.page*PAGE,u.page*PAGE+PAGE);
+  $('#logtbl').innerHTML=`<div class="tablewrap"><table><thead><tr><th>When</th><th>By</th><th>Action</th><th>Section</th><th>Change</th></tr></thead><tbody>${rows.map(l=>`<tr><td style="white-space:nowrap">${fmtDT(l.at)}</td><td>${esc(l.by)}</td><td><span class="pill ${l.action==='deleted'?'p-bad':l.action==='added'?'p-ok':l.action==='published'?'p-review':'p-role'}">${esc(l.action)}</span></td><td>${esc(l.section)}</td><td>${esc(l.summary)}${logLink(l)}</td></tr>`).join('')||'<tr><td colspan="5" class="muted" style="padding:18px">No entries match.</td></tr>'}</tbody></table></div>
+  <div class="pager"><span>${list.length?`Showing ${u.page*PAGE+1}–${u.page*PAGE+rows.length} of ${list.length}`:'0 entries'}</span><span class="row"><button type="button" class="btn small" data-act="logPage" data-d="-1" ${u.page===0?'disabled':''}>← Previous</button><span>Page ${u.page+1} of ${pages}</span><button type="button" class="btn small" data-act="logPage" data-d="1" ${u.page>=pages-1?'disabled':''}>Next →</button></span></div>`;
+}
+function logLink(l){
+  if(l.section==='Knowledge items'&&byId(DR.items,l.target))return ` <button type="button" class="linkbtn" data-act="logOpen" data-s="items" data-t="${esc(l.target)}">Open item</button>`;
+  if(l.section==='Service pages'&&l2Info(l.target))return ` <button type="button" class="linkbtn" data-act="logOpen" data-s="l2" data-t="${esc(l.target)}">Open page</button>`;
+  if(l.section==='Glossary'&&DR.glossary.some(g=>g.term===l.target))return ` <button type="button" class="linkbtn" data-act="logOpen" data-s="gloss" data-t="${esc(l.target)}">Open term</button>`;
+  return '';
+}
+ACTS.logPage=el=>{UI.log.page+=+el.dataset.d;renderLog()};
+ACTS.logOpen=el=>{const s=el.dataset.s,t=el.dataset.t;if(s==='items'){goto('items',{q:byId(DR.items,t).title});setTimeout(()=>{const it=byId(DR.items,t);it&&itemForm(it)},50)}else if(s==='l2'){goto('l2',{q:t});setTimeout(()=>l2Form(t),50)}else{goto('gloss',{q:t})}};
+ACTS.logCsv=()=>{
+  const rows=[['at','by','action','section','target','summary'],...DR.changeLog.map(l=>[l.at,l.by,l.action,l.section,l.target,l.summary])];
+  const blob=new Blob(['﻿'+rows.map(r=>r.map(csvQ).join(',')).join('\r\n')+'\r\n'],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cass-km-change-log.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Change log exported.');
+};
+
+/* ===== 8. How to use this page ===== */
+VIEWS.help={render(){
+  const g=(k,t)=>`<button type="button" class="btn small" data-act="goto" data-k="${k}">${t}</button>`;
+  const S=(t,body,open)=>`<details class="acc" ${open?'open':''}><summary>${t}</summary><div class="body">${body}</div></details>`;
+  return `<div><h1>How to use this page</h1><p class="sub">Short, plain steps for new admins. Open a section to read it.</p></div>
+  ${S('Before you start',`<ul class="ol"><li>Admins are Process Excellence and named content owners. Sign in with the admin username and password.</li><li>The shared folder is <b>[shared folder link]</b> (fill in your real folder).</li><li>Always import the latest published <code>km-data.js</code> (<b>Import…</b>) before you edit if someone else may have published since your last session.</li><li>Your edits are saved in this browser as a <b>working draft</b>. Readers do not see them until you publish.</li></ul>`,true)}
+  ${S('Add a document or video',`<ol class="ol"><li>Upload or create the content in Microsoft Loop or SharePoint.</li><li>Copy its link (Share › Copy link).</li><li>Go to Knowledge items › <b>Add item</b>.</li><li>Fill in title, type, service, step, optional L3 function, owner, description, companies and status. Tick <b>Require access</b> if needed.</li><li>Paste the link and <b>Save</b>.</li><li>Click <b>Preview on site</b> to check it.</li><li><b>Download km-data.js</b> and replace the file in the shared folder.</li></ol>${g('items','Go to Knowledge items')}`)}
+  ${S('Edit an entry',`<p>Find it with search or filters › Edit › change fields › Save › Preview › Publish. The “New” badge reappears for readers whenever an item is updated, unless you set it to “Never show” for small fixes such as typos.</p>${g('items','Go to Knowledge items')}`)}
+  ${S('Delete an entry',`<p>Delete › confirm › use <b>Undo</b> in the pop-up if it was a mistake › publish. Deleting here does not delete the file in Loop or SharePoint.</p>`)}
+  ${S('Add SAP or other system how-tos',`<p>There is no separate SAP section. Add the video or guide as a normal item under the L2 service and process step it supports (for example the shipping instruction video sits under 1.1.4 Fulfil Orders).</p>`)}
+  ${S('Update a service page',`<p>Pick the page owner, expert and approver from the People directory, set coverage and status, edit the process steps, and click “Mark reviewed today”.</p>${g('l2','Go to Service pages')}`)}
+  ${S('Change who is shown as a contact',`<p>People directory › Edit (updates everywhere), or Service pages › change the picker for one page only. Use <b>Bulk assign</b> to set the same owner on many pages.</p>${g('people','Go to People directory')}`)}
+  ${S('Glossary',`<ol class="ol"><li><b>+ Add term</b>: type the term and its meaning (the meaning can stay empty for now: readers see “Meaning to be added”).</li><li>Tick the towers it belongs to. A term can have several (BG: Finance &amp; Accounting and Customer Operations). Leave towers empty if unknown: it shows under “Not assigned yet”.</li><li><b>Bulk tag</b>: tick several terms (or the box at the top to select all shown), choose Add tower, Set only this tower or Remove tower, then Apply.</li><li><b>Export CSV</b> to edit many terms in Excel, then <b>Import CSV…</b>. Columns are term, meaning, towers (tower names separated by “;”). You see a summary before anything changes.</li></ol>${g('gloss','Go to Glossary')}`)}
+  ${S('Academy and tests',`<p>Change a week’s materials and tower pages, edit checkpoint tests and questions, set the pass mark and the lock rules, and preview a week or test as a new joiner would see it.</p>${g('acad','Go to Academy')}`)}
+  ${S('What the labels mean',`<ul class="ol"><li><span class="pill p-draft">Draft</span> being written, use with care.</li><li><span class="pill p-review">In review</span> waiting for the PIC and Process Excellence review.</li><li><span class="pill p-approved">Approved</span> signed off by the Tower Head.</li><li><span class="pill p-lock">Require access</span> restricted file (customer, bank or pricing details). Readers can request access.</li><li><span class="pill p-new">New</span> added or updated recently and not opened by the reader yet.</li></ul><p>Only admins set these labels. The Knowledge Centre and Academy pages cannot change them.</p><p>Use <b>“New” badge › Never show</b> for small fixes such as typos, so readers are not told about a change that does not matter to them.</p>`)}
+  ${S('Publish your changes',`<ol class="ol"><li>Click <b>Preview on site</b> and check your changes (the orange “Preview of unpublished changes” bar shows you are looking at the draft).</li><li>Click <b>Download km-data.js</b>.</li><li>Rename the current file in the shared folder to <code>km-data_backup_YYYY-MM-DD.js</code>.</li><li>Copy the downloaded file into the folder.</li><li>Open <code>index.html</code> and press Ctrl+F5 to check.</li><li>Tell readers if it is a big change.</li></ol>`)}
+  ${S('Two admins at once',`<p>Only one person should publish at a time. The second person imports the newest <code>km-data.js</code> first and redoes their edits on top.</p>`)}
+  ${S('Content rules',`<ul class="ol"><li>No customer bank details, LC numbers or prices in titles or descriptions.</li><li>Tick Require access for restricted files.</li><li>Titles start with the task, for example “LC Review – …”.</li><li>Keep descriptions to one sentence.</li></ul>`)}
+  ${S('Troubleshooting',`<ul class="ol"><li><b>“km-data.js could not be loaded”:</b> the file is missing or not next to the page. Put it back in the same folder.</li><li><b>A link opens a download instead of the page:</b> use the Loop “Copy link” address.</li><li><b>Changes are not showing:</b> press Ctrl+F5 to clear the browser cache.</li><li><b>Forgot the password:</b> ask Process Excellence to set a new one (they replace the hash in km-data.js).</li><li><b>The orange preview bar stays on:</b> click <b>Exit preview</b> in the bar. It only appears in the browser tab where you opened a preview.</li></ul>`)}`;
+}};
+
+/* ===== 9. Settings ===== */
+VIEWS.set={
+  render(){
+    const s=DR.settings;
+    return `<div><h1>Settings</h1><p class="sub">Password, badges, banner, companies, labels, search help and taxonomy updates.</p></div>
+    <section class="panel pad gap"><h2>Change password</h2><form id="pwForm" class="g3" novalidate>${fld('cur','Current password',`<input type="password" id="f_cur" name="cur" autocomplete="current-password">`)}${fld('new1','New password (10+ characters)',`<input type="password" id="f_new1" name="new1" autocomplete="new-password">`)}${fld('new2','Repeat new password',`<input type="password" id="f_new2" name="new2" autocomplete="new-password">`)}</form><div class="row"><button type="button" class="btn primary" data-act="pwSave">Change password</button><span class="hint">The new hash is saved in the draft and takes effect for everyone after you publish. On this computer it works straight away.</span></div><div class="err" id="pwErr"></div></section>
+    <section class="panel pad gap"><h2>Site</h2><div class="g3">
+     <div class="fld"><label for="sd">“New” badge period (days)</label><input id="sd" type="number" min="1" max="365" value="${s.newBadgeDays}" data-on="setDays"></div>
+     <div class="fld"><label class="lb">Sample banner</label><label class="sw"><input type="checkbox" data-on="setBanner" name="on" ${s.banner.on?'checked':''}> Show banner</label></div></div>
+     <div class="fld"><label for="sbt">Banner wording</label><input id="sbt" type="text" value="${esc(s.banner.text)}" data-on="setBannerText"></div>
+     <div class="fld"><label for="san">Admin names (one per line, suggested in the login “Your name for the change log” field)</label><textarea id="san" data-on="setAdmins">${esc(s.adminNames.join('\n'))}</textarea></div>
+     <div class="fld"><span class="lb">Companies</span><div class="chips" id="coList">${s.companies.map(c=>`<span class="chip on">${esc(c)} <button type="button" class="linkbtn" style="color:inherit" data-act="coDel" data-c="${esc(c)}" aria-label="Remove ${esc(c)}">✕</button></span>`).join('')}</div><div class="row" style="margin-top:6px"><input type="text" id="coNew" placeholder="New company code" style="max-width:200px"><button type="button" class="btn small" data-act="coAdd">Add company</button></div></div></section>
+    <section class="panel pad gap"><h2>Item type labels</h2><p class="sub">Rename a type or its description. Items using it are updated. The order is fixed, with Quick Reference Guide first. “Lessons &amp; Real Examples” is one combined type.</p>
+     <div class="tablewrap"><table><thead><tr><th>#</th><th>Label</th><th>Description</th><th>Items</th></tr></thead><tbody>${DR.itemTypes.map((t,i)=>`<tr><td>${i+1}</td><td><input type="text" value="${esc(t.name)}" data-on="typeName" data-i="${i}" aria-label="Label ${i+1}"></td><td><input type="text" value="${esc(t.desc)}" data-on="typeDesc" data-i="${i}" aria-label="Description ${i+1}"></td><td>${DR.items.filter(x=>x.type===t.name).length}</td></tr>`).join('')}</tbody></table></div></section>
+    <section class="panel pad gap"><h2>Search synonyms</h2><p class="sub">Typing the word on the left also finds the related terms on the right. Separate related terms with commas. Applies to the site after publishing.</p>
+     <div class="tablewrap"><table><thead><tr><th>Word</th><th>Also finds</th><th></th></tr></thead><tbody>${Object.entries(DR.synonyms).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td><input type="text" value="${esc(v.join(', '))}" data-on="synVal" data-k="${esc(k)}" aria-label="Related terms for ${esc(k)}"></td><td><button type="button" class="btn small danger" data-act="synDel" data-k="${esc(k)}">Delete</button></td></tr>`).join('')}<tr><td><input type="text" id="synK" placeholder="New word" aria-label="New synonym word"></td><td><input type="text" id="synV" placeholder="related, terms" aria-label="Related terms"></td><td><button type="button" class="btn small primary" data-act="synAdd">Add</button></td></tr></tbody></table></div></section>
+    <section class="panel pad gap"><h2>Popular searches</h2><p class="sub">Shown when a reader clicks the empty search box.</p><ol class="ol" id="popList">${DR.popularSearches.map((p,i)=>`<li class="row"><span class="grow">${esc(p)}</span><button type="button" class="btn small" data-act="popMv" data-i="${i}" data-d="-1" ${i===0?'disabled':''} aria-label="Move up">↑</button><button type="button" class="btn small" data-act="popMv" data-i="${i}" data-d="1" ${i===DR.popularSearches.length-1?'disabled':''} aria-label="Move down">↓</button><button type="button" class="btn small danger" data-act="popDel" data-i="${i}">Delete</button></li>`).join('')}</ol><div class="row"><input type="text" id="popNew" placeholder="New popular search" style="max-width:260px"><button type="button" class="btn small primary" data-act="popAdd">Add</button></div></section>
+    <section class="panel pad gap"><h2>Taxonomy</h2><p class="sub">Service codes and names (L0 to L3) come from the official CASS Service Taxonomy. To update them, import an updated <code>service-taxonomy.json</code>. A diff of added, removed and renamed services and functions is shown before anything is applied.</p><div class="row"><button type="button" class="btn" data-act="taxIn">Import taxonomy JSON…</button><button type="button" class="btn" data-act="taxOut">Export taxonomy JSON</button></div><input type="file" id="taxFile" accept=".json,.txt" hidden></section>
+`;
+  }
+};
+ACTS.pwSave=()=>{
+  const f=$('#pwForm'),v=readForm(f),err=$('#pwErr');
+  const salt=DR.settings.passwordSalt,cur=hashPw(v.cur,salt);
+  if(cur!==DR.settings.adminPasswordHash&&cur!==PUB.settings.adminPasswordHash){err.textContent='The current password is not correct.';return}
+  if(v.new1.length<10){err.textContent='The new password needs at least 10 characters.';return}
+  if(v.new1!==v.new2){err.textContent='The two new passwords do not match.';return}
+  DR.settings.adminPasswordHash=hashPw(v.new1,salt);err.textContent='';commit('edited','Settings','password','Password changed (takes effect for everyone after publishing)');f.reset();toast('Password changed in your draft.');
+};
+ON.setDays=el=>{const v=Math.round(+el.value);if(!(v>=1&&v<=365)){toast('Use a number of days from 1 to 365.');el.value=DR.settings.newBadgeDays;return}if(v===DR.settings.newBadgeDays)return;DR.settings.newBadgeDays=v;commit('edited','Settings','newBadgeDays',`“New” badge period → ${v} days`);toast('Saved.')};
+ON.setBanner=el=>{DR.settings.banner.on=el.checked;commit('edited','Settings','banner','Sample banner '+(el.checked?'on':'off'));toast('Saved.')};
+ON.setBannerText=el=>{DR.settings.banner.text=el.value.trim();commit('edited','Settings','banner','Banner wording edited');toast('Saved.')};
+ON.setAdmins=el=>{DR.settings.adminNames=el.value.split('\n').map(x=>x.trim()).filter(Boolean);commit('edited','Settings','adminNames','Admin names edited');toast('Saved.')};
+ACTS.coAdd=()=>{const v=$('#coNew').value.trim().toUpperCase();if(!v)return toast('Enter a company code.');if(DR.settings.companies.includes(v))return toast('That company is already in the list.');DR.settings.companies.push(v);commit('edited','Settings','companies','Added company '+v);rerender()};
+ACTS.coDel=el=>{const c=el.dataset.c,used=DR.items.filter(i=>i.companies.includes(c)).length;if(DR.settings.companies.length<=1)return toast('Keep at least one company.');
+  confirmDlg({title:`Remove ${c}?`,body:`<p class="sub">${used?plural(used,'item')+' use this company. It is removed from them, and items left with no company fall back to every remaining company.':'No items use this company.'}</p>`,ok:'Remove',danger:true,onOk:()=>{DR.settings.companies=DR.settings.companies.filter(x=>x!==c);DR.items.forEach(i=>{i.companies=i.companies.filter(x=>x!==c);if(!i.companies.length)i.companies=[...DR.settings.companies]});commit('edited','Settings','companies','Removed company '+c);rerender()}})};
+ON.typeName=el=>{const i=+el.dataset.i,v=el.value.trim(),old=DR.itemTypes[i].name;if(!v||DR.itemTypes.some((t,j)=>j!==i&&t.name.toLowerCase()===v.toLowerCase())){toast('Labels must be unique and not empty.');el.value=old;return}if(v===old)return;DR.itemTypes[i].name=v;DR.items.forEach(x=>{if(x.type===old)x.type=v});AC().weekContent&&Object.values(AC().weekContent).forEach(c=>c.materials.forEach(m=>{if(m.type===old)m.type=v}));commit('edited','Settings','itemTypes',`Item type “${old}” renamed to “${v}”`);toast('Renamed. Items using it are updated.');rerender()};
+ON.typeDesc=el=>{DR.itemTypes[+el.dataset.i].desc=el.value.trim();commit('edited','Settings','itemTypes','Item type description edited');toast('Saved.')};
+ON.synVal=el=>{const v=el.value.split(',').map(x=>x.trim()).filter(Boolean);if(!v.length){toast('Add at least one related term, or delete the row.');el.value=DR.synonyms[el.dataset.k].join(', ');return}DR.synonyms[el.dataset.k]=v;commit('edited','Settings','synonyms',`Synonym “${el.dataset.k}” → ${v.join(', ')}`);toast('Saved.')};
+ACTS.synDel=el=>{const k=el.dataset.k;delete DR.synonyms[k];commit('deleted','Settings','synonyms','Deleted synonym '+k);rerender()};
+ACTS.synAdd=()=>{const k=$('#synK').value.trim().toLowerCase(),v=$('#synV').value.split(',').map(x=>x.trim()).filter(Boolean);if(!k||!v.length)return toast('Enter the word and at least one related term.');if(DR.synonyms[k])return toast('That word already has a row. Edit it above.');DR.synonyms[k]=v;commit('added','Settings','synonyms',`Added synonym ${k} → ${v.join(', ')}`);rerender()};
+ACTS.popAdd=()=>{const v=$('#popNew').value.trim();if(!v)return toast('Enter a search.');if(DR.popularSearches.includes(v))return toast('Already in the list.');DR.popularSearches.push(v);commit('added','Settings','popular','Added popular search '+v);rerender()};
+ACTS.popDel=el=>{const i=+el.dataset.i,v=DR.popularSearches.splice(i,1)[0];commit('deleted','Settings','popular','Removed popular search '+v);rerender()};
+ACTS.popMv=el=>{const i=+el.dataset.i,j=i+ +el.dataset.d,a=DR.popularSearches;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];commit('edited','Settings','popular','Reordered popular searches');rerender()};
+/* taxonomy import / export */
+function taxToFlat(j){
+  if(j&&Array.isArray(j.towers)){const tax=[],l3={};j.towers.forEach(a=>{const A={code:String(a.code),name:a.name,l1:[]};(a.l1||[]).forEach(b=>{const B={code:String(b.code),name:b.name,l2:[]};(b.l2||[]).forEach(c=>{B.l2.push({code:String(c.code),name:c.name});if((c.l3||[]).length)l3[c.code]=c.l3.map(f=>f.details?{code:f.code,name:f.name,details:f.details}:{code:f.code,name:f.name})});A.l1.push(B)});tax.push(A)});return {taxonomy:tax,l3}}
+  if(j&&Array.isArray(j.taxonomy)&&j.l3)return {taxonomy:j.taxonomy,l3:j.l3};
+  return null;
+}
+function flatToOfficial(){return {source:'CASS Service Taxonomy (exported from admin.html)',towers:DR.taxonomy.map(a=>({code:a.code,name:a.name,l1:a.l1.map(b=>({code:b.code,name:b.name,l2:b.l2.map(c=>({code:c.code,name:c.name,l3:(DR.l3[c.code]||[]).map(f=>f.details?{code:f.code,name:f.name,details:f.details}:{code:f.code,name:f.name})}))}))}))}}
+ACTS.taxIn=()=>$('#taxFile').click();
+ACTS.taxOut=()=>{const blob=new Blob([JSON.stringify(flatToOfficial(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='service-taxonomy.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Taxonomy downloaded.')};
+document.addEventListener('change',e=>{
+  if(e.target.id!=='taxFile'||!e.target.files[0])return;const file=e.target.files[0];e.target.value='';const fr=new FileReader();
+  fr.onload=()=>{
+    let j;try{j=JSON.parse(String(fr.result))}catch(x){return infoDlg('That file could not be read','<p>It is not valid JSON.</p>')}
+    const nf=taxToFlat(j);if(!nf)return infoDlg('Unrecognised format','<p>Expected the official <code>service-taxonomy.json</code> with a <code>towers</code> list (each with l1, l2 and l3), or an object with <code>taxonomy</code> and <code>l3</code>.</p>');
+    const errs=[],seen=new Set(),l2new={},l3new={};
+    nf.taxonomy.forEach(a=>a.l1.forEach(b=>b.l2.forEach(c=>{if(!/^\d+\.\d+\.\d+$/.test(c.code))errs.push('L2 code “'+c.code+'” is not in the form 1.1.1');if(seen.has(c.code))errs.push('Duplicate L2 code '+c.code);seen.add(c.code);l2new[c.code]=c.name})));
+    Object.entries(nf.l3).forEach(([c,fs])=>{if(!l2new[c])errs.push('L3 functions listed for unknown service '+c);fs.forEach(f=>{if(!f.code.startsWith(c+'.'))errs.push('L3 code '+f.code+' does not belong to '+c);if(l3new[f.code])errs.push('Duplicate L3 code '+f.code);l3new[f.code]=f.name})});
+    const l2old={};L2S().forEach(x=>l2old[x.code]=x.name);const l3old={};Object.values(DR.l3).forEach(fs=>fs.forEach(f=>l3old[f.code]=f.name));
+    const diff=(o,n)=>({add:Object.keys(n).filter(k=>!(k in o)),rem:Object.keys(o).filter(k=>!(k in n)),ren:Object.keys(n).filter(k=>k in o&&o[k]!==n[k])});
+    const d2=diff(l2old,l2new),d3=diff(l3old,l3new);
+    d2.rem.forEach(c=>{const n=DR.items.filter(i=>i.l2===c).length;if(n)errs.push(`Cannot remove service ${c}: ${plural(n,'item')} still use it. Move them first.`)});
+    const li=(arr,f)=>arr.length?`<ul class="ol">${arr.slice(0,8).map(f).join('')}${arr.length>8?`<li>…and ${arr.length-8} more</li>`:''}</ul>`:'<p class="muted small">None</p>';
+    const m=modal(`<h2>Taxonomy import: what would change</h2>${errs.length?`<div class="banner bad"><b>Fix these first:</b><ul class="ol">${errs.slice(0,8).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+     <h3>Services (L2)</h3><p class="small"><b>Added ${d2.add.length}</b>${li(d2.add,c=>`<li>${c} ${esc(l2new[c])}</li>`)}<b>Removed ${d2.rem.length}</b>${li(d2.rem,c=>`<li>${c} ${esc(l2old[c])}</li>`)}<b>Renamed ${d2.ren.length}</b>${li(d2.ren,c=>`<li>${c}: ${esc(l2old[c])} → ${esc(l2new[c])}</li>`)}</p>
+     <h3>Functions (L3)</h3><p class="small"><b>Added ${d3.add.length}</b>${li(d3.add,c=>`<li>${c} ${esc(l3new[c])}</li>`)}<b>Removed ${d3.rem.length}</b>${li(d3.rem,c=>`<li>${c} ${esc(l3old[c])}</li>`)}<b>Renamed ${d3.ren.length}</b>${li(d3.ren,c=>`<li>${c}: ${esc(l3old[c])} → ${esc(l3new[c])}</li>`)}</p>
+     <div class="acts"><button type="button" class="btn" data-x="c">Cancel</button><button type="button" class="btn primary" data-x="o" ${errs.length?'disabled':''}>Apply to draft</button></div>`,{label:'Taxonomy diff',wide:true});
+    m.el.addEventListener('click',ev=>{const b=ev.target.closest('[data-x]');if(!b)return;if(b.dataset.x==='c')return m.close();
+      DR.taxonomy=nf.taxonomy;DR.l3=nf.l3;_l2k=null;commit('imported','Settings','taxonomy',`Taxonomy imported: L2 +${d2.add.length} −${d2.rem.length} renamed ${d2.ren.length}; L3 +${d3.add.length} −${d3.rem.length} renamed ${d3.ren.length}`);m.close();renderNav();toast('Taxonomy applied to the draft.')});
+  };
+  fr.readAsText(file);
+});
+/* ===== start ===== */
+if(loadSession())startApp();else renderLogin(expired?IDLE_MSG:'');
+
+</script>
+</body></html>
+

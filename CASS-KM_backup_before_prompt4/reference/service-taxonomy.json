@@ -1,0 +1,1913 @@
+{
+  "source": "CASS Service Taxonomy (Service_Taxonomy_190126.pptx, 19 Jan 2026)",
+  "note": "L0-L2 names follow the taxonomy overview slide; L3 codes and wording follow the per-L2 slides. 1.1.8 Freight Invoice L3s are marked 'to be further confirmed' in the source. Where an L3 line had text after ':' or 'e.g.', the lead text is the name and the rest is in 'details' (shown under the collapsible Details in the Knowledge Centre).",
+  "towers": [
+    {
+      "code": "1",
+      "name": "Customer Operations",
+      "l1": [
+        {
+          "code": "1.1",
+          "name": "Customer Success",
+          "l2": [
+            {
+              "code": "1.1.1",
+              "name": "Customer Data Management",
+              "l3": [
+                {
+                  "code": "1.1.1.1",
+                  "name": "Collect and request customer account information (trigger by Sales)"
+                },
+                {
+                  "code": "1.1.1.2",
+                  "name": "Classify and validate new customer data and active accounts"
+                },
+                {
+                  "code": "1.1.1.3",
+                  "name": "Modify/block customer accounts"
+                },
+                {
+                  "code": "1.1.1.4",
+                  "name": "Deactivate customer accounts"
+                }
+              ]
+            },
+            {
+              "code": "1.1.2",
+              "name": "Contract Management",
+              "l3": [
+                {
+                  "code": "1.1.2.1",
+                  "name": "Create contract (before SO creation)"
+                },
+                {
+                  "code": "1.1.2.2",
+                  "name": "Automate and digitize contract management processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "1.1.3",
+              "name": "Capture & Monitor Orders",
+              "l3": [
+                {
+                  "code": "1.1.3.1",
+                  "name": "Track and manage orders, updates and cancels"
+                },
+                {
+                  "code": "1.1.3.2",
+                  "name": "Automate and digitize order management processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "1.1.4",
+              "name": "Fulfil Orders",
+              "l3": [
+                {
+                  "code": "1.1.4.1",
+                  "name": "Processing the orders"
+                },
+                {
+                  "code": "1.1.4.2",
+                  "name": "Shipping the order"
+                },
+                {
+                  "code": "1.1.4.3",
+                  "name": "Manage 3rd party logistic providers (indirectly, just for escalation)"
+                },
+                {
+                  "code": "1.1.4.4",
+                  "name": "Manage reversed logistics"
+                },
+                {
+                  "code": "1.1.4.5",
+                  "name": "Automate and digitize order management processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "1.1.5",
+              "name": "Billing & Invoicing",
+              "l3": [
+                {
+                  "code": "1.1.5.1",
+                  "name": "Define invoice procedures (in terms of generating invoice)"
+                },
+                {
+                  "code": "1.1.5.2",
+                  "name": "Create invoice and release"
+                },
+                {
+                  "code": "1.1.5.3",
+                  "name": "Create credit/debit note and approve"
+                },
+                {
+                  "code": "1.1.5.4",
+                  "name": "Manage/alignment with revenue recognition"
+                },
+                {
+                  "code": "1.1.5.5",
+                  "name": "Automate and digitize billing & invoicing processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "1.1.6",
+              "name": "Collection Management",
+              "l3": [
+                {
+                  "code": "1.1.6.1",
+                  "name": "Execute system adjustment for delinquent account balances (as needed)"
+                },
+                {
+                  "code": "1.1.6.2",
+                  "name": "Follow up on overdue payments and manage collection activities"
+                },
+                {
+                  "code": "1.1.6.3",
+                  "name": "Automate and digitize collection management processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "1.1.7",
+              "name": "Customer Satisfaction",
+              "l3": [
+                {
+                  "code": "1.1.7.1",
+                  "name": "Develop customer service strategy"
+                },
+                {
+                  "code": "1.1.7.2",
+                  "name": "Plan and manage customer service workforce"
+                },
+                {
+                  "code": "1.1.7.3",
+                  "name": "Receive and manage customer inquiries"
+                },
+                {
+                  "code": "1.1.7.4",
+                  "name": "Receive and manage customer complaints"
+                },
+                {
+                  "code": "1.1.7.5",
+                  "name": "Analyze disputes"
+                },
+                {
+                  "code": "1.1.7.6",
+                  "name": "Evaluate customer service operations"
+                },
+                {
+                  "code": "1.1.7.7",
+                  "name": "Measure and evaluate customer satisfaction"
+                },
+                {
+                  "code": "1.1.7.8",
+                  "name": "Automate and digitize customer satisfaction processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "1.1.8",
+              "name": "Freight Invoice",
+              "l3": [
+                {
+                  "code": "1.1.8.1",
+                  "name": "Billing preparation and data validation"
+                },
+                {
+                  "code": "1.1.8.2",
+                  "name": "Rating and charge application"
+                },
+                {
+                  "code": "1.1.8.3",
+                  "name": "Documentation and compliance handling"
+                },
+                {
+                  "code": "1.1.8.4",
+                  "name": "Invoice creation and dispatch"
+                },
+                {
+                  "code": "1.1.8.5",
+                  "name": "Dispute management and resolution"
+                },
+                {
+                  "code": "1.1.8.6",
+                  "name": "Financial and administration support"
+                }
+              ]
+            },
+            {
+              "code": "1.1.9",
+              "name": "Supporting Activities: Reporting & Continuous Improvement",
+              "l3": [
+                {
+                  "code": "1.1.9.1",
+                  "name": "Liaising with Indirect Tax, Legal and Trade Compliance on trade related issue",
+                  "details": [
+                    "e.g. vet Letters of Credit (LC) for export orders, Invoke Credit-approved LOI (Letter of Indemnity) for LC customers, etc"
+                  ]
+                },
+                {
+                  "code": "1.1.9.2",
+                  "name": "Month-end closing activities",
+                  "details": [
+                    "e.g. perform and complete reporting process, as per guidelines with Customer, create and electronically distribute mutually agreed reports between Customer Ops & Finance Ops, manual update of CCS and NRV price, etc"
+                  ]
+                },
+                {
+                  "code": "1.1.9.3",
+                  "name": "Prepare and manage daily / weekly / monthly governance with Aster team on reviewing mutually agreed operational KPIs and metrices"
+                },
+                {
+                  "code": "1.1.9.4",
+                  "name": "Receive Sample Request and coordinate the sample delivery request with relevant parties",
+                  "details": [
+                    "Trade Agent, Warehouse, Research Lab, Sample Requestor and Customer"
+                  ]
+                },
+                {
+                  "code": "1.1.9.5",
+                  "name": "Support management of service providers",
+                  "details": [
+                    "e.g. maintain relevant vendor system admin access, support Logistics Manager to provide timely performance review of land logistics and Freight Forwarder service providers, support Trade Compliance Manager to provide timely performance review of Trade Agent service provider, etc"
+                  ]
+                },
+                {
+                  "code": "1.1.9.6",
+                  "name": "Automate and digitize customer operations processes, drive process transformation and efficiency"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "2",
+      "name": "Procurement",
+      "l1": [
+        {
+          "code": "2.1",
+          "name": "Procurement Operations",
+          "l2": [
+            {
+              "code": "2.1.1",
+              "name": "Vendor Data Management (PO)",
+              "l3": [
+                {
+                  "code": "2.1.1.1",
+                  "name": "Establish vendor master data policies and guideline"
+                },
+                {
+                  "code": "2.1.1.2",
+                  "name": "Collect vendor account information"
+                },
+                {
+                  "code": "2.1.1.3",
+                  "name": "Classify and validate new vendor data and active accounts"
+                },
+                {
+                  "code": "2.1.1.4",
+                  "name": "Modify/block vendor accounts"
+                },
+                {
+                  "code": "2.1.1.5",
+                  "name": "Deactivate vendor accounts"
+                },
+                {
+                  "code": "2.1.1.6",
+                  "name": "Vendor master data governance, reporting and continuous improvement",
+                  "details": [
+                    "identify duplicate vendor, enforce naming standards",
+                    "audit & access control : restrict edit rights, maintain audit trails",
+                    "monitor SLA and KPI performance",
+                    "automate and digitize vendor data management processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "2.1.2",
+              "name": "Material Master – Procurement",
+              "l3": [
+                {
+                  "code": "2.1.2.1",
+                  "name": "Purchasing info records",
+                  "details": [
+                    "connect a material to a specific vendor",
+                    "stores vendor-specific details, e.g. price, delivery times, conditions for that material"
+                  ]
+                },
+                {
+                  "code": "2.1.2.2",
+                  "name": "Source list management",
+                  "details": [
+                    "defines approved vendors for a material",
+                    "helps control procurement by specifying which vendor can supply which material"
+                  ]
+                },
+                {
+                  "code": "2.1.2.3",
+                  "name": "Quota arrangement",
+                  "details": [
+                    "Distributes procurement quantities among multiple vendors for the same material"
+                  ]
+                },
+                {
+                  "code": "2.1.2.4",
+                  "name": "Material-vendor relationship in contracts",
+                  "details": [
+                    "Framework agreement link materials to vendors for long-term procurement"
+                  ]
+                },
+                {
+                  "code": "2.1.2.5",
+                  "name": "Automate and digitize material master processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "2.1.3",
+              "name": "Outline Agreement Management",
+              "l3": [
+                {
+                  "code": "2.1.3.1",
+                  "name": "Input contract to the system"
+                },
+                {
+                  "code": "2.1.3.2",
+                  "name": "Add/amend contract to the system"
+                }
+              ]
+            },
+            {
+              "code": "2.1.4",
+              "name": "Request to Purchase (RTP)",
+              "l3": [
+                {
+                  "code": "2.1.4.1",
+                  "name": "Generate and issue Purchase Order (PO)"
+                },
+                {
+                  "code": "2.1.4.2",
+                  "name": "Share contract with customer"
+                },
+                {
+                  "code": "2.1.4.3",
+                  "name": "Receive & track goods/services by customer warehouse/users; resolution/facilitation of delivery related issues by supplier team"
+                }
+              ]
+            },
+            {
+              "code": "2.1.5",
+              "name": "Inventory Management – Supply Side",
+              "l3": [
+                {
+                  "code": "2.1.5.1",
+                  "name": "Forecast & replenishment planning"
+                },
+                {
+                  "code": "2.1.5.2",
+                  "name": "Re-order stock/safety stock"
+                },
+                {
+                  "code": "2.1.5.3",
+                  "name": "Automate and digitize inventory management processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "2.1.6",
+              "name": "Project Turnaround (PTA)",
+              "l3": [
+                {
+                  "code": "2.1.6.1",
+                  "name": "Supplier performance recovery"
+                },
+                {
+                  "code": "2.1.6.2",
+                  "name": "Contract remediation/re-baselining"
+                },
+                {
+                  "code": "2.1.6.3",
+                  "name": "Project turnaround management"
+                },
+                {
+                  "code": "2.1.6.4",
+                  "name": "Supplier replacement/re-tendering"
+                },
+                {
+                  "code": "2.1.6.5",
+                  "name": "Crisis procurement/emergency sourcing"
+                },
+                {
+                  "code": "2.1.6.6",
+                  "name": "Streamline S2P workflows, introduce automation for S2P processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "2.1.7",
+              "name": "Spot Buy",
+              "l3": [
+                {
+                  "code": "2.1.7.1",
+                  "name": "Analyze spot buy requirements ($10K-50K / <$250K)"
+                },
+                {
+                  "code": "2.1.7.2",
+                  "name": "Recommend and approve vendor"
+                },
+                {
+                  "code": "2.1.7.3",
+                  "name": "Generate & issue Purchase Order (PO)"
+                },
+                {
+                  "code": "2.1.7.4",
+                  "name": "Automate and digitize spot buy processes, drive process transformation and efficiency"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "2.2",
+          "name": "Commercial Operations (S2C)",
+          "l2": [
+            {
+              "code": "2.2.1",
+              "name": "Contract Management",
+              "l3": [
+                {
+                  "code": "2.2.1.1",
+                  "name": "Define term and conditions of purchase"
+                },
+                {
+                  "code": "2.2.1.2",
+                  "name": "Maintain contract terms and conditions"
+                },
+                {
+                  "code": "2.2.1.3",
+                  "name": "Create contract"
+                },
+                {
+                  "code": "2.2.1.4",
+                  "name": "Share contract with vendor"
+                },
+                {
+                  "code": "2.2.1.5",
+                  "name": "Monitor contract"
+                },
+                {
+                  "code": "2.2.1.6",
+                  "name": "Review contract"
+                },
+                {
+                  "code": "2.2.1.7",
+                  "name": "Adjust/terminate contract"
+                },
+                {
+                  "code": "2.2.1.8",
+                  "name": "Contract Renewals and Amendments"
+                },
+                {
+                  "code": "2.2.1.9",
+                  "name": "Automate and digitize contract management processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "2.2.2",
+              "name": "Strategic / Agile Sourcing",
+              "l3": [
+                {
+                  "code": "2.2.2.1",
+                  "name": "Category strategy development",
+                  "details": [
+                    "Spend analysis, market intelligence (analyze spend by category, identify sourcing opportunities, gather market & supplier insights)"
+                  ]
+                },
+                {
+                  "code": "2.2.2.2",
+                  "name": "Sourcing pipeline planning",
+                  "details": [
+                    "Opportunity assessment, sourcing calendar (prioritize sourcing projects, align with business needs, develop annual sourcing plan)"
+                  ]
+                },
+                {
+                  "code": "2.2.2.3",
+                  "name": "Market engagement",
+                  "details": [
+                    "Supplier research, Request for Information (RFI) process (identify potential suppliers, prepare & distribute RFI and evaluate supplier capabilities)"
+                  ]
+                },
+                {
+                  "code": "2.2.2.4",
+                  "name": "RFQ/RFP management",
+                  "details": [
+                    "Bid preparation, response evaluation (develop and issue RFQ/RFP; consolidate supplier responses; perform commercial and technical evaluation)"
+                  ]
+                },
+                {
+                  "code": "2.2.2.5",
+                  "name": "Supplier negotiation & selection",
+                  "details": [
+                    "Price negotiation, award recommendation (conduct negotiation sessions, analyze total cost of ownership, prepare supplier award recommendations)"
+                  ]
+                },
+                {
+                  "code": "2.2.2.6",
+                  "name": "Source to S2C processes, reporting and continuous improvement",
+                  "details": [
+                    "KPI/SLA monitoring, risk mitigation : track supplier performance metrics; conduct supplier reviews; identify and mitigate supply risks",
+                    "KPI dashboard, sourcing savings : generate sourcing KPIs (cycle time, savings achieved); report supplier performance and contract compliance"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "3",
+      "name": "Finance & Accounting",
+      "l1": [
+        {
+          "code": "3.1",
+          "name": "Order to Cash (O2C)",
+          "l2": [
+            {
+              "code": "3.1.1",
+              "name": "Credit Management",
+              "l3": [
+                {
+                  "code": "3.1.1.1",
+                  "name": "Credit limit setup and monitoring"
+                },
+                {
+                  "code": "3.1.1.2",
+                  "name": "Risk assessment and scoring"
+                },
+                {
+                  "code": "3.1.1.3",
+                  "name": "Credit policy enforcement"
+                },
+                {
+                  "code": "3.1.1.4",
+                  "name": "Credit block resolution"
+                },
+                {
+                  "code": "3.1.1.5",
+                  "name": "Automate and digitize credit management processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "3.1.2",
+              "name": "Account Receivables",
+              "l3": [
+                {
+                  "code": "3.1.2.1",
+                  "name": "Payment receipt"
+                },
+                {
+                  "code": "3.1.2.2",
+                  "name": "Cash posting and reconciliation"
+                },
+                {
+                  "code": "3.1.2.3",
+                  "name": "Unapplied cash handling"
+                },
+                {
+                  "code": "3.1.2.4",
+                  "name": "Customer account maintenance"
+                },
+                {
+                  "code": "3.1.2.5",
+                  "name": "A/R aging schedule report"
+                },
+                {
+                  "code": "3.1.2.6",
+                  "name": "Automate and digitize A/R processes, drive process transformation and efficiency"
+                },
+                {
+                  "code": "3.1.2.7",
+                  "name": "Creation of Sundry invoices, upon request by business"
+                },
+                {
+                  "code": "3.1.2.8",
+                  "name": "Pre-billing work related to several sundry invoices"
+                }
+              ]
+            },
+            {
+              "code": "3.1.3",
+              "name": "Maintain Pricing and Discount",
+              "l3": [
+                {
+                  "code": "3.1.3.1",
+                  "name": "Input and maintain prices (incl. discount and loyalty program) in the system"
+                },
+                {
+                  "code": "3.1.3.2",
+                  "name": "Automate and digitize pricing and discount processes, drive process transformation and efficiency"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "3.2",
+          "name": "Purchase to Pay (P2P)",
+          "l2": [
+            {
+              "code": "3.2.1",
+              "name": "Invoice Receiving",
+              "l3": [
+                {
+                  "code": "3.2.1.1",
+                  "name": "Receive documents from",
+                  "details": [
+                    "external parties : vendor via email (PDF documents)",
+                    "internal parties : employee via email (PDF documents)"
+                  ]
+                },
+                {
+                  "code": "3.2.1.2",
+                  "name": "Verify documents (can refer to ACE's detailed procedures)",
+                  "details": [
+                    "legality documents (original/authentic vs. counterfeit documents)",
+                    "completeness documents based on internal agreed check list",
+                    "acknowledge/record the “received date” to establish the invoice due date",
+                    "scan all received documents and attach the scanned image in the SAP system",
+                    "send the acknowledgement to vendor/employee for the received documents",
+                    "If the document check list isn’t completed :",
+                    "email and request vendor for the lack of supporting documents and hold the documents that have been received until it’s completed",
+                    "email vendor for the wrong supporting documents received and return them via email/courier (if it’s physical document received)"
+                  ]
+                },
+                {
+                  "code": "3.2.1.3",
+                  "name": "Filing",
+                  "details": [
+                    "file all the complete document of payment process (from control and payment team), classified by :",
+                    "1. by legal entity",
+                    "2. by payment date",
+                    "send archived documents to designated storage facility (ensure the retention period complies with each country’s tax and legal requirements)"
+                  ]
+                },
+                {
+                  "code": "3.2.1.4",
+                  "name": "Reviewing and reporting",
+                  "details": [
+                    "create report for daily transaction : # of invoice received, invoice due date, payment date. Payment date is from control and payment team (joint effort with control and payment team)",
+                    "review # of physical documents vs. # of invoice in the report (daily counts)"
+                  ]
+                },
+                {
+                  "code": "3.2.1.5",
+                  "name": "External/Internal user inquiries/contact center",
+                  "details": [
+                    "receive service request from related stakeholders (internal and external) via email/call",
+                    "classify issue by ID job (ticketing no.), requestor, tower, type of issue, date of request, status (open, in progress, completed/closed)",
+                    "review status of service request based on agreed SLA (escalate issues that haven’t been solved/met SLA)",
+                    "close the solved/completed service issue by each tower"
+                  ]
+                },
+                {
+                  "code": "3.2.1.6",
+                  "name": "Automate and digitize invoice receiving processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "3.2.2",
+              "name": "Invoice Validation",
+              "l3": [
+                {
+                  "code": "3.2.2.1",
+                  "name": "Verify/validate invoice",
+                  "details": [
+                    "validate commercial invoice against PO (price, qty)",
+                    "validate vendor bank beneficiary vs. invoice/statement of vendor vs. bank beneficiary’s previous transaction",
+                    "validate approved delivery slip / proof of performance especially if it’s not 3 way match PO",
+                    "validate ASM (Authorized Signature Matrix) approval",
+                    "validate tax invoice"
+                  ]
+                },
+                {
+                  "code": "3.2.2.2",
+                  "name": "Review posted invoice"
+                },
+                {
+                  "code": "3.2.2.3",
+                  "name": "Reporting, continuous improvement and supporting activities",
+                  "details": [
+                    "create reversal journal as needed",
+                    "create monthly report, e.g. “open adv. payment update report”, “outstanding GR report”, etc.",
+                    "KPI/SLA monitoring, risk mitigation : timely posted & payment",
+                    "automate and digitize invoice validation processes, drive process transformation and efficiency",
+                    "manage and resolve vendor queries received in the ACE-vendorhelpdesk mailbox",
+                    "monthly Payroll on time posting and CPF direct debit clearing",
+                    "monthly accruals related to payrolls"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.2.3",
+              "name": "Travel & Entertainment",
+              "l3": [
+                {
+                  "code": "3.2.3.1",
+                  "name": "Verify/validate documents",
+                  "details": [
+                    "verify approval of travel request and travel expenses from line manager",
+                    "verify supporting documents against user input (reimbursement)"
+                  ]
+                },
+                {
+                  "code": "3.2.3.2",
+                  "name": "Post reimbursement, notify the verification/validation"
+                },
+                {
+                  "code": "3.2.3.3",
+                  "name": "Review posted document"
+                },
+                {
+                  "code": "3.2.3.4",
+                  "name": "Reporting, continuous improvement and supporting activities",
+                  "details": [
+                    "monthly T&E spending, by cost center, by username (part of T&E audit report)",
+                    "KPI/SLA monitoring, risk mitigation",
+                    "automate and digitize travel and entertainment processes, drive process transformation and efficiency",
+                    "managing and resolving queries on ACE-staff claims mailbox",
+                    "administering changes in Concur, liaising with concur development team when needed in trying to resolve the staff queries"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.2.4",
+              "name": "Vendor Data Management (PO & Non-PO)",
+              "l3": [
+                {
+                  "code": "3.2.4.1",
+                  "name": "VPO Vendor",
+                  "details": [
+                    "Update data related to Finance (bank account, payment term, etc.)"
+                  ]
+                },
+                {
+                  "code": "3.2.4.2",
+                  "name": "Collect vendor account information (Non-PO Vendor)"
+                },
+                {
+                  "code": "3.2.4.3",
+                  "name": "Classify and validate new vendor data and active accounts (Non-PO Vendor)"
+                },
+                {
+                  "code": "3.2.4.4",
+                  "name": "Modify/block vendor accounts (Non-PO Vendor)"
+                },
+                {
+                  "code": "3.2.4.5",
+                  "name": "Deactivate vendor accounts (Non-PO Vendor)"
+                },
+                {
+                  "code": "3.2.4.6",
+                  "name": "Vendor master data governance, reporting and continuous improvement (Non-PO Vendor)",
+                  "details": [
+                    "identify duplicate vendor, enforce naming standards",
+                    "audit & access control : restrict edit rights, maintain audit trails",
+                    "monitor SLA and KPI performance",
+                    "automate and digitize vendor data management processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "3.3",
+          "name": "Record to Report (R2R)",
+          "l2": [
+            {
+              "code": "3.3.1",
+              "name": "Master Data Management",
+              "l3": [
+                {
+                  "code": "3.3.1.1",
+                  "name": "CoA design and governance",
+                  "details": [
+                    "define CoA structure (segments, hierarchy, coding logic)",
+                    "align CoA with financial reporting, statutory and management needs",
+                    "establish CoA design principles and naming conventions",
+                    "review and approve CoA changes via governance board"
+                  ]
+                },
+                {
+                  "code": "3.3.1.2",
+                  "name": "CoA master data maintenance",
+                  "details": [
+                    "Modify, block/retire and maintain account attribute, e.g. account type, reconciliation indicator, etc."
+                  ]
+                },
+                {
+                  "code": "3.3.1.3",
+                  "name": "CoA mapping and integration",
+                  "details": [
+                    "map local CoA to group CoA (for consolidation)",
+                    "align CoA with cost centers, profit centers and functional areas",
+                    "support integration with tax codes, asset classes"
+                  ]
+                },
+                {
+                  "code": "3.3.1.4",
+                  "name": "CoA request management",
+                  "details": [
+                    "validate changes",
+                    "route approval based on impact and thresholds",
+                    "track record status and turnaround time",
+                    "communicate outcomes to stakeholders"
+                  ]
+                },
+                {
+                  "code": "3.3.1.5",
+                  "name": "CoA data quality and controls",
+                  "details": [
+                    "perform periodic data cleansing",
+                    "identify unused and duplicate accounts",
+                    "monitor compliance with naming and usage policies",
+                    "run validation checks, e.g. open items, postings, reconciliation"
+                  ]
+                },
+                {
+                  "code": "3.3.1.6",
+                  "name": "CoA change impact and assessment",
+                  "details": [
+                    "simulate changes in test environment",
+                    "communicate risks and mitigation plan"
+                  ]
+                },
+                {
+                  "code": "3.3.1.7",
+                  "name": "CoA compliance and audit",
+                  "details": [
+                    "maintain audit trail of CoA changes",
+                    "support internal and external audits",
+                    "ensure segregation duties in CoA maintenance"
+                  ]
+                },
+                {
+                  "code": "3.3.1.8",
+                  "name": "CoA training and documentation",
+                  "details": [
+                    "Develop and maintain CoA manuals and guidelines"
+                  ]
+                },
+                {
+                  "code": "3.3.1.9",
+                  "name": "CoA lifecycle review and optimization",
+                  "details": [
+                    "periodic review of CoA structure and usage",
+                    "recommend rationalization or redesign",
+                    "align with evolving business models and reporting needs",
+                    "benchmark against industry best practice"
+                  ]
+                },
+                {
+                  "code": "3.3.1.10",
+                  "name": "CoA reporting and analytics",
+                  "details": [
+                    "provide CoA usage reports",
+                    "analyze account-level posting trends",
+                    "enable drill-down and traceability for reconciliations"
+                  ]
+                },
+                {
+                  "code": "3.3.1.11",
+                  "name": "Establish customer master data policies and guideline"
+                },
+                {
+                  "code": "3.3.1.12",
+                  "name": "Receive data request from CO and update customer master data"
+                },
+                {
+                  "code": "3.3.1.13",
+                  "name": "Customer master data governance, reporting and continuous improvement",
+                  "details": [
+                    "identify duplicate customer, enforce naming standards",
+                    "audit & access control : restrict edit rights, maintain audit trails",
+                    "monitor SLA and KPI performance",
+                    "automate and digitize customer data management processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.3.2",
+              "name": "General Ledger (GL) Accounting",
+              "l3": [
+                {
+                  "code": "3.3.2.1",
+                  "name": "Record general journal entries"
+                },
+                {
+                  "code": "3.3.2.2",
+                  "name": "Record adjusting (incl. reversal) journal entries"
+                },
+                {
+                  "code": "3.3.2.3",
+                  "name": "Reconcile general ledger accounts"
+                },
+                {
+                  "code": "3.3.2.4",
+                  "name": "Reporting, continuous improvement and supporting activities",
+                  "details": [
+                    "month-end/periodically trend analysis, anomaly data analysis",
+                    "automate and digitize GL accounting processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.3.3",
+              "name": "Fixed Assets Accounting",
+              "l3": [
+                {
+                  "code": "3.3.3.1",
+                  "name": "Capitalize fixed assets"
+                },
+                {
+                  "code": "3.3.3.2",
+                  "name": "Calculate depreciation"
+                },
+                {
+                  "code": "3.3.3.3",
+                  "name": "Dispose of fixed assets"
+                },
+                {
+                  "code": "3.3.3.4",
+                  "name": "Reconcile fixed asset accounts"
+                },
+                {
+                  "code": "3.3.3.5",
+                  "name": "Fixed assets periodically physical counts plan (joint effort with other functions)"
+                },
+                {
+                  "code": "3.3.3.6",
+                  "name": "Reporting, continuous improvement and supporting activities",
+                  "details": [
+                    "monthly report fixed assets analysis",
+                    "automate and digitize fixed assets accounting processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.3.4",
+              "name": "Lease Accounting",
+              "l3": [
+                {
+                  "code": "3.3.4.1",
+                  "name": "Create new leases"
+                },
+                {
+                  "code": "3.3.4.2",
+                  "name": "Calculate depreciation"
+                },
+                {
+                  "code": "3.3.4.3",
+                  "name": "Retire lease when required"
+                },
+                {
+                  "code": "3.3.4.4",
+                  "name": "Monitoring lease invoices via various external portals and coordination with AP team for posting into AP Control account for Lease liability balances"
+                },
+                {
+                  "code": "3.3.4.5",
+                  "name": "Reporting, continuous improvement and supporting activities",
+                  "details": [
+                    "monthly report leases",
+                    "automate and digitize fixed assets accounting processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.3.5",
+              "name": "Intercompany Accounting",
+              "l3": [
+                {
+                  "code": "3.3.5.1",
+                  "name": "Record intercompany transactions"
+                },
+                {
+                  "code": "3.3.5.2",
+                  "name": "Invoice intercompany charges"
+                },
+                {
+                  "code": "3.3.5.3",
+                  "name": "Perform intercompany eliminations for consolidation"
+                },
+                {
+                  "code": "3.3.5.4",
+                  "name": "Reporting, continuous improvement and supporting activities",
+                  "details": [
+                    "monthly report intercompany account analysis",
+                    "automate and digitize intercompany accounting processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.3.6",
+              "name": "Financial Close & Consolidation",
+              "l3": [
+                {
+                  "code": "3.3.6.1",
+                  "name": "Execute monthly/year-end close"
+                },
+                {
+                  "code": "3.3.6.2",
+                  "name": "Consolidate group financial statement"
+                },
+                {
+                  "code": "3.3.6.3",
+                  "name": "Eliminate intercompany transactions"
+                },
+                {
+                  "code": "3.3.6.4",
+                  "name": "Reconcile consolidated account"
+                },
+                {
+                  "code": "3.3.6.5",
+                  "name": "Reporting, continuous improvement and supporting activities",
+                  "details": [
+                    "KPI/SLA monitoring, risk mitigation",
+                    "automate and financial close and consolidation processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.3.7",
+              "name": "Statutory & Regulatory Reporting",
+              "l3": [
+                {
+                  "code": "3.3.7.1",
+                  "name": "Prepare external financial statement reports (IFRS, GAAP, PSAK)"
+                },
+                {
+                  "code": "3.3.7.2",
+                  "name": "Submit reports to regulators"
+                },
+                {
+                  "code": "3.3.7.3",
+                  "name": "Support internal audit, external parties (bank, shareholders, etc.) and investment relations"
+                },
+                {
+                  "code": "3.3.7.4",
+                  "name": "Reporting, continuous improvement and supporting activities",
+                  "details": [
+                    "KPI/SLA monitoring, risk mitigation",
+                    "automate and digitize statutory and regulatory reporting processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "3.4",
+          "name": "Tax",
+          "l2": [
+            {
+              "code": "3.4.1",
+              "name": "Tax Data Management",
+              "l3": [
+                {
+                  "code": "3.4.1.1",
+                  "name": "Collect tax relevant data from ERP and other source systems"
+                },
+                {
+                  "code": "3.4.1.2",
+                  "name": "Validate taxpayer ID, tax codes and transaction classifications"
+                },
+                {
+                  "code": "3.4.1.3",
+                  "name": "Archive and maintain tax data in compliance with regulatory requirements"
+                },
+                {
+                  "code": "3.4.1.4",
+                  "name": "Automate and digitize tax data management processes, drive process transformation and efficiency"
+                },
+                {
+                  "code": "3.4.1.5",
+                  "name": "Maintain and enhance ERP tax configuration",
+                  "details": [
+                    "e.g., SAP tax codes"
+                  ]
+                },
+                {
+                  "code": "3.4.1.6",
+                  "name": "Participate in IT projects",
+                  "details": [
+                    "Migrations, upgrades, automation initiatives"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.4.2",
+              "name": "Tax Calculation & Validation",
+              "l3": [
+                {
+                  "code": "3.4.2.1",
+                  "name": "Calculate tax liability based on transactional data",
+                  "details": [
+                    "e.g. GST/VAT, income tax"
+                  ]
+                },
+                {
+                  "code": "3.4.2.2",
+                  "name": "Apply correct tax rates and formulas per latest regulations"
+                },
+                {
+                  "code": "3.4.2.3",
+                  "name": "Cross-validate tax calculations with accounting entries"
+                },
+                {
+                  "code": "3.4.2.4",
+                  "name": "Automate and digitize tax calculation/validation processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "3.4.3",
+              "name": "Tax Reporting & Compliance",
+              "l3": [
+                {
+                  "code": "3.4.3.1",
+                  "name": "Prepare periodic tax reports",
+                  "details": [
+                    "e.g. GST/VAT returns, annual income tax filing"
+                  ]
+                },
+                {
+                  "code": "3.4.3.2",
+                  "name": "Submit reports to tax authorities via e-Filing or designated platforms"
+                },
+                {
+                  "code": "3.4.3.3",
+                  "name": "Ensure compliance with deadlines, formats and jurisdictional rules"
+                },
+                {
+                  "code": "3.4.3.4",
+                  "name": "Prepare tax payment instructions and ensure timely settlement (GST/VAT, WHT, CIT, property tax instalments)"
+                },
+                {
+                  "code": "3.4.3.5",
+                  "name": "Reconcile tax cash flows with Treasury and Controller (AP) teams"
+                }
+              ]
+            },
+            {
+              "code": "3.4.4",
+              "name": "Tax Reconciliation",
+              "l3": [
+                {
+                  "code": "3.4.4.1",
+                  "name": "Reconcile tax postings with general ledger and sub-ledger data"
+                },
+                {
+                  "code": "3.4.4.2",
+                  "name": "Identify and resolve discrepancies or misclassifications"
+                },
+                {
+                  "code": "3.4.4.3",
+                  "name": "Document reconciliation results for audit and compliance purposes"
+                },
+                {
+                  "code": "3.4.4.4",
+                  "name": "Automate and digitize tax reconciliation processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "3.4.5",
+              "name": "Tax Audit Report",
+              "l3": [
+                {
+                  "code": "3.4.5.1",
+                  "name": "Compile supporting documentation for internal or external tax audits"
+                },
+                {
+                  "code": "3.4.5.2",
+                  "name": "Draft formal responses to audit findings or inquiries"
+                },
+                {
+                  "code": "3.4.5.3",
+                  "name": "Coordinate with legal, finance and external auditors as needed"
+                },
+                {
+                  "code": "3.4.5.4",
+                  "name": "Support preparation of transfer pricing reports",
+                  "details": [
+                    "Local files, master file, CbCR"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.4.6",
+              "name": "Tax Refund & Recovery",
+              "l3": [
+                {
+                  "code": "3.4.6.1",
+                  "name": "Identify opportunities for tax refunds or incentives"
+                },
+                {
+                  "code": "3.4.6.2",
+                  "name": "Prepare and submit refund claims with required documentation"
+                },
+                {
+                  "code": "3.4.6.3",
+                  "name": "Monitor claim status and follow up with tax authorities until resolution"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "3.5",
+          "name": "Treasury",
+          "l2": [
+            {
+              "code": "3.5.1",
+              "name": "Front Office Operations",
+              "l3": [
+                {
+                  "code": "3.5.1.1",
+                  "name": "Cash and liquidity management",
+                  "details": [
+                    "cash positioning & forecasting",
+                    "% of available cash invested",
+                    "intercompany funding and pooling",
+                    "intercompany netting and settlement"
+                  ]
+                },
+                {
+                  "code": "3.5.1.2",
+                  "name": "Bank relationship management",
+                  "details": [
+                    "bank account opening/closure",
+                    "bank fee/service negotiation",
+                    "KYC and bank documentation",
+                    "Corporate Card Management",
+                    "bank maintenance",
+                    "iBanking administration"
+                  ]
+                },
+                {
+                  "code": "3.5.1.3",
+                  "name": "Debt and capital markets",
+                  "details": [
+                    "bond or debt issuance",
+                    "bilateral/syndicated loans",
+                    "credit facility management"
+                  ]
+                },
+                {
+                  "code": "3.5.1.4",
+                  "name": "Foreign exchange F(x) and hedging",
+                  "details": [
+                    "F(x) exposure management",
+                    "hedging strategy & execution"
+                  ]
+                },
+                {
+                  "code": "3.5.1.5",
+                  "name": "Strategic treasury advisory",
+                  "details": [
+                    "capital structure optimization",
+                    "scenario analysis and stress testing",
+                    "M&A and corporate action support",
+                    "benchmarking and best practices"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.5.2",
+              "name": "Back Office Operations",
+              "l3": [
+                {
+                  "code": "3.5.2.1",
+                  "name": "Risk management and compliance",
+                  "details": [
+                    "financial risk identification & mitigation",
+                    "regulatory compliance (SOX, IFRS, GAAP, PSAK)",
+                    "internal control & audit"
+                  ]
+                },
+                {
+                  "code": "3.5.2.2",
+                  "name": "Transaction operations",
+                  "details": [
+                    "transaction settlement and reconciliation",
+                    "treasury accounting entries",
+                    "internal/external reporting"
+                  ]
+                },
+                {
+                  "code": "3.5.2.3",
+                  "name": "Treasury technology and systems",
+                  "details": [
+                    "Treasury Management System (TMS)",
+                    "ERP and bank integration",
+                    "process automation and digitalization",
+                    "cybersecurity and data access"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.5.3",
+              "name": "Control & Payment",
+              "l3": [
+                {
+                  "code": "3.5.3.1",
+                  "name": "Review and control payment",
+                  "details": [
+                    "review the correctness of posted invoice in daily basis",
+                    "check the duplicate payment",
+                    "check down payment, open credit note",
+                    "check payment term changes"
+                  ]
+                },
+                {
+                  "code": "3.5.3.2",
+                  "name": "Create payment file (input payment)",
+                  "details": [
+                    "input payment to internet banking (transfer)",
+                    "create payment voucher (cash)",
+                    "print transfer slip"
+                  ]
+                },
+                {
+                  "code": "3.5.3.3",
+                  "name": "Execute/release payment",
+                  "details": [
+                    "approve transferred amount following bank beneficiary vs. approved document that has been inputted in internet banking (transfer)",
+                    "pay cash to vendor (cash)",
+                    "get vendor’s signature in payment voucher and remittance slip from vendor (cash)"
+                  ]
+                },
+                {
+                  "code": "3.5.3.4",
+                  "name": "Input clearing bank"
+                },
+                {
+                  "code": "3.5.3.5",
+                  "name": "Clearing from “clearing bank’ to “main bank”",
+                  "details": [
+                    "clearing after bank statement process",
+                    "archive bank documentation per transaction"
+                  ]
+                },
+                {
+                  "code": "3.5.3.6",
+                  "name": "Post payment review",
+                  "details": [
+                    "check the direct debit transaction (utilities, etc.)",
+                    "check the bounce back payment"
+                  ]
+                },
+                {
+                  "code": "3.5.3.7",
+                  "name": "Reporting, continuous improvement and supporting activities",
+                  "details": [
+                    "estimated fund request for the following week, cash flow forecast data, etc.",
+                    "KPI/SLA monitoring, risk mitigation",
+                    "automate and digitize control and payment processes, drive process transformation and efficiency"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "3.6",
+          "name": "Energy Risk Accounting (ERA)",
+          "l2": [
+            {
+              "code": "3.6.1",
+              "name": "Cost Accounting & Controlling",
+              "l3": [
+                {
+                  "code": "3.6.1.1",
+                  "name": "Set up and update cost allocations attributes"
+                },
+                {
+                  "code": "3.6.1.2",
+                  "name": "Execute cost allocation periodically"
+                },
+                {
+                  "code": "3.6.1.3",
+                  "name": "Analyze cost variances, investigate and document reasons (commentaries) for cost deviations"
+                },
+                {
+                  "code": "3.6.1.4",
+                  "name": "Perform month-end closing for cost related costing activities"
+                }
+              ]
+            },
+            {
+              "code": "3.6.2",
+              "name": "Inventory Counting & Reconciliation",
+              "l3": [
+                {
+                  "code": "3.6.2.1",
+                  "name": "Schedule cycle counts, define frequency and scope of item-level counts"
+                },
+                {
+                  "code": "3.6.2.2",
+                  "name": "Generate counts sheets, create system-based or manual template for counting"
+                },
+                {
+                  "code": "3.6.2.3",
+                  "name": "Perform physical count, execute actual stock count in warehouse"
+                },
+                {
+                  "code": "3.6.2.4",
+                  "name": "Enter count results, input counted quantities into ERP or WMS"
+                },
+                {
+                  "code": "3.6.2.5",
+                  "name": "Post inventory differences, record adjustments for overages or shortages"
+                },
+                {
+                  "code": "3.6.2.6",
+                  "name": "Analyze and investigate root causes of discrepancies"
+                },
+                {
+                  "code": "3.6.2.7",
+                  "name": "Reconcile inventory between physical vs. system records, resolve mismatches"
+                },
+                {
+                  "code": "3.6.2.8",
+                  "name": "Support and provide documentation for audit validation"
+                },
+                {
+                  "code": "3.6.2.9",
+                  "name": "Freeze/unfreeze inventory, temporarily block transactions during counting"
+                },
+                {
+                  "code": "3.6.2.10",
+                  "name": "Automate and digitize inventory counting and reconciliation processes, drive process transformation and efficiency"
+                },
+                {
+                  "code": "3.6.2.11",
+                  "name": "Add support site investigation of mass balance gains/losses outside tolerance"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "3.7",
+          "name": "Fin Planning & Analysis (FP&A)",
+          "l2": [
+            {
+              "code": "3.7.1",
+              "name": "Planning & Budgeting",
+              "l3": [
+                {
+                  "code": "3.7.1.1",
+                  "name": "Budget formulation and consolidation",
+                  "details": [
+                    "develop annual operating and capital budgets",
+                    "coordinate inputs from department and cost centers",
+                    "consolidate into enterprise-wide financial plans"
+                  ]
+                },
+                {
+                  "code": "3.7.1.2",
+                  "name": "Forecasting and scenario planning",
+                  "details": [
+                    "create rolling forecasts (monthly, quarterly)",
+                    "simulate financial outcomes under different business scenarios",
+                    "integrate macroeconomic, commodity and operational drivers"
+                  ]
+                },
+                {
+                  "code": "3.7.1.3",
+                  "name": "Long-range scenario planning",
+                  "details": [
+                    "develop multi-year projections (long-range plans) based on strategic initiatives, market trends and macroeconomic assumptions",
+                    "link financial forecasts to business strategy, investment roadmaps and transformation programs",
+                    "scenario simulation, base-case, worst-case outcomes to assess resilience and funding needs",
+                    "sensitivity analysis, test impact of key variables, e.g. energy prices, F(x) rates, demand shifts on long-term financial health"
+                  ]
+                },
+                {
+                  "code": "3.7.1.4",
+                  "name": "Cost center and functional budgeting",
+                  "details": [
+                    "allocate budgets to departments/functions",
+                    "track usage and variances at granular levels",
+                    "align with strategic and operational KPIs"
+                  ]
+                },
+                {
+                  "code": "3.7.1.5",
+                  "name": "Budget control and variance analysis",
+                  "details": [
+                    "monitor actual vs. budget",
+                    "investigate and explain deviations",
+                    "recommend corrective actions or re-forecasting"
+                  ]
+                },
+                {
+                  "code": "3.7.1.6",
+                  "name": "Budget Cycle Governance",
+                  "details": [
+                    "define calendar, milestones and approval workflows",
+                    "ensure compliance within internal control and audit requirements",
+                    "facilitate stakeholder reviews and sign-offs"
+                  ]
+                },
+                {
+                  "code": "3.7.1.7",
+                  "name": "Budgeting system and template management",
+                  "details": [
+                    "maintain budget tools",
+                    "design and update input templates",
+                    "train users and ensure data integrity"
+                  ]
+                },
+                {
+                  "code": "3.7.1.8",
+                  "name": "Strategic alignment and communication",
+                  "details": [
+                    "link budget to strategic initiatives and scorecards",
+                    "prepare executive summaries and board presentation",
+                    "translate financial plans into operational targets"
+                  ]
+                },
+                {
+                  "code": "3.7.1.9",
+                  "name": "Automate and digitize planning and budgeting processes, drive process transformation and efficiency"
+                }
+              ]
+            },
+            {
+              "code": "3.7.2",
+              "name": "Management Reporting",
+              "l3": [
+                {
+                  "code": "3.7.2.1",
+                  "name": "Periodic financial reporting",
+                  "details": [
+                    "prepare monthly, quarterly and year-to-date reports",
+                    "include P&L, balance sheet and cash flow summaries",
+                    "align with internal calendars and stakeholder expectations"
+                  ]
+                },
+                {
+                  "code": "3.7.2.2",
+                  "name": "Variance analysis and commentary",
+                  "details": [
+                    "compare actuals vs. budget/forecast",
+                    "provide root cause analysis and business commentary",
+                    "highlight risks, opportunities and corrective actions"
+                  ]
+                },
+                {
+                  "code": "3.7.2.3",
+                  "name": "KPI and performance dashboarding",
+                  "details": [
+                    "track operational and financial KPIs (e.g. EBITDA, ROIC, cost per unit)",
+                    "visualize trends and benchmarks across time and entities",
+                    "enable drill-downs by region, product or function"
+                  ]
+                },
+                {
+                  "code": "3.7.2.4",
+                  "name": "Segment and entity reporting",
+                  "details": [
+                    "generate reports by business unit, geography, product line or customer segment",
+                    "support internal management and external disclosures"
+                  ]
+                },
+                {
+                  "code": "3.7.2.5",
+                  "name": "Ad hoc and analytical reporting",
+                  "details": [
+                    "respond to on-demand requests from leadership or auditors",
+                    "perform deep dives into cost drivers, margin erosion or working capital"
+                  ]
+                },
+                {
+                  "code": "3.7.2.6",
+                  "name": "Report automation and governance",
+                  "details": [
+                    "maintain reporting templates or tools, e.g. Power BI, SAP BW, etc.",
+                    "ensure data integrity, version control and audit readiness",
+                    "define reporting standards and ownership across teams"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.7.3",
+              "name": "Profitability Analysis",
+              "l3": [
+                {
+                  "code": "3.7.3.1",
+                  "name": "Product profitability analysis",
+                  "details": [
+                    "calculate gross margin and contribution margin per product",
+                    "identify loss-making SKUs and pricing opportunities"
+                  ]
+                },
+                {
+                  "code": "3.7.3.2",
+                  "name": "Margin bridge and variance analysis",
+                  "details": [
+                    "track changes in margin over time",
+                    "explain drivers : price, volume, mix, cost, F(x), etc.",
+                    "support strategic pricing and sourcing decisions"
+                  ]
+                },
+                {
+                  "code": "3.7.3.3",
+                  "name": "Profitability forecasting and simulation",
+                  "details": [
+                    "model future profitability under different scenarios",
+                    "simulate impact of cost changes, pricing strategies or volume shifts"
+                  ]
+                },
+                {
+                  "code": "3.7.3.4",
+                  "name": "Profitability dashboards and reporting",
+                  "details": [
+                    "visualize profitability metrics across dimensions",
+                    "enable drill-downs by product, region or time period",
+                    "support executive and operational reviews"
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "3.7.4",
+              "name": "Investment Controlling",
+              "l3": [
+                {
+                  "code": "3.7.4.1",
+                  "name": "Capex planning and budgeting",
+                  "details": [
+                    "develop annual and multi-year expenditure plans",
+                    "align investment proposals with strategic priorities",
+                    "coordinate with business units for funding needs"
+                  ]
+                },
+                {
+                  "code": "3.7.4.2",
+                  "name": "Investment tracking and performance monitoring",
+                  "details": [
+                    "monitor actual vs. planned spend and timelines",
+                    "track project milestones, benefits realization and cost overruns",
+                    "flag delays, scope changes and reforecasting needs"
+                  ]
+                },
+                {
+                  "code": "3.7.4.3",
+                  "name": "Insurance",
+                  "details": [
+                    "support cost tracking, payments and accounting of insurance costs",
+                    "support annual program renewal process, collaborating with business units and functions in providing the necessary information to insurers so to ensure program remain robust to cover the business risk exposure",
+                    "support regular reporting to insurers, mainly for marine cargo and charterer's liability."
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "4",
+      "name": "Human Resources",
+      "l1": [
+        {
+          "code": "4.1",
+          "name": "Human Resources Operations",
+          "l2": [
+            {
+              "code": "4.1.1",
+              "name": "Employee Data Management",
+              "l3": [
+                {
+                  "code": "4.1.1.1",
+                  "name": "Employee master data maintenance",
+                  "details": [
+                    "Create, update and validate employee records (e.g. personal info, job details, cost center, supervisor)"
+                  ]
+                },
+                {
+                  "code": "4.1.1.2",
+                  "name": "Position and organization structure management",
+                  "details": [
+                    "Maintain position hierarchies, reporting lines and organization units in HR system"
+                  ]
+                },
+                {
+                  "code": "4.1.1.3",
+                  "name": "Data quality and validation checks",
+                  "details": [
+                    "Run periodic audits to ensure accuracy, completeness and consistency across systems"
+                  ]
+                },
+                {
+                  "code": "4.1.1.4",
+                  "name": "Employee lifecycle event processing",
+                  "details": [
+                    "Manage data updates for hiring, transfers, promotions, terminations and retirements (hire to retire)"
+                  ]
+                },
+                {
+                  "code": "4.1.1.5",
+                  "name": "Document management and archiving",
+                  "details": [
+                    "Store and retrieve employee documents (contract, ID, certifications) per retention policies"
+                  ]
+                },
+                {
+                  "code": "4.1.1.6",
+                  "name": "Data privacy and consent management",
+                  "details": [
+                    "Ensure compliance of general and personal data protection and manage employee for data usage"
+                  ]
+                },
+                {
+                  "code": "4.1.1.7",
+                  "name": "Interface and integration monitoring",
+                  "details": [
+                    "Oversee data flows between HR system, payroll, finance and other 3rd party system"
+                  ]
+                },
+                {
+                  "code": "4.1.1.8",
+                  "name": "Employee self-service enablement",
+                  "details": [
+                    "Manage portal for personal data updates, document access and workflow initiation"
+                  ]
+                },
+                {
+                  "code": "4.1.1.9",
+                  "name": "Global mobility data handling",
+                  "details": [
+                    "Track expatriate assignments, visa status and cross-border data requirements"
+                  ]
+                },
+                {
+                  "code": "4.1.1.10",
+                  "name": "Reporting analysis, compliance and continuous improvement",
+                  "details": [
+                    "provide HC, attrition, workforce analytics using employee data",
+                    "compliance and audit, support internal/external audits with validated employee data and change logs",
+                    "automate and digitize employee data management processes, drive process transformation and efficiency"
+                  ]
+                },
+                {
+                  "code": "4.1.1.11",
+                  "name": "Employee queries data / call center",
+                  "details": [
+                    "e.g. insurance registration, pay slip issues, employment letter creation, etc."
+                  ]
+                }
+              ]
+            },
+            {
+              "code": "4.1.2",
+              "name": "Recruitment",
+              "l3": [
+                {
+                  "code": "4.1.2.1",
+                  "name": "Job requisition",
+                  "details": [
+                    "Review completeness (after business unit's approval) in the alignment with organization structure and budget"
+                  ]
+                },
+                {
+                  "code": "4.1.2.2",
+                  "name": "Job description",
+                  "details": [
+                    "Define and standardize role and responsibilities, qualifications and job grading"
+                  ]
+                },
+                {
+                  "code": "4.1.2.3",
+                  "name": "Sourcing strategy and channel management (job board, referrals, social media, etc.)"
+                },
+                {
+                  "code": "4.1.2.4",
+                  "name": "Screening and shortlisting candidate",
+                  "details": [
+                    "Review CV and assess candidates"
+                  ]
+                },
+                {
+                  "code": "4.1.2.5",
+                  "name": "Schedule interview and manage logistics (virtual or on-site)"
+                },
+                {
+                  "code": "4.1.2.6",
+                  "name": "Facilitate soft and technical skill-set assessment until selection process (hiring decisions)"
+                },
+                {
+                  "code": "4.1.2.7",
+                  "name": "Offer letters, manage approvals and negotiate terms"
+                },
+                {
+                  "code": "4.1.2.8",
+                  "name": "Employee background verification (incl. medical screening)"
+                },
+                {
+                  "code": "4.1.2.9",
+                  "name": "Manage career sites"
+                },
+                {
+                  "code": "4.1.2.10",
+                  "name": "Manage internship (selection process to offering)"
+                },
+                {
+                  "code": "4.1.2.11",
+                  "name": "Reporting analysis, compliance and continuous improvement",
+                  "details": [
+                    "track time-to-fill, cost-per-hire and source effectiveness",
+                    "ensure recruitment practices comply with labor law and internal controls",
+                    "automate and digitize recruitment processes, drive process transformation and efficiency"
+                  ]
+                },
+                {
+                  "code": "4.1.2.12",
+                  "name": "New joiner announcement/email"
+                }
+              ]
+            },
+            {
+              "code": "4.1.3",
+              "name": "Employee Payroll Data Preparation",
+              "l3": [
+                {
+                  "code": "4.1.3.1",
+                  "name": "Ensure personal data, banking details are accurate and up-to-date in HR system"
+                },
+                {
+                  "code": "4.1.3.2",
+                  "name": "Coordinate and communicate payroll cut-off date for data submission and approvals across functions"
+                },
+                {
+                  "code": "4.1.3.3",
+                  "name": "Manage data related to",
+                  "details": [
+                    "time and attendance (check-in/out, overtime, etc.)",
+                    "variable pay, e.g. bonuses, incentives, allowances",
+                    "statutory deduction (BPJS) and benefit (insurance), etc."
+                  ]
+                },
+                {
+                  "code": "4.1.3.4",
+                  "name": "Data upload and transfer/interface",
+                  "details": [
+                    "manage standardized template to upload payroll data",
+                    "monitor smooth interface between systems"
+                  ]
+                },
+                {
+                  "code": "4.1.3.5",
+                  "name": "Ensure data privacy and access control is well and strongly managed"
+                },
+                {
+                  "code": "4.1.3.6",
+                  "name": "Exception handling (missing, incorrect, late data) has to be done before payroll lock"
+                },
+                {
+                  "code": "4.1.3.7",
+                  "name": "Automate and digitize payroll data preparation processes, drive process transformation and efficiency"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

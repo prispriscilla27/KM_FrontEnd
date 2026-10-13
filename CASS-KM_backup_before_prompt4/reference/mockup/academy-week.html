@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CASS Academy Week</title>
+<style>
+
+/* Layout: brand bar + hero, tower picker (one tower shown at a time, with Back), progress panel, three month columns of weekly activities (locked in order) with test checkpoints, final checkpoint. */
+:root{
+  --bg:#f3f6fa;--surface:#ffffff;--surface-2:#eef4f9;--ink:#16324a;--muted:#5d7385;--line:#dae4ed;
+  --brand:#0a6fc2;--brand-soft:#e5f1fb;--on-brand:#ffffff;--hdr1:#052944;--hdr2:#0b6899;--hdr3:#15a9c8;--hdr-ink:#ffffff;--hdr-muted:#d4ebf5;
+  --ok:#1d7f55;--ok-bg:#e3f4ec;--warn:#9a6411;--warn-bg:#fbf0dc;--bad:#b42318;--bad-bg:#fdeceb;--hl:#fff3c4;--hl-line:#d9a900;--shadow:0 4px 16px rgba(18,59,90,.07);
+  --font:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;color-scheme:light
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;--brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--warn:#e7b25a;--warn-bg:#3a2d14;--bad:#f59a8f;--bad-bg:#3d1a17;--hl:#3a3112;--hl-line:#c9a227;--shadow:0 4px 16px rgba(0,0,0,.3);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;--brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --ok:#5bd09a;--ok-bg:#163a2b;--warn:#e7b25a;--warn-bg:#3a2d14;--bad:#f59a8f;--bad-bg:#3d1a17;--hl:#3a3112;--hl-line:#c9a227;--shadow:0 4px 16px rgba(0,0,0,.3);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font);font-size:14px;color:var(--ink);background:var(--bg);line-height:1.45}
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.wrap{padding-inline:max(16px,4vw)}
+.top{background:linear-gradient(105deg,var(--hdr1),#07527e);color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
+.brand{font-weight:800;font-size:19px}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav a{padding:8px 12px;border-radius:8px}
+.nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
+.mock{font-size:12px;background:var(--hl);border-bottom:1px solid var(--hl-line);padding-block:6px}
+.hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
+.hero h1{margin:0 0 4px;font-size:26px}
+.hero p{margin:0;color:var(--hdr-muted);max-width:65ch}
+.page{padding-block:22px;display:grid;gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.pad{padding:20px}
+h2{margin:0 0 6px;font-size:20px}
+.sub{color:var(--muted);margin:0;max-width:70ch}
+.back{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:999px;cursor:pointer;font-weight:600;color:var(--brand)}
+.back:hover{background:var(--brand-soft)}
+.phead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:14px}
+.tcard{display:grid;gap:4px;text-align:left;border:1px solid var(--line);background:var(--surface);padding:16px;border-radius:12px;cursor:pointer;min-width:0}
+.tcard:hover{border-color:var(--brand);background:var(--brand-soft)}
+.tcard b{font-size:15px}
+.tcard span{color:var(--muted);font-size:12.5px}
+.tcard i{font-style:normal;color:var(--brand);font-weight:700;font-size:12px;margin-top:4px}
+.bar{height:10px;background:var(--surface-2);border-radius:999px;margin-top:12px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--ok))}
+.progress{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px;margin-top:6px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.month{padding:16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.month h3{margin:0 0 8px;font-size:16px}
+.week{display:block;border-top:1px solid var(--line);padding:11px 0}
+.week:first-of-type{border-top:0}
+.row{display:flex;gap:9px;align-items:flex-start}
+.row input{margin-top:3px;accent-color:var(--brand);width:16px;height:16px;flex:none}
+.row b{font-size:13.5px}
+.row small{display:block;color:var(--muted);margin-top:2px}
+.when{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 0 25px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.when span{background:var(--surface-2);padding:2px 7px;border-radius:6px}
+.week.locked{opacity:.6}
+.week.locked .row b::after{content:" · Locked";color:var(--muted);font-weight:600;font-size:12px}
+.week.locked .row input{cursor:not-allowed}
+.lockmsg{display:block;margin:6px 0 0 25px;font-size:11.5px;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 25px}
+.wkbtn{display:inline-block;font-size:12.5px;color:var(--on-brand);background:var(--brand);padding:6px 12px;border-radius:999px;font-weight:700}
+.wkbtn:hover{filter:brightness(1.08)}
+.wkbtn.off{background:var(--surface-2);color:var(--muted);cursor:not-allowed}
+.check{margin-top:10px;background:var(--warn-bg);border:1px solid var(--line);padding:12px;border-radius:10px;display:grid;gap:6px}
+.check b{color:var(--warn);font-size:12.5px}
+.check p{margin:0;font-size:12.5px;color:var(--ink)}
+.tbtn{display:inline-block;justify-self:start;background:var(--brand);color:var(--on-brand);border:0;padding:8px 14px;border-radius:9px;font-weight:700;cursor:pointer}
+.tbtn[aria-disabled="true"]{background:var(--surface-2);color:var(--muted);cursor:not-allowed}
+.tres{font-size:12px;font-weight:700;color:var(--ok)}
+.final{padding:20px;background:linear-gradient(110deg,var(--hdr1),#0b719d);color:var(--hdr-ink);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.final h3{margin:0 0 4px}
+.final p{margin:0;color:var(--hdr-muted);max-width:65ch}
+.final .tbtn{background:#fff;color:#07527e}
+.final .tbtn[aria-disabled="true"]{background:rgba(255,255,255,.18);color:var(--hdr-muted)}
+.final .tres{color:#b9f1d6}
+.reset{border:0;background:none;color:var(--muted);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:9px;font-size:13px;max-width:calc(100% - 32px)}
+@media (max-width:950px){.months{grid-template-columns:1fr}}
+
+.crumb{font-size:12.5px;color:var(--muted)}
+.crumb a{color:var(--brand)}
+.goals{margin:8px 0 0;padding-left:20px;display:grid;gap:4px}
+.mats{display:grid;gap:10px;margin-top:12px}
+.mat{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.mat h3{margin:4px 0 2px;font-size:14.5px}
+.mat p{margin:0;color:var(--muted);font-size:12.5px}
+.tag{display:inline-block;background:var(--surface-2);padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;margin-right:4px}
+.tag.type{background:var(--brand-soft);color:var(--brand)}
+.tag.tba{background:var(--warn-bg);color:var(--warn)}
+.openbtn{border:1px solid var(--brand);background:var(--surface);color:var(--brand);padding:7px 13px;border-radius:9px;font-weight:700;cursor:pointer;white-space:nowrap;display:inline-block}
+.openbtn:hover{background:var(--brand-soft)}
+.openbtn[aria-disabled="true"]{border-color:var(--line);color:var(--muted);cursor:not-allowed;background:var(--surface-2)}
+.footnav{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:6px}
+.btn{display:inline-block;background:var(--brand);color:var(--on-brand);border:0;padding:10px 16px;border-radius:9px;font-weight:700;cursor:pointer}
+.btn.ghost{background:var(--surface);color:var(--brand);border:1px solid var(--line)}
+.btn[disabled]{background:var(--surface-2);color:var(--muted);cursor:not-allowed;border:1px solid var(--line)}
+.donebar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.overlay{position:fixed;inset:0;background:rgba(5,20,35,.5);display:grid;place-items:center;padding:16px;z-index:30}
+.dlg{background:var(--surface);border-radius:14px;max-width:520px;width:100%;padding:22px;box-shadow:var(--shadow);display:grid;gap:10px}
+.dlg h2{margin:0}
+@media (max-width:600px){.mat{grid-template-columns:minmax(0,1fr)}}
+
+.q{margin-top:16px}
+.q p{margin:0 0 8px;font-weight:650;font-size:14.5px}
+.q label{display:flex;gap:8px;align-items:flex-start;margin:6px 0;padding:9px 11px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--surface)}
+.q label:hover{border-color:var(--brand)}
+.q label input{margin-top:3px;accent-color:var(--brand)}
+.q.right label.sel{background:var(--ok-bg);border-color:var(--ok)}
+.q.wrong label.sel{background:var(--bad-bg);border-color:var(--bad)}
+.q.wrong label.ans{border-color:var(--ok)}
+.why{font-size:12.5px;margin-top:6px;color:var(--muted)}
+.score{font-size:30px;font-weight:800;margin:6px 0}
+.btn{display:inline-block;background:var(--brand);color:var(--on-brand);border:0;padding:10px 16px;border-radius:9px;font-weight:700;cursor:pointer}
+.btn.ghost{background:var(--surface);color:var(--brand);border:1px solid var(--line)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.tag{display:inline-block;background:var(--surface-2);padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;margin-right:6px}
+.note{font-size:12px;color:var(--muted);margin-top:14px}
+
+/* ---- Round 5: tower colours, progress circles, material list ---- */
+:root{--t1:#be185d;--t2:#0e7490;--t3:#8a4b14;--t4:#374151;--t-ink:#ffffff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824}}
+:root[data-theme="dark"]{--t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824}
+.brand{color:var(--hdr-ink)}
+.tw-1{--tc:var(--t1)}.tw-2{--tc:var(--t2)}.tw-3{--tc:var(--t3)}.tw-4{--tc:var(--t4)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;vertical-align:middle}
+.pill.tw{background:var(--tc);color:var(--t-ink)}
+.tcard{border-left:6px solid var(--tc,var(--line))}
+.ring{flex:none;display:block}
+.ring .rt{fill:none;stroke:var(--line);stroke-width:6}
+.ring .rb{fill:none;stroke:var(--brand);stroke-width:6;stroke-linecap:round}
+.ring.done .rb{stroke:var(--ok)}
+.ring.lock .rb{stroke:none}
+.ring text{fill:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.ring.lock text{fill:var(--muted)}
+.ring .ck{fill:none;stroke:var(--ok);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:no-preference){.ring .rb{transition:stroke-dasharray .5s ease}}
+.wrow{display:flex;gap:12px;align-items:flex-start}
+.wbody{min-width:0;flex:1}
+.wbody>b{font-size:13.5px;display:block}
+.wbody>small{display:block;color:var(--muted);margin-top:2px}
+.wbody .when{margin:6px 0 0}
+.wbody .links{margin:8px 0 0}
+.lockmsg{display:block;margin:6px 0 0;font-size:11.5px;color:var(--muted)}
+.week.locked .wbody>b::after{content:" · Locked";color:var(--muted);font-weight:600;font-size:12px}
+.mat{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}
+.mstat{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;background:transparent}
+.mstat.opened{border-color:var(--brand);border-style:dashed}
+.mstat.fin{background:var(--ok);border-color:var(--ok)}
+.mstat svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.mat.fin{border-color:var(--ok)}
+.macts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.btn.sm{padding:7px 12px;font-size:13px}
+.okt{color:var(--ok);font-weight:700;font-size:12.5px}
+.tlink{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12px;padding:2px 4px}
+.prog{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+@media (max-width:600px){.mat{grid-template-columns:auto minmax(0,1fr)}.macts{grid-column:1/-1;justify-content:flex-start}}
+
+.banner-admin{background:var(--hl);border:1px solid var(--hl-line);border-radius:10px;padding:9px 12px;font-size:13px}
+
+</style></head><body>
+<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS home">CASS</a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a class="on" href="new-joiner-academy.html">New Joiner Academy</a><a href="admin.html">Admin login</a></nav></header>
+<div class="mock wrap">Mockup for discussion. The materials on this page are placeholders for the real Knowledge Centre content.</div>
+<section class="hero wrap"><h1 id="wTitle">Week</h1><p id="wSub"></p></section>
+<main class="page wrap" id="page"></main>
+<div id="ovRoot"></div><div class="toast" id="toast" hidden></div>
+<script src="km-data.js"></script>
+<script src="km-boot.js"></script>
+<script src="academy-data.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,2800)}
+const params=new URLSearchParams(location.search);
+const n=Math.min(12,Math.max(1,parseInt(params.get('week'),10)||1));
+const tower=towerFromQuery();
+const ADMIN=window.KM_PREVIEW&&params.get('as')==='admin';   /* admin preview: show the week even if it is still locked */
+const W=WEEKS.find(x=>x.n===n);
+const BACK='new-joiner-academy.html'+(tower?'#tower-'+slug(tower):'');
+const qs=k=>'academy-week.html?week='+k+'&tower='+slug(tower);
+let mats=[];
+function stop(msg,btn){$('wTitle').textContent='Week '+n+' · '+W.title;$('wSub').textContent='';$('page').innerHTML='<section class="panel pad"><h2>'+msg[0]+'</h2><p class="sub">'+msg[1]+'</p><div class="footnav"><a class="btn" href="'+BACK+'">'+btn+'</a></div></section>'}
+function matRow(m,i,P,I){
+  const fin=P.fin.includes(m.id),opened=P.opn.includes(m.id)||fin,change=canChange(n,tower),frozen=I.frozen;
+  const st=`<span class="mstat ${fin?'fin':(opened?'opened':'')}" aria-hidden="true">${fin?CHECK_SVG:''}</span>`;
+  const tags=`<span class="tag type">${esc(m.type)}</span><span class="tag">${esc(m.time)}</span>${m.tba?'<span class="tag tba">To be added</span>':''}${fin?'<span class="tag" style="background:var(--ok-bg);color:var(--ok)">Finished</span>':(opened?'<span class="tag" style="background:var(--brand-soft);color:var(--brand)">Opened</span>':'')}`;
+  let acts='';
+  const open=m.href?`<a class="openbtn" href="${esc(m.href)}" data-open="${esc(m.id)}">${opened?'Open again':'Open in Knowledge Centre'} →</a>`:`<button type="button" class="openbtn" data-prev="${i}">${opened?'Open again':'Open'}</button>`;
+  if(m.tba)acts='<span class="openbtn" aria-disabled="true">To be added</span>';
+  else if(fin)acts=`<span class="okt">✓ Finished</span>${open}${change?`<button type="button" class="tlink" data-unfin="${esc(m.id)}">Undo</button>`:''}`;
+  else acts=`${open}${opened&&!frozen?`<button type="button" class="btn sm" data-fin="${esc(m.id)}">Mark as finished</button>`:''}`;
+  return `<div class="mat ${fin?'fin':''}">${st}<div><div>${tags}</div><h3>${esc(m.title)}</h3><p>${esc(m.desc)}</p></div><div class="macts">${acts}</div></div>`;
+}
+function render(){
+  if(!tower)return stop(['Choose your tower first','The weeks follow your tower’s learning path.'],'Go to the Academy');
+  const Wk=weekInfo(tower),done=Wk.done,P=Wk.P,I=Wk.info[n];
+  const reason=ADMIN?'':lockReason(n,done,tower);
+  if(reason)return stop(['This week is locked',reason],'Back to my journey');
+  const complete=done.includes(n);
+  $('wTitle').textContent='Week '+n+' · '+W.title;$('wSub').textContent=W.desc+' About '+W.hours+'. '+tower+'.';
+  mats=materialsFor(n,tower);
+  const C=A.weekContent[n]||{goals:[]};
+  const nextOpen=n<12&&(ADMIN||unlocked(n+1,done,tower));
+  const p=complete?1:(I.total?I.fin/I.total:0);
+  const rg=ring(p,84,I.total?I.fin+'/'+I.total:'–',complete?'done':'',complete?'Week '+n+' complete':I.fin+' of '+I.total+' materials finished');
+  const track=I.total?`${I.fin} of ${I.total} materials finished`:'Nothing to track yet';
+  let tail='';
+  if(I.manual){tail=`<div style="flex:1;min-width:220px"><p class="sub">${I.total===0&&mats.length?'The materials for this week are still to be added, so there is nothing to finish yet.':'This week has no materials yet.'} ${complete?'You marked this week as done.':'Mark it as done to move on.'}</p></div>${complete?`<button type="button" class="btn ghost" id="manUndo" ${canChange(n,tower)?'':'disabled'}>Undo</button>`:`<button type="button" class="btn" id="manDone">Mark week ${n} as done</button>`}`}
+  else tail=`<div style="flex:1;min-width:220px"><h2 style="margin:0 0 4px">${complete?'Week '+n+' is complete':'Open each material, then mark it as finished'}</h2><p class="sub">${complete?(I.frozen?'Locked because a checkpoint covering this week has been taken.':(n<12?(nextOpen?'Week '+(n+1)+' is open.':'Week '+(n+1)+' is not open yet.'):'Take Checkpoint 3 and the final checkpoint from your journey page.')):(AS.lockWeeksInOrder?'When every material is finished, the circle completes and '+(n<12?'week '+(n+1):'Checkpoint 3')+' opens.':'Finish every material to complete this week.')}</p></div>`;
+  $('page').innerHTML=`${ADMIN?'<div class="banner-admin">Admin preview: this week is shown even if it would be locked for a new joiner. Progress you make here is saved for this browser only.</div>':''}<div class="crumb"><a href="${BACK}">My onboarding journey</a> › ${esc(tower)} › Week ${n}</div>
+  <section class="panel pad"><div class="prog">${rg}<div style="flex:1;min-width:220px"><h2 style="margin:0 0 4px">Your progress</h2><p class="sub">${track}${complete?' · week complete':''}.</p></div></div></section>
+  <section class="panel pad"><h2>What you will learn</h2><ul class="goals">${C.goals.map(g=>'<li>'+esc(g)+'</li>').join('')}</ul></section>
+  <section class="panel pad"><h2>Materials for this week</h2><p class="sub">${mats.length} materials · about ${esc(W.hours)} in total. Open a material, read or watch it, then mark it as finished. The check symbol and the circle update as you go.</p>
+   <div class="mats">${mats.map((m,i)=>matRow(m,i,P,I)).join('')||'<p class="sub">No materials yet.</p>'}</div></section>
+  <section class="panel pad"><div class="donebar">${tail}</div></section>
+  <div class="footnav"><span>${n>1?`<a class="btn ghost" href="${qs(n-1)}">← Week ${n-1}</a>`:''}</span><a class="btn ghost" href="${BACK}">Back to my journey</a><span>${n<12?(nextOpen?`<a class="btn" href="${qs(n+1)}">Week ${n+1} →</a>`:`<span class="btn" disabled style="background:var(--surface-2);color:var(--muted);cursor:not-allowed">Week ${n+1} · locked</span>`):''}</span></div>`;
+}
+function finish(id){
+  const before=weekInfo(tower).done.includes(n);
+  if(!setFinished(tower,n,id,true))return;
+  const after=weekInfo(tower).done.includes(n);
+  render();
+  if(after&&!before)toast(n<12?'Week '+n+' complete. '+(unlocked(n+1,weekInfo(tower).done,tower)?'Week '+(n+1)+' is now open.':'Week '+(n+1)+' stays locked until the checkpoint rule is met.'):'Week 12 complete. Checkpoint 3 is now open.');
+  else toast('Marked as finished.');
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button,a');if(!b)return;
+  if(b.dataset.open){markOpened(tower,b.dataset.open)}
+  else if(b.dataset.fin){finish(b.dataset.fin)}
+  else if(b.dataset.unfin){if(setFinished(tower,n,b.dataset.unfin,false))render();else toast('This cannot be undone any more.')}
+  else if(b.id==='manDone'){setManual(tower,n,true);render();toast(n<12?'Week '+(n+1)+' is now open.':'Checkpoint 3 is now open.')}
+  else if(b.id==='manUndo'){if(setManual(tower,n,false))render()}
+  else if(b.dataset.prev!==undefined)openPrev(mats[+b.dataset.prev],b);
+  else if(b.getAttribute('aria-disabled')==='true')e.preventDefault();
+});
+function openPrev(m,opener){
+  markOpened(tower,m.id);
+  const P=prog(tower),fin=P.fin.includes(m.id),I=weekInfo(tower).info[n];
+  const o=document.createElement('div');o.className='overlay';o.innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dT"><div><span class="tag type">${esc(m.type)}</span><span class="tag">${esc(m.time)}</span></div><h2 id="dT" tabindex="-1">${esc(m.title)}</h2><p class="sub">${esc(m.desc)}</p><p class="sub">This is placeholder content for the mockup. In the live version this opens the real file in Microsoft Loop or SharePoint, or a Knowledge Centre item.</p><div class="macts" style="justify-content:flex-start"><button type="button" class="btn ghost" id="cl">Close</button>${fin||I.frozen?'':'<button type="button" class="btn" id="fn">I have finished this</button>'}</div></div>`;
+  $('ovRoot').appendChild(o);const c=()=>{o.remove();document.removeEventListener('keydown',k);render();const nb=document.querySelector('[data-prev="'+mats.indexOf(m)+'"]');if(nb)nb.focus()};const k=ev=>{if(ev.key==='Escape')c()};
+  document.addEventListener('keydown',k);o.addEventListener('click',ev=>{if(ev.target===o||ev.target.id==='cl')c();else if(ev.target.id==='fn'){c();finish(m.id)}});$('dT').focus();
+}
+render();
+</script>
+
+</body></html>

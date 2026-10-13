@@ -8,10 +8,9 @@ window.KM_DATA = {
     "version": 1,
     "lastPublished": "2026-10-12",
     "lastPublishedBy": "Process Excellence",
-    "adminUser": "AdminPE",
     "passwordSalt": "cass-km-2026",
-    "adminPasswordHash": "7a24697b3c6f39e461b9bd60ef25402b67f3f33d8f4b66a0a0eb064ba869f9c6",
     "newBadgeDays": 30,
+    "publishers": "heads",
     "companies": [
       "APS",
       "ACE",
@@ -2003,6 +2002,50 @@ window.KM_DATA = {
       "location": "Jakarta office, Level 11",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
       "about": "Maintains the Knowledge Centre and its governance."
+    },
+    {
+      "id": "dorian",
+      "name": "Dorian Hexley",
+      "role": "Head of Procurement",
+      "team": "Procurement",
+      "email": "dorian.hexley@cass-example.co.id",
+      "phone": "+62 21 5000 1410",
+      "location": "Jakarta office, Level 9",
+      "hours": "Mon–Fri, 08:00–17:00 WIB",
+      "about": "Approves Procurement knowledge content."
+    },
+    {
+      "id": "calista",
+      "name": "Calista Wennerholm",
+      "role": "Head of Human Resources",
+      "team": "Human Resources",
+      "email": "calista.wennerholm@cass-example.co.id",
+      "phone": "+62 21 5000 1420",
+      "location": "Jakarta office, Level 8",
+      "hours": "Mon–Fri, 08:00–17:00 WIB",
+      "about": "Approves Human Resources knowledge content."
+    },
+    {
+      "id": "bastian",
+      "name": "Bastian Quillfeather",
+      "role": "Procurement Specialist",
+      "team": "Procurement · Procurement Operations",
+      "email": "bastian.quillfeather@cass-example.co.id",
+      "phone": "+62 21 5000 1430",
+      "location": "Jakarta office, Level 9",
+      "hours": "Mon–Fri, 08:00–17:00 WIB",
+      "about": "Contact for purchase requests and vendor questions."
+    },
+    {
+      "id": "ilsabet",
+      "name": "Ilsabet Rowanthorne",
+      "role": "HR Operations Specialist",
+      "team": "Human Resources · HR Operations",
+      "email": "ilsabet.rowanthorne@cass-example.co.id",
+      "phone": "+62 21 5000 1440",
+      "location": "Jakarta office, Level 8",
+      "hours": "Mon–Fri, 08:00–17:00 WIB",
+      "about": "Contact for employee data and payroll preparation questions."
     }
   ],
   "itemTypes": [
@@ -2132,272 +2175,6 @@ window.KM_DATA = {
   },
   "items": [
     {
-      "id": "lc-dtp",
-      "title": "LC Review – Desktop Procedure",
-      "type": "SOP / DTP",
-      "l2": "3.1.1",
-      "step": "LC Review & Consultation",
-      "l3": "",
-      "status": "Draft",
-      "updated": "2026-10-06",
-      "updatedBy": "tasha",
-      "owner": "tasha",
-      "escalateTo": "",
-      "complexity": "",
-      "version": "0.3",
-      "link": "",
-      "description": "Step-by-step LC clause review for CO and Finance, from draft LC received to confirmation or amendment request.",
-      "duration": "",
-      "requireAccess": true,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE"
-      ]
-    },
-    {
-      "id": "lc-qrd",
-      "title": "LC clause checklist (SWIFT MT700 fields)",
-      "type": "Quick Reference Guide",
-      "l2": "3.1.1",
-      "step": "LC Review & Consultation",
-      "l3": "",
-      "status": "In review",
-      "updated": "2026-10-05",
-      "updatedBy": "tasha",
-      "owner": "tasha",
-      "escalateTo": "",
-      "complexity": "",
-      "version": "0.2",
-      "link": "",
-      "description": "One-page checklist of the MT700 fields to check: 44A/B/E/F shipment, 45A goods, 46A documents, 47A additional conditions, 48 presentation period, 71D charges.",
-      "duration": "",
-      "requireAccess": false,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE"
-      ]
-    },
-    {
-      "id": "lc-wiki-47a",
-      "title": "Clause wiki: Additional Conditions (47A) · High",
-      "type": "Training Material",
-      "l2": "3.1.1",
-      "step": "LC Review & Consultation",
-      "l3": "",
-      "status": "Draft",
-      "updated": "2026-10-02",
-      "updatedBy": "tasha",
-      "owner": "tasha",
-      "escalateTo": "",
-      "complexity": "",
-      "version": "0.2",
-      "link": "",
-      "description": "What to check in field 47A, common issues and typical resolution under UCP 600 and ISBP 745.",
-      "duration": "",
-      "requireAccess": false,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE"
-      ]
-    },
-    {
-      "id": "lc-wiki-71d",
-      "title": "Clause wiki: Charges (71D) · High",
-      "type": "Training Material",
-      "l2": "3.1.1",
-      "step": "LC Review & Consultation",
-      "l3": "",
-      "status": "Draft",
-      "updated": "2026-10-02",
-      "updatedBy": "tasha",
-      "owner": "tasha",
-      "escalateTo": "",
-      "complexity": "",
-      "version": "0.2",
-      "link": "",
-      "description": "How bank charges are split between applicant and beneficiary, and what to flag.",
-      "duration": "",
-      "requireAccess": false,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE"
-      ]
-    },
-    {
-      "id": "lc-flow",
-      "title": "LC review workflow (CO and Finance swimlane)",
-      "type": "Training Material",
-      "l2": "3.1.1",
-      "step": "LC Review & Consultation",
-      "l3": "",
-      "status": "Approved",
-      "updated": "2026-09-30",
-      "updatedBy": "jules",
-      "owner": "jules",
-      "escalateTo": "",
-      "complexity": "",
-      "version": "1.0",
-      "link": "",
-      "description": "Swimlane diagram of who does what from payment method decision to shipment and payment.",
-      "duration": "",
-      "requireAccess": false,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE",
-        "AMS"
-      ]
-    },
-    {
-      "id": "lc-ex-low",
-      "title": "Charges split differs from contract terms",
-      "type": "Exception Handling",
-      "l2": "3.1.1",
-      "step": "LC Review & Consultation",
-      "l3": "",
-      "status": "Draft",
-      "updated": "2026-10-07",
-      "updatedBy": "tasha",
-      "owner": "tasha",
-      "escalateTo": "tasha",
-      "complexity": "Low",
-      "version": "0.1",
-      "link": "",
-      "description": "The 71D charges split does not match the sales contract. Request an amendment through CO.",
-      "duration": "",
-      "requireAccess": true,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE"
-      ]
-    },
-    {
-      "id": "lc-ex-med",
-      "title": "Additional condition needs several review passes",
-      "type": "Exception Handling",
-      "l2": "3.1.1",
-      "step": "LC Review & Consultation",
-      "l3": "",
-      "status": "Draft",
-      "updated": "2026-10-07",
-      "updatedBy": "tasha",
-      "owner": "tasha",
-      "escalateTo": "orin",
-      "complexity": "Medium",
-      "version": "0.1",
-      "link": "",
-      "description": "A 47A condition is unclear and needs more than one round between CO and Finance.",
-      "duration": "",
-      "requireAccess": true,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE"
-      ]
-    },
-    {
-      "id": "lc-ll-ship",
-      "title": "Shipment date extension during regional conflict",
-      "type": "Lessons & Real Examples",
-      "l2": "3.1.1",
-      "step": "LC Review & Consultation",
-      "l3": "",
-      "status": "Draft",
-      "updated": "2026-09-29",
-      "updatedBy": "tasha",
-      "owner": "tasha",
-      "escalateTo": "",
-      "complexity": "",
-      "version": "0.1",
-      "link": "",
-      "description": "A conflict delayed vessels, so the latest shipment date was extended by LC amendment.",
-      "duration": "",
-      "requireAccess": true,
-      "newBadge": "auto",
-      "companies": [
-        "APS"
-      ]
-    },
-    {
-      "id": "lc-real-47a",
-      "title": "Non-documentary 47A condition disregarded (UCP 600 Art. 14(h))",
-      "type": "Lessons & Real Examples",
-      "l2": "3.1.1",
-      "step": "LC Review & Consultation",
-      "l3": "",
-      "status": "Draft",
-      "updated": "2026-10-03",
-      "updatedBy": "tasha",
-      "owner": "tasha",
-      "escalateTo": "",
-      "complexity": "",
-      "version": "0.1",
-      "link": "",
-      "description": "A 47A buyer-inspection condition with no matching document was treated as non-documentary.",
-      "duration": "",
-      "requireAccess": true,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE"
-      ]
-    },
-    {
-      "id": "cra-qrd",
-      "title": "Customer risk assessment: key questions",
-      "type": "Quick Reference Guide",
-      "l2": "3.1.1",
-      "step": "Customer Risk Assessment",
-      "l3": "",
-      "status": "Draft",
-      "updated": "2026-09-26",
-      "updatedBy": "tasha",
-      "owner": "tasha",
-      "escalateTo": "",
-      "complexity": "",
-      "version": "0.1",
-      "link": "",
-      "description": "Is the company financially stable, is the exposure acceptable, is there payment default risk?",
-      "duration": "",
-      "requireAccess": false,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE",
-        "AMS"
-      ]
-    },
-    {
-      "id": "pm-qrd",
-      "title": "Payment method decision: Credit Limit, LC or CIA",
-      "type": "Quick Reference Guide",
-      "l2": "3.1.1",
-      "step": "Payment Method Decision",
-      "l3": "",
-      "status": "Draft",
-      "updated": "2026-09-26",
-      "updatedBy": "orin",
-      "owner": "orin",
-      "escalateTo": "",
-      "complexity": "",
-      "version": "0.1",
-      "link": "",
-      "description": "How the risk assessment leads to a credit limit, an LC (or SBLC) or cash in advance.",
-      "duration": "",
-      "requireAccess": false,
-      "newBadge": "auto",
-      "companies": [
-        "APS",
-        "ACE",
-        "AMS"
-      ]
-    },
-    {
       "id": "sap-ship",
       "title": "Shipping instruction list (SAP video, 00:00–04:30)",
       "type": "Video",
@@ -2420,6 +2197,16 @@ window.KM_DATA = {
         "APS",
         "ACE",
         "AMS"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-10-08T09:00:00+07:00",
+          "by": "Jules Pemberton",
+          "note": "Version history starts here",
+          "changes": []
+        }
       ]
     },
     {
@@ -2445,6 +2232,464 @@ window.KM_DATA = {
         "APS",
         "ACE",
         "AMS"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-10-08T09:00:00+07:00",
+          "by": "Jules Pemberton",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "escalateTo": "",
+      "complexity": "",
+      "link": "",
+      "duration": "",
+      "requireAccess": false,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE",
+        "AMS"
+      ],
+      "document": null,
+      "id": "rtp-qrd",
+      "title": "Request to Purchase: submission checklist",
+      "type": "Quick Reference Guide",
+      "l2": "2.1.4",
+      "step": "",
+      "l3": "",
+      "status": "In review",
+      "updated": "2026-10-12",
+      "updatedBy": "bastian",
+      "owner": "bastian",
+      "version": "0.1",
+      "description": "Checklist of what a complete Request to Purchase needs before it is submitted.",
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-10-12T09:00:00+07:00",
+          "by": "Bastian Quillfeather",
+          "note": "First version",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "lc-ex-med",
+      "title": "Additional condition needs several review passes",
+      "type": "Exception Handling",
+      "l2": "3.1.1",
+      "step": "LC Review & Consultation",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-10-07",
+      "updatedBy": "tasha",
+      "owner": "tasha",
+      "escalateTo": "orin",
+      "complexity": "Medium",
+      "version": "0.1",
+      "link": "",
+      "description": "A 47A condition is unclear and needs more than one round between CO and Finance.",
+      "duration": "",
+      "requireAccess": true,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-10-07T09:00:00+07:00",
+          "by": "Tasha Verlinden",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "lc-ex-low",
+      "title": "Charges split differs from contract terms",
+      "type": "Exception Handling",
+      "l2": "3.1.1",
+      "step": "LC Review & Consultation",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-10-07",
+      "updatedBy": "tasha",
+      "owner": "tasha",
+      "escalateTo": "tasha",
+      "complexity": "Low",
+      "version": "0.1",
+      "link": "",
+      "description": "The 71D charges split does not match the sales contract. Request an amendment through CO.",
+      "duration": "",
+      "requireAccess": true,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-10-07T09:00:00+07:00",
+          "by": "Tasha Verlinden",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "lc-wiki-47a",
+      "title": "Clause wiki: Additional Conditions (47A) · High",
+      "type": "Training Material",
+      "l2": "3.1.1",
+      "step": "LC Review & Consultation",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-10-02",
+      "updatedBy": "tasha",
+      "owner": "tasha",
+      "escalateTo": "",
+      "complexity": "",
+      "version": "0.2",
+      "link": "",
+      "description": "What to check in field 47A, common issues and typical resolution under UCP 600 and ISBP 745.",
+      "duration": "",
+      "requireAccess": false,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.2",
+          "at": "2026-10-02T09:00:00+07:00",
+          "by": "Tasha Verlinden",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "lc-wiki-71d",
+      "title": "Clause wiki: Charges (71D) · High",
+      "type": "Training Material",
+      "l2": "3.1.1",
+      "step": "LC Review & Consultation",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-10-02",
+      "updatedBy": "tasha",
+      "owner": "tasha",
+      "escalateTo": "",
+      "complexity": "",
+      "version": "0.2",
+      "link": "",
+      "description": "How bank charges are split between applicant and beneficiary, and what to flag.",
+      "duration": "",
+      "requireAccess": false,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.2",
+          "at": "2026-10-02T09:00:00+07:00",
+          "by": "Tasha Verlinden",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "cra-qrd",
+      "title": "Customer risk assessment: key questions",
+      "type": "Quick Reference Guide",
+      "l2": "3.1.1",
+      "step": "Customer Risk Assessment",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-09-26",
+      "updatedBy": "tasha",
+      "owner": "tasha",
+      "escalateTo": "",
+      "complexity": "",
+      "version": "0.1",
+      "link": "",
+      "description": "Is the company financially stable, is the exposure acceptable, is there payment default risk?",
+      "duration": "",
+      "requireAccess": false,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE",
+        "AMS"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-09-26T09:00:00+07:00",
+          "by": "Tasha Verlinden",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "lc-qrd",
+      "title": "LC clause checklist (SWIFT MT700 fields)",
+      "type": "Quick Reference Guide",
+      "l2": "3.1.1",
+      "step": "LC Review & Consultation",
+      "l3": "",
+      "status": "In review",
+      "updated": "2026-10-05",
+      "updatedBy": "tasha",
+      "owner": "tasha",
+      "escalateTo": "",
+      "complexity": "",
+      "version": "0.2",
+      "link": "",
+      "description": "One-page checklist of the MT700 fields to check: 44A/B/E/F shipment, 45A goods, 46A documents, 47A additional conditions, 48 presentation period, 71D charges.",
+      "duration": "",
+      "requireAccess": false,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.2",
+          "at": "2026-10-05T09:00:00+07:00",
+          "by": "Tasha Verlinden",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "lc-dtp",
+      "title": "LC Review – Desktop Procedure",
+      "type": "SOP / DTP",
+      "l2": "3.1.1",
+      "step": "LC Review & Consultation",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-10-06",
+      "updatedBy": "tasha",
+      "owner": "tasha",
+      "escalateTo": "",
+      "complexity": "",
+      "version": "0.3",
+      "link": "",
+      "description": "Step-by-step LC clause review for CO and Finance, from draft LC received to confirmation or amendment request.",
+      "duration": "",
+      "requireAccess": true,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.3",
+          "at": "2026-10-06T09:00:00+07:00",
+          "by": "Tasha Verlinden",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "lc-flow",
+      "title": "LC review workflow (CO and Finance swimlane)",
+      "type": "Training Material",
+      "l2": "3.1.1",
+      "step": "LC Review & Consultation",
+      "l3": "",
+      "status": "Approved",
+      "updated": "2026-09-30",
+      "updatedBy": "jules",
+      "owner": "jules",
+      "escalateTo": "",
+      "complexity": "",
+      "version": "1.0",
+      "link": "",
+      "description": "Swimlane diagram of who does what from payment method decision to shipment and payment.",
+      "duration": "",
+      "requireAccess": false,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE",
+        "AMS"
+      ],
+      "document": null,
+      "approvedBy": "leona",
+      "approvedAt": "2026-09-30",
+      "versions": [
+        {
+          "v": "1.0",
+          "at": "2026-09-30T09:00:00+07:00",
+          "by": "Jules Pemberton",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "lc-real-47a",
+      "title": "Non-documentary 47A condition disregarded (UCP 600 Art. 14(h))",
+      "type": "Lessons & Real Examples",
+      "l2": "3.1.1",
+      "step": "LC Review & Consultation",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-10-03",
+      "updatedBy": "tasha",
+      "owner": "tasha",
+      "escalateTo": "",
+      "complexity": "",
+      "version": "0.1",
+      "link": "",
+      "description": "A 47A buyer-inspection condition with no matching document was treated as non-documentary.",
+      "duration": "",
+      "requireAccess": true,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-10-03T09:00:00+07:00",
+          "by": "Tasha Verlinden",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "pm-qrd",
+      "title": "Payment method decision: Credit Limit, LC or CIA",
+      "type": "Quick Reference Guide",
+      "l2": "3.1.1",
+      "step": "Payment Method Decision",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-09-26",
+      "updatedBy": "orin",
+      "owner": "orin",
+      "escalateTo": "",
+      "complexity": "",
+      "version": "0.1",
+      "link": "",
+      "description": "How the risk assessment leads to a credit limit, an LC (or SBLC) or cash in advance.",
+      "duration": "",
+      "requireAccess": false,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE",
+        "AMS"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-09-26T09:00:00+07:00",
+          "by": "Orin Salvatara",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "id": "lc-ll-ship",
+      "title": "Shipment date extension during regional conflict",
+      "type": "Lessons & Real Examples",
+      "l2": "3.1.1",
+      "step": "LC Review & Consultation",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-09-29",
+      "updatedBy": "tasha",
+      "owner": "tasha",
+      "escalateTo": "",
+      "complexity": "",
+      "version": "0.1",
+      "link": "",
+      "description": "A conflict delayed vessels, so the latest shipment date was extended by LC amendment.",
+      "duration": "",
+      "requireAccess": true,
+      "newBadge": "auto",
+      "companies": [
+        "APS"
+      ],
+      "document": null,
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-09-29T09:00:00+07:00",
+          "by": "Tasha Verlinden",
+          "note": "Version history starts here",
+          "changes": []
+        }
+      ]
+    },
+    {
+      "escalateTo": "",
+      "complexity": "",
+      "link": "",
+      "duration": "",
+      "requireAccess": false,
+      "newBadge": "auto",
+      "companies": [
+        "APS",
+        "ACE",
+        "AMS"
+      ],
+      "document": null,
+      "id": "payroll-qrd",
+      "title": "Payroll data preparation checklist",
+      "type": "Quick Reference Guide",
+      "l2": "4.1.3",
+      "step": "",
+      "l3": "",
+      "status": "Draft",
+      "updated": "2026-10-12",
+      "updatedBy": "ilsabet",
+      "owner": "ilsabet",
+      "version": "0.1",
+      "description": "Checklist for preparing and checking payroll data before the payroll cut-off.",
+      "versions": [
+        {
+          "v": "0.1",
+          "at": "2026-10-12T09:00:00+07:00",
+          "by": "Ilsabet Rowanthorne",
+          "note": "First version",
+          "changes": []
+        }
       ]
     }
   ],
@@ -4479,6 +4724,26 @@ window.KM_DATA = {
     ]
   },
   "changeLog": [
+    {
+      "at": "2026-10-12T10:20:00+07:00",
+      "by": "Ilsabet Rowanthorne",
+      "action": "added",
+      "section": "Knowledge items",
+      "target": "payroll-qrd",
+      "summary": "Added “Payroll data preparation checklist” under 4.1.3 as Draft",
+      "title": "Payroll data preparation checklist",
+      "tower": "4"
+    },
+    {
+      "at": "2026-10-12T10:05:00+07:00",
+      "by": "Bastian Quillfeather",
+      "action": "added",
+      "section": "Knowledge items",
+      "target": "rtp-qrd",
+      "summary": "Added “Request to Purchase: submission checklist” under 2.1.4 as In review",
+      "title": "Request to Purchase: submission checklist",
+      "tower": "2"
+    },
     {
       "at": "2026-10-08T15:20:00+07:00",
       "by": "Jules Pemberton",

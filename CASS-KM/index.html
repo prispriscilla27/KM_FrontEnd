@@ -211,6 +211,7 @@ h3.sec{margin:0 0 10px;font-size:15px}
 @media (prefers-reduced-motion:no-preference){.drawer{animation:slidein .2s ease-out}@keyframes slidein{from{transform:translateX(40px);opacity:.4}to{transform:none;opacity:1}}}
 .lockbox{background:var(--lock-bg);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13px}
 .lockbox b{color:var(--lock)}
+.apprline{margin:0;font-size:13px;color:var(--ok);font-weight:600}
 .hist{margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:12.5px;color:var(--muted)}
 .pop{position:fixed;z-index:40;width:min(320px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--pop-shadow);padding:16px;display:grid;gap:12px}
 .pop .ph{display:flex;gap:12px;align-items:center;padding-right:24px}
@@ -296,7 +297,7 @@ const L3RAW=D.l3||{};
 const PEOPLE={};(D.people||[]).forEach(p=>{if(p&&p.id)PEOPLE[p.id]=p});
 const TYPES=(D.itemTypes||[]);
 const L2PAGES=D.l2Pages||{};
-const ITEMS=(D.items||[]).map(i=>Object.assign({step:'',l3:'',escalateTo:'',complexity:'',link:'',description:'',duration:'',requireAccess:false,newBadge:'auto',companies:[]},i));
+const ITEMS=(D.items||[]).map(i=>Object.assign({step:'',l3:'',escalateTo:'',complexity:'',link:'',description:'',duration:'',requireAccess:false,newBadge:'auto',companies:[],document:null,approvedBy:'',approvedAt:''},i));
 const TOWERNAMES=D.towerNames||{};
 const GLOSSARY=(D.glossary||[]).map(g=>({term:String(g.term||''),meaning:String(g.meaning||''),towers:Array.isArray(g.towers)?g.towers.map(String):[]}));
 const SYN={};Object.entries(D.synonyms||{}).forEach(([k,v])=>{SYN[norm(k)]=(Array.isArray(v)?v:[v]).map(norm)});
@@ -670,13 +671,15 @@ function openItem(id){
   seen[id]=it.updated;store.set('kmSeen',seen);
   const fnc=it.l3?l3Find(it.l2,it.l3):null,link=safeUrl(it.link),lbl=it.requireAccess?'Request access in Microsoft Loop':'Open in Microsoft Loop';
   const isEx=it.type==='Exception Handling'||it.escalateTo||it.complexity;
+  const hasDoc=!!(it.document&&it.document.file)&&!it.requireAccess,apprBy=it.status==='Approved'&&it.approvedBy&&PEOPLE[it.approvedBy];
   document.getElementById('drawerRoot').innerHTML=`<div class="drawer-bg" data-close></div><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="display:flex;gap:6px;flex-wrap:wrap">${badges(it)}</span><button type="button" class="btn" data-close aria-label="Close the detail panel">Close</button></div>
    <h3 id="dTitle">${esc(it.title)}</h3>
    ${it.description?`<p class="sub">${esc(it.description)}</p>`:''}
+   ${apprBy?`<p class="apprline">Approved by ${esc(PEOPLE[it.approvedBy].name)} on ${fmt(it.approvedAt)}</p>`:''}
    ${it.requireAccess?`<div class="lockbox"><b>Require access.</b> This file holds customer or bank details, so it is only open to people with permission. Ask the owner for access.</div>`:''}
    <div class="meta" style="margin-top:0"><div><b>Type</b>${esc(it.type)}</div><div><b>Service</b>${esc(it.l2+' '+nameOf(it.l2))}</div>${it.step?`<div><b>Process step</b>${esc(it.step)}</div>`:''}${fnc?`<div><b>L3 function</b>${esc(fnc.code+' '+fnc.name)}</div>`:''}<div><b>Owner</b>${personBtn(it.owner,'Owner · '+it.title)}</div>${isEx?`<div><b>Escalate to</b>${personBtn(it.escalateTo,'Escalation · '+it.title)}</div><div><b>Complexity</b>${it.complexity?esc(it.complexity):'<span class="tba">Not set</span>'}</div>`:''}<div><b>Version</b>${esc(it.version||'')}</div><div><b>Last updated</b>${fmt(it.updated)}${personName(it.updatedBy)?' by '+esc(personName(it.updatedBy)):''}</div>${it.duration?`<div><b>Duration</b>${esc(it.duration)}</div>`:''}<div><b>Companies</b>${esc((it.companies||[]).join(', '))}</div></div>
-   <div class="acts">${link?`<a class="btn primary" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${lbl}</a>`:`<button type="button" class="btn primary" disabled title="${lbl}">Link not added yet</button>`}<button type="button" class="btn" data-copylink="${esc(it.id)}">Copy link to this item</button></div>
+   <div class="acts">${hasDoc?`<a class="btn primary" href="document.html?item=${encodeURIComponent(it.id)}">View document</a>`:''}${link?`<a class="btn ${hasDoc?'':'primary'}" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${lbl}</a>`:hasDoc?'':`<button type="button" class="btn primary" disabled title="${lbl}">Link not added yet</button>`}<button type="button" class="btn" data-copylink="${esc(it.id)}">Copy link to this item</button></div>
    ${hist(it.id)}
    <p class="note">Labels are set by KM admins. “New” shows until you open an updated item.</p></div>`;
   setHash('#item-'+it.id);
