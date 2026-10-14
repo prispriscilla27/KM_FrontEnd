@@ -138,6 +138,15 @@ The site has no server, so publishing writes three things into the site folder: 
 - **Discard draft** throws away your unpublished changes.
 - The change log keeps the newest 500 entries, records the account and tower of each change, and is shown per item in the Knowledge Centre detail panel.
 
+### What service pages show (Super Admin)
+
+**Admin › Settings › Service pages on the Knowledge Centre** (AdminPE / Super Admin only):
+
+- **Page details:** show or hide Page owner, Approved by, Ask the expert and Last reviewed on every service page. The values stay saved and still show in Admin.
+- **Knowledge categories:** a table with one row per service page and one column per category (Quick Reference Guide, SOP / DTP, Video, …). Ticked = shown. The **All service pages** row hides a category everywhere at once; **Hide categories with no entries yet** removes the empty “Not available yet” boxes on every page. Each row has **Show all**, **Hide all** and **Copy to process** (copies the row to every service in the same process). **Show everything** undoes it all.
+- Hiding a category removes only its **box** from the service page. Its entries can still be found through search, Recently updated and item links. Process steps always show; a step with nothing left to show says so. Content coverage by tower still counts every entry.
+- Like every change, it reaches readers when you publish.
+
 ### Views (how often each entry is opened)
 
 Every knowledge entry shows an eye with its number of views (overall) on the Knowledge Centre cards, in the detail panel and on the document page. Entries with no views show 0.

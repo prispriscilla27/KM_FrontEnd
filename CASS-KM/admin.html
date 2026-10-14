@@ -89,6 +89,8 @@ h3{margin:0 0 8px;font-size:15px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .stat{padding:14px 16px;text-align:left;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:12px;box-shadow:var(--shadow);display:grid;gap:2px}
 .stat:hover{border-color:var(--brand)}
+.sptbl{max-height:70vh;overflow:auto}.sptbl thead th{position:sticky;top:0;z-index:2;background:var(--surface)}.sptbl tr.allrow>td{position:sticky;top:44px;z-index:1}
+.sptbl th.c,.sptbl td.c{text-align:center;padding-left:6px;padding-right:6px}.sptbl th.c{white-space:normal;min-width:84px;font-size:11px}.sptbl td.off{opacity:.45}.sptbl tr.allrow>td{background:var(--brand-soft)}.spcell{display:inline-flex;gap:4px;align-items:center;cursor:pointer}.spcell small{font-size:11px;color:var(--muted)}.sptbl td.acts{white-space:nowrap;min-width:0;max-width:none}
 .vstat{cursor:default}.vstat:hover{border-color:var(--line)}.vstat small{font-size:12px;color:var(--muted)}.vstat b small{font-size:14px;font-weight:600;color:var(--muted)}.vstats{margin:12px 0}
 .vchart{display:block;max-width:100%}.vchart .g{stroke:var(--line);stroke-width:1}.vchart .base{stroke:var(--muted);stroke-width:1}.vchart .ax{fill:var(--muted);font-size:11px}.vchart .ax.on{fill:var(--ink);font-weight:700}.vchart .vl{fill:var(--ink);font-size:11.5px;font-weight:700}.vchart .bar{fill:var(--brand)}.vchart .vb .hit{fill:transparent}.vchart .vb{cursor:pointer;outline:none}.vchart .vb:hover .hit,.vchart .vb:focus-visible .hit{fill:var(--brand-soft)}.vchart .vb.sel .hit{fill:var(--brand-soft)}
 .sortbtn{background:none;border:0;padding:0;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;cursor:pointer}#vTbl .tablewrap,.vwrap{position:relative}.vtbl td.num,.vtbl th.num{text-align:right;font-variant-numeric:tabular-nums}.vtbl tr.sel>td{background:var(--brand-soft)}
@@ -980,7 +982,8 @@ const UI={
   gloss:{q:'',tower:'all',help:'',sel:new Set(),edit:null,adding:false},
   acad:{tab:'path',wk:null,tower:'',tq:'',tfTower:'',tfWeek:'',tfTest:''},
   log:{q:'',by:'',section:'',action:'',tw:'',from:'',to:'',page:0},
-  views:{month:'',tw:'',q:'',sort:'all',dir:-1,sel:null}
+  views:{month:'',tw:'',q:'',sort:'all',dir:-1,sel:null},
+  sp:{tw:''}
 };
 const DAY=864e5;
 const daysSince=d=>d?Math.floor((Date.now()-new Date(d.slice(0,10)+'T00:00:00').getTime())/DAY):9999;
@@ -2138,6 +2141,7 @@ VIEWS.help={render(){
   ${S('Glossary',`<ol class="ol"><li><b>+ Add term</b> with its meaning and towers (AdminPE).</li><li><b>Bulk tag</b>: tick several terms, choose Add tower, Set only this tower or Remove tower, then Apply.</li><li><b>Export CSV</b> to edit in Excel, then <b>Import CSV…</b> (you see a summary first).</li></ol>${g('gloss','Go to Glossary')}`)}
   ${S('Academy and tests',`<p>AdminPE changes a week’s materials and tower pages, marks a material “to be added”, edits checkpoints and questions, sets the pass mark and lock rules, and previews a week or test as a new joiner would see it.</p>${g('acad','Go to Academy')}`)}
   ${S('What the labels mean',`<ul class="ol"><li><span class="pill p-draft">Draft</span> being written, use with care.</li><li><span class="pill p-review">In review</span> waiting for the tower head.</li><li><span class="pill p-approved">Approved</span> signed off by the tower head or AdminPE.</li><li><span class="pill p-lock">Require access</span> restricted file (customer, bank or pricing details). Readers can request access.</li><li><span class="pill p-new">New</span> added or updated recently and not opened by the reader yet.</li></ul><p>Only admins set these labels. Use <b>“New” badge › Never show</b> for small fixes such as typos.</p>`)}
+  ${S('Hide page details or categories on service pages',`<ol class="ol"><li>AdminPE only: open <b>Settings › Service pages on the Knowledge Centre</b>.</li><li>Untick a page detail (Page owner, Approved by, Ask the expert, Last reviewed) to hide it on every service page.</li><li>Untick a category in a service page's row to hide that box there, or in the <b>All service pages</b> row to hide it everywhere. Entries stay in search and Recently updated.</li><li>Publish.</li></ol>${g('set','Go to Settings')}`)}
   ${S('See how often entries are viewed',`<ol class="ol"><li>Open <b>Views</b>. Pick a month to see each entry's views that month, the month before and overall; click a bar in the chart to pick that month, or <b>Monthly chart</b> on a row to see one entry.</li><li>One view = one person opening an entry (panel and/or document) on one day. Admins are not counted.</li><li>Real totals need IT's view-counting address (README › Views). Then import the counts CSV with <b>Import view counts…</b> and publish so readers see the new numbers.</li></ol>${g('views','Go to Views')}`)}
   ${S('Publish your changes',`<ol class="ol"><li>Open the Knowledge Centre in this browser (or click <b>Preview on site</b>) and check your changes. They show straight away, search included; the orange bar shows you are looking at your unpublished draft. Other people see them only after you publish.</li><li>Click <b>Publish…</b>.</li><li><b>Publish to folder…</b> (Edge, Chrome) writes km-data.js, km-accounts.js (if accounts changed) and new files in documents/ straight into the site folder. Otherwise <b>Download .zip</b> and extract it over the site folder.</li><li>Keep the previous km-data.js as a backup (for example <code>km-data_backup_YYYY-MM-DD.js</code>) and delete the files the dialog lists as no longer used.</li><li>Open <code>index.html</code>, press Ctrl+F5 to check, and tell readers if it is a big change.</li></ol>`)}
   ${S('Send my changes / Merge changes',`<ul class="ol"><li>If your account may not publish, <b>Send my changes</b> downloads a zip with only your items and documents. Send it to your tower head.</li><li>Tower heads and AdminPE use <b>Merge changes file…</b>, review the table (rejected rows say why, for example another tower or an approval attempt), choose which version to keep when an item changed on both sides, apply, and publish.</li><li>A tower head can only merge changes for their own tower.</li></ul>`)}
@@ -2152,6 +2156,7 @@ VIEWS.set={
     const s=DR.settings,a=ME(),nL3=Object.values(DR.l3).reduce((n,f)=>n+f.length,0),nL1=DR.taxonomy.reduce((n,t)=>n+t.l1.length,0);
     return `<div><h1>Settings</h1><p class="sub">${can(a,'accounts')?'Accounts, publishing, badges, banner, companies, labels, search help and taxonomy updates.':'Badges, banner, companies, labels, search help and taxonomy. Change your own password in <b>My account</b> (top bar).'}</p></div>
     ${can(a,'accounts')?accountsHtml():''}
+    ${can(a,'settings')?svcPageHtml():''}
     <section class="panel pad gap"><h2>Site</h2><div class="g3">
      <div class="fld"><label for="sd">“New” badge period (days)</label><input id="sd" type="number" min="1" max="365" value="${s.newBadgeDays}" data-on="setDays"></div>
      <div class="fld"><label class="lb">Sample banner</label><label class="sw"><input type="checkbox" data-on="setBanner" name="on" ${s.banner.on?'checked':''}> Show banner</label></div></div>
@@ -2169,6 +2174,49 @@ VIEWS.set={
   }
 };
 NEED_ON.noop='settings';ON.noop=()=>{};
+/* ---- Service pages on the Knowledge Centre (Super Admin only) ----
+   settings.servicePage = {hideFields:{owner,expert,approver,lastReviewed}, hideEmptyTypes, hideTypesAll:[type], hideTypes:{"<L2>":[type]}}
+   Hiding only changes what readers see on service pages: the values stay in the data, and entries of a hidden category stay in
+   search, Recently updated and item links. */
+const SPF=[['owner','Page owner'],['approver','Approved by'],['expert','Ask the expert'],['lastReviewed','Last reviewed']];
+function SPS(){const s=DR.settings;if(!s.servicePage||typeof s.servicePage!=='object')s.servicePage={};const p=s.servicePage;
+  if(!p.hideFields||typeof p.hideFields!=='object')p.hideFields={};if(!Array.isArray(p.hideTypesAll))p.hideTypesAll=[];if(!p.hideTypes||typeof p.hideTypes!=='object')p.hideTypes={};p.hideEmptyTypes=!!p.hideEmptyTypes;return p}
+const spRow=c=>SPS().hideTypes[c]||[];
+function spSetRow(c,list){const p=SPS(),l=DR.itemTypes.map(t=>t.name).filter(n=>list.includes(n));if(l.length)p.hideTypes[c]=l;else delete p.hideTypes[c]}
+function svcPageHtml(){
+  const p=SPS(),u=UI.sp,T=DR.itemTypes.map(t=>t.name),rows=L2S().filter(r=>!u.tw||r.l0.code===u.tw);
+  const cnt={};DR.items.forEach(i=>{const k=i.l2+'|'+i.type;cnt[k]=(cnt[k]||0)+1});
+  const nHid=Object.keys(p.hideTypes).length;
+  return `<section class="panel pad gap" id="svcpage"><h2>Service pages on the Knowledge Centre</h2>
+   <p class="sub">Choose what readers see on service (L2) pages. Hidden things stay saved and still show here in Admin; switch them back on at any time. Changes reach readers when you publish.</p>
+   <div class="fld"><span class="lb">Page details (all service pages)</span><div class="checks">${SPF.map(([k,l])=>`<label><input type="checkbox" name="${k}" data-on="spField" ${p.hideFields[k]?'':'checked'}> Show ${esc(l)}</label>`).join('')}</div></div>
+   <div class="fld"><span class="lb">Knowledge categories</span><label class="sw"><input type="checkbox" data-on="spEmpty" ${p.hideEmptyTypes?'checked':''}> Hide categories with no entries yet (the “Not available yet” boxes), on every service page</label>
+    <p class="hint">Hiding a category removes only its box from the service page. Its entries can still be found through search, Recently updated and item links. Process steps always show.</p></div>
+   <div class="row between" style="align-items:flex-end;margin-top:6px"><div class="fld" style="min-width:200px"><label for="sptw">Tower</label><select id="sptw" name="tw" data-on="spF"><option value="">All towers</option>${DR.taxonomy.map(t=>`<option value="${esc(t.code)}" ${u.tw===t.code?'selected':''}>${esc(t.name)}</option>`).join('')}</select></div>
+    <div class="row"><span class="muted small">${nHid?plural(nHid,'service page')+' with hidden categories':'Every category visible on every service page'}${p.hideTypesAll.length?` · ${plural(p.hideTypesAll.length,'category','categories')} hidden on all pages`:''}</span><button type="button" class="btn small" data-act="spReset">Show everything</button></div></div>
+   <div class="tablewrap sptbl"><table><thead><tr><th>Service page</th>${T.map(t=>`<th class="c">${esc(t)}</th>`).join('')}<th><span class="sr">Row actions</span></th></tr></thead><tbody>
+    <tr class="allrow"><td><b>All service pages</b><small class="muted" style="display:block">Untick to hide a category everywhere</small></td>${T.map(t=>`<td class="c"><input type="checkbox" data-on="spAll" data-t="${esc(t)}" ${p.hideTypesAll.includes(t)?'':'checked'} aria-label="Show ${esc(t)} on all service pages"></td>`).join('')}<td></td></tr>
+    ${rows.map(r=>{const h=spRow(r.code);return `<tr><td><b>${esc(r.code)}</b> ${esc(r.name)}<small class="muted" style="display:block">${esc(r.l1.name)}</small></td>${T.map(t=>{const all=p.hideTypesAll.includes(t),n=cnt[r.code+'|'+t]||0;
+      return `<td class="c${all?' off':''}"><label class="spcell"><input type="checkbox" data-on="spCell" data-c="${esc(r.code)}" data-t="${esc(t)}" ${h.includes(t)?'':'checked'} ${all?`disabled title="Hidden on all service pages"`:''} aria-label="Show ${esc(t)} on ${esc(r.code)} ${esc(r.name)}">${n?`<small>${n}</small>`:''}</label></td>`}).join('')}
+      <td class="acts"><button type="button" class="btn small" data-act="spRowAll" data-c="${esc(r.code)}" data-v="show">Show all</button><button type="button" class="btn small" data-act="spRowAll" data-c="${esc(r.code)}" data-v="hide">Hide all</button><button type="button" class="btn small" data-act="spCopy" data-c="${esc(r.code)}" title="Copy this row to every service in ${esc(r.l1.code+' '+r.l1.name)}">Copy to process</button></td></tr>`}).join('')}
+   </tbody></table></div><p class="hint">Ticked = shown. The small number is how many entries that service has in the category.</p></section>`;
+}
+const spRe=()=>{const y=window.scrollY;rerender();window.scrollTo({top:y})};
+ON.spF=el=>{UI.sp[el.name]=el.value;spRe()};
+ON.spField=el=>{const p=SPS(),k=el.name,l=(SPF.find(x=>x[0]===k)||[k,k])[1];if(el.checked)delete p.hideFields[k];else p.hideFields[k]=true;commit('edited','Settings','servicePage',`Service pages: ${l} ${el.checked?'shown':'hidden'}`);toast(`${l} ${el.checked?'shown':'hidden'} on service pages.`)};
+ON.spEmpty=el=>{SPS().hideEmptyTypes=el.checked;commit('edited','Settings','servicePage',`Service pages: categories with no entries ${el.checked?'hidden':'shown'}`);toast(el.checked?'Empty categories hidden.':'Empty categories shown.')};
+ON.spAll=el=>{const p=SPS(),t=el.dataset.t;p.hideTypesAll=p.hideTypesAll.filter(x=>x!==t);if(!el.checked)p.hideTypesAll.push(t);p.hideTypesAll=DR.itemTypes.map(x=>x.name).filter(n=>p.hideTypesAll.includes(n));
+  commit('edited','Settings','servicePage',`${t} ${el.checked?'shown':'hidden'} on all service pages`);spRe()};
+ON.spCell=el=>{const c=el.dataset.c,t=el.dataset.t,h=spRow(c).filter(x=>x!==t);if(!el.checked)h.push(t);spSetRow(c,h);commit('edited','Settings','servicePage',`Service page ${c}: ${t} ${el.checked?'shown':'hidden'}`)};
+ACTS.spRowAll=el=>{const c=el.dataset.c,show=el.dataset.v==='show';spSetRow(c,show?[]:DR.itemTypes.map(t=>t.name));commit('edited','Settings','servicePage',`Service page ${c}: all categories ${show?'shown':'hidden'}`);spRe()};
+ACTS.spCopy=el=>{const c=el.dataset.c,r=L2S().find(x=>x.code===c);if(!r)return;const others=r.l1.l2.map(x=>x.code).filter(x=>x!==c),h=spRow(c);
+  confirmDlg({title:'Copy to the whole process?',body:`<p>Apply the categories of <b>${esc(c)} ${esc(r.name)}</b> (${h.length?'hidden: '+esc(h.join(', ')):'all shown'}) to the ${plural(others.length,'other service')} in ${esc(r.l1.code+' '+r.l1.name)}: ${esc(others.join(', '))}.</p>`,ok:'Copy',
+    onOk:()=>{others.forEach(x=>spSetRow(x,h.slice()));commit('edited','Settings','servicePage',`Categories of ${c} copied to ${others.join(', ')}`);spRe();toast('Copied to '+plural(others.length,'service'))}})};
+ACTS.spReset=()=>{const p=SPS();if(!Object.keys(p.hideTypes).length&&!p.hideTypesAll.length&&!p.hideEmptyTypes&&!Object.keys(p.hideFields).length)return toast('Everything is already shown.');
+  confirmDlg({title:'Show everything?',body:'<p>Shows every category on every service page, turns off “Hide categories with no entries yet” and shows all four page details again.</p>',ok:'Show everything',
+    onOk:()=>{p.hideTypes={};p.hideTypesAll=[];p.hideEmptyTypes=false;p.hideFields={};commit('edited','Settings','servicePage','Service pages: everything shown');spRe()}})};
+Object.assign(NEED_ON,{spField:'settings',spEmpty:'settings',spAll:'settings',spCell:'settings'});Object.assign(NEED,{spRowAll:'settings',spCopy:'settings',spReset:'settings'});
+
 
 /* ---- Accounts (AdminPE only). Stored in km-accounts.js, which only admin.html loads. ---- */
 const SAMPLES=[['leona','head','3'],['mirela','head','1'],['dorian','head','2'],['calista','head','4'],['tasha','editor','3'],['davin','editor','1'],['bastian','editor','2'],['ilsabet','editor','4']];
@@ -2272,7 +2320,7 @@ ON.setAdmins=el=>{DR.settings.adminNames=el.value.split('\n').map(x=>x.trim()).f
 ACTS.coAdd=()=>{const v=$('#coNew').value.trim().toUpperCase();if(!v)return toast('Enter a company code.');if(DR.settings.companies.includes(v))return toast('That company is already in the list.');DR.settings.companies.push(v);commit('edited','Settings','companies','Added company '+v);rerender()};
 ACTS.coDel=el=>{const c=el.dataset.c,used=DR.items.filter(i=>i.companies.includes(c)).length;if(DR.settings.companies.length<=1)return toast('Keep at least one company.');
   confirmDlg({title:`Remove ${c}?`,body:`<p class="sub">${used?plural(used,'item')+' use this company. It is removed from them, and items left with no company fall back to every remaining company.':'No items use this company.'}</p>`,ok:'Remove',danger:true,onOk:()=>{DR.settings.companies=DR.settings.companies.filter(x=>x!==c);DR.items.forEach(i=>{i.companies=i.companies.filter(x=>x!==c);if(!i.companies.length)i.companies=[...DR.settings.companies]});commit('edited','Settings','companies','Removed company '+c);rerender()}})};
-ON.typeName=el=>{const i=+el.dataset.i,v=el.value.trim(),old=DR.itemTypes[i].name;if(!v||DR.itemTypes.some((t,j)=>j!==i&&t.name.toLowerCase()===v.toLowerCase())){toast('Labels must be unique and not empty.');el.value=old;return}if(v===old)return;DR.itemTypes[i].name=v;DR.items.forEach(x=>{if(x.type===old)x.type=v});AC().weekContent&&Object.values(AC().weekContent).forEach(c=>c.materials.forEach(m=>{if(m.type===old)m.type=v}));commit('edited','Settings','itemTypes',`Item type “${old}” renamed to “${v}”`);toast('Renamed. Items using it are updated.');rerender()};
+ON.typeName=el=>{const i=+el.dataset.i,v=el.value.trim(),old=DR.itemTypes[i].name;if(!v||DR.itemTypes.some((t,j)=>j!==i&&t.name.toLowerCase()===v.toLowerCase())){toast('Labels must be unique and not empty.');el.value=old;return}if(v===old)return;DR.itemTypes[i].name=v;DR.items.forEach(x=>{if(x.type===old)x.type=v});{const sp=SPS();sp.hideTypesAll=sp.hideTypesAll.map(n=>n===old?v:n);Object.values(sp.hideTypes).forEach(l=>l.forEach((n,j)=>{if(n===old)l[j]=v}))}AC().weekContent&&Object.values(AC().weekContent).forEach(c=>c.materials.forEach(m=>{if(m.type===old)m.type=v}));commit('edited','Settings','itemTypes',`Item type “${old}” renamed to “${v}”`);toast('Renamed. Items using it are updated.');rerender()};
 ON.typeDesc=el=>{DR.itemTypes[+el.dataset.i].desc=el.value.trim();commit('edited','Settings','itemTypes','Item type description edited');toast('Saved.')};
 ON.synVal=el=>{const v=el.value.split(',').map(x=>x.trim()).filter(Boolean);if(!v.length){toast('Add at least one related term, or delete the row.');el.value=DR.synonyms[el.dataset.k].join(', ');return}DR.synonyms[el.dataset.k]=v;commit('edited','Settings','synonyms',`Synonym “${el.dataset.k}” → ${v.join(', ')}`);toast('Saved.')};
 ACTS.synDel=el=>{const k=el.dataset.k;delete DR.synonyms[k];commit('deleted','Settings','synonyms','Deleted synonym '+k);rerender()};

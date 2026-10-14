@@ -12,6 +12,12 @@ window.KM_DATA = {
     "newBadgeDays": 30,
     "publishers": "heads",
     "viewsEndpoint": "",
+    "servicePage": {
+      "hideFields": {},
+      "hideEmptyTypes": false,
+      "hideTypesAll": [],
+      "hideTypes": {}
+    },
     "companies": [
       "APS",
       "ACE",

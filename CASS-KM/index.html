@@ -554,8 +554,15 @@ const towerOf=it=>L2INDEX[it.l2]?L2INDEX[it.l2].l0:null;
 const eye=id=>window.kmEye?window.kmEye(id):'';
 function itemCard(it,o){o=o||{};const up=`<span>Updated ${fmt(it.updated)}</span>`,bot=badges(it)+(o.dateTop?'':up)+(o.extra||'')+eye(it.id);return `<button type="button" class="item" data-item="${esc(it.id)}">${o.dateTop?`<span class="tr"><span class="t">${o.title||esc(it.title)}</span><span class="m d">${up}</span></span>`:`<span class="t">${o.title||esc(it.title)}</span>`}${o.lead?`<span class="m">${o.lead}</span>`:''}${bot?`<span class="m">${bot}</span>`:''}</button>`}
 const towerLead=it=>{const t=towerOf(it);return (t?`<span class="pill tw tw-${esc(t.code)}">${esc(t.name)}</span>`:'')+`<span>${esc(it.l2+' '+nameOf(it.l2))}</span>`};
-function assetGrid(list){
-  return `<div class="assets">${TYPES.map(t=>{const its=list.filter(i=>i.type===t.name);return `<div class="panel asset ${its.length?'':'empty'}"><h4>${esc(t.name)}<span class="n">${its.length||''}</span></h4>${its.length?its.map(i=>itemCard(i)).join(''):`<p class="desc">${esc(t.desc)}<br>Not available yet.</p>`}</div>`}).join('')}</div>`;
+/* Service page display settings (Admin › Settings, Super Admin only). Hiding a category only removes its box from service pages;
+   its entries stay in search, Recently updated and item links. */
+const SP=Object.assign({hideFields:{},hideEmptyTypes:false,hideTypesAll:[],hideTypes:{}},(D.settings||{}).servicePage||{});
+const typeHidden=(c,t,count)=>(SP.hideTypesAll||[]).includes(t)||((SP.hideTypes||{})[c]||[]).includes(t)||(!!SP.hideEmptyTypes&&!count);
+const fieldShown=k=>!(SP.hideFields||{})[k];
+function assetGrid(list,c,emptyMsg){
+  const shown=TYPES.filter(t=>!typeHidden(c,t.name,list.filter(i=>i.type===t.name).length));
+  if(!shown.length)return `<p class="sub">${emptyMsg||'Nothing to show for this service yet.'}</p>`;
+  return `<div class="assets">${shown.map(t=>{const its=list.filter(i=>i.type===t.name);return `<div class="panel asset ${its.length?'':'empty'}"><h4>${esc(t.name)}<span class="n">${its.length||''}</span></h4>${its.length?its.map(i=>itemCard(i)).join(''):`<p class="desc">${esc(t.desc)}<br>Not available yet.</p>`}</div>`}).join('')}</div>`;
 }
 function feedback(){return `<div class="feedback"><span>Was this page helpful?</span><button type="button" class="btn" data-fb="yes">Yes</button><button type="button" class="btn" data-fb="no">No</button><button type="button" class="btn" data-fb="edit" aria-expanded="false" aria-controls="fbForm">Suggest an edit</button></div><div id="fbForm" hidden style="margin-top:10px"><label for="fbText" class="sub">What should change? Write a note, copy it, then paste it into Teams or email to the page owner.</label><textarea id="fbText"></textarea><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary" data-fb="copy">Copy note for the page owner</button><button type="button" class="btn" data-fb="cancel">Cancel</button></div></div>`}
 
@@ -574,6 +581,7 @@ function l3Section(c){
   const fs=L3[c]||[];
   return `<section class="panel pad"><h3 class="sec">Functions (L3)</h3>${fs.length?`<div class="l3">${fs.map(f=>`<div class="l3card ${state.flashFn===f.code?'flash':''}" id="${fnId(f.code)}"><span class="c">${esc(f.code)}</span>${esc(f.name)}${f.details.length?`<details><summary>Details</summary><ul>${f.details.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:''}</div>`).join('')}</div>`:'<p class="sub">No functions listed for this service.</p>'}</section>`;
 }
+const metaRow=cells=>{const h=cells.join('');return h?`<div class="meta">${h}</div>`:''};
 function viewL2(){
   const c=state.l2,m=meta(c),node=L2INDEX[c],cov=covOf(c),nm=nameOf(c);
   const items=ITEMS.filter(i=>i.l2===c&&vis(i));
@@ -581,7 +589,7 @@ function viewL2(){
   const head=`<div class="crumb"><button type="button" data-view="home">Home</button> › Knowledge Centre › ${esc(node.l0.name)} › ${esc(node.l1.name)} › ${esc(nm)}</div>
    <section class="panel pad"><div class="titlerow"><div><h2><span style="color:var(--muted)">${esc(c)}</span> ${esc(nm)}</h2><p class="sub">${esc(m.intro||'No knowledge content has been added for this service yet.')}</p></div>
    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="pill p-${cov}">${COV[cov]}</span>${ST[m.status]?`<span class="pill ${ST[m.status]}">${esc(m.status)}</span>`:''}<button type="button" class="linkbtn" data-legend aria-haspopup="dialog" aria-expanded="false">What do the labels mean?</button></div></div>
-   <div class="meta"><div><b>Page owner</b>${personBtn(m.owner,'Page owner · '+nm)}</div><div><b>Ask the expert</b>${personBtn(m.expert,'Ask the expert · '+nm)}</div><div><b>Approved by</b>${personBtn(m.approver,(approved?'Approved by':'Approver (approval pending)')+' · '+nm)}${approved?'':' <span class="pill p-draft" style="margin-top:4px">Pending</span>'}</div><div><b>Last reviewed</b>${m.lastReviewed?fmt(m.lastReviewed):'<span class="tba">Not yet</span>'}</div></div></section>`;
+   ${metaRow([fieldShown('owner')?`<div><b>Page owner</b>${personBtn(m.owner,'Page owner · '+nm)}</div>`:'',fieldShown('expert')?`<div><b>Ask the expert</b>${personBtn(m.expert,'Ask the expert · '+nm)}</div>`:'',fieldShown('approver')?`<div><b>Approved by</b>${personBtn(m.approver,(approved?'Approved by':'Approver (approval pending)')+' · '+nm)}${approved?'':' <span class="pill p-draft" style="margin-top:4px">Pending</span>'}</div>`:'',fieldShown('lastReviewed')?`<div><b>Last reviewed</b>${m.lastReviewed?fmt(m.lastReviewed):'<span class="tba">Not yet</span>'}</div>`:''])}</section>`;
   let body=l3Section(c);
   const steps=stepsOf(c);
   if(cov==='none'&&!items.length&&!steps){
@@ -590,12 +598,12 @@ function viewL2(){
     if(!steps.find(s=>s.id===state.step))state.step=defaultStep(c);
     const cur=steps.find(s=>s.id===state.step);
     body+=`<section class="panel pad"><h3 class="sec">Business process map</h3><p class="sub">Select a step to see its knowledge. The highlighted step is the one the current KM covers.</p>
-     <div class="flow" style="margin-top:12px" role="group" aria-label="Process steps">${steps.map((s,i,a)=>{const n=items.filter(x=>x.step===s.name).length;return `<button type="button" class="node ${s.km?'km':''} ${s.id===state.step?'on':''}" data-step="${esc(s.id)}" aria-pressed="${s.id===state.step}"><b>${i+1}. ${esc(s.name)}</b><span class="tags">${(s.who||[]).map(w=>`<span class="pill p-role">${esc(w)}</span>`).join('')}${s.l3?`<span class="pill p-role">${esc(s.l3)}</span>`:''}</span><small>${n?n+' item'+(n>1?'s':''):'No content yet'}</small></button>${i<a.length-1?'<span class="arrow" aria-hidden="true">→</span>':''}`}).join('')}</div>
+     <div class="flow" style="margin-top:12px" role="group" aria-label="Process steps">${steps.map((s,i,a)=>{const n=items.filter(x=>x.step===s.name&&!typeHidden(c,x.type,1)).length;return `<button type="button" class="node ${s.km?'km':''} ${s.id===state.step?'on':''}" data-step="${esc(s.id)}" aria-pressed="${s.id===state.step}"><b>${i+1}. ${esc(s.name)}</b><span class="tags">${(s.who||[]).map(w=>`<span class="pill p-role">${esc(w)}</span>`).join('')}${s.l3?`<span class="pill p-role">${esc(s.l3)}</span>`:''}</span><small>${n?n+' item'+(n>1?'s':''):'No content yet'}</small></button>${i<a.length-1?'<span class="arrow" aria-hidden="true">→</span>':''}`}).join('')}</div>
      <p class="note">Role tags show who does the step (CO = Customer Operations).</p></section>
-     <section aria-live="polite"><h3 class="sec">${esc(steps.indexOf(cur)+1+'. '+cur.name)}</h3>${assetGrid(items.filter(i=>i.step===cur.name))}</section>`;
-    const loose=items.filter(i=>!i.step||!steps.some(s=>s.name===i.step));
+     <section aria-live="polite"><h3 class="sec">${esc(steps.indexOf(cur)+1+'. '+cur.name)}</h3>${assetGrid(items.filter(i=>i.step===cur.name),c,'Nothing to show for this step yet.')}</section>`;
+    const loose=items.filter(i=>(!i.step||!steps.some(s=>s.name===i.step))&&!typeHidden(c,i.type,1));
     if(loose.length)body+=`<section class="panel pad"><h3 class="sec">Not linked to a process step</h3><div class="recent">${loose.map(i=>itemCard(i)).join('')}</div></section>`;
-  } else body+=`<section><h3 class="sec">Knowledge for this service</h3>${assetGrid(items)}</section>`;
+  } else body+=`<section><h3 class="sec">Knowledge for this service</h3>${assetGrid(items,c)}</section>`;
   return head+body+`<section class="panel pad">${feedback()}</section>`;
 }
 function viewSearch(){
