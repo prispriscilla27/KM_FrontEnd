@@ -157,6 +157,7 @@ h3.sec{margin:0 0 10px;font-size:15px}
 .item .t{font-weight:650;font-size:13px;display:block;overflow-wrap:anywhere}
 .item .m{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;align-items:center;font-size:11.5px;color:var(--muted)}
 .kmviews{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.l3dd>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px}.l3dd>summary::-webkit-details-marker{display:none}.l3dd>summary::after{content:'';width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:-4px 4px 0 0;transition:transform .15s}.l3dd[open]>summary::after{transform:rotate(-135deg);margin-top:4px}.l3dd>summary h3{margin:0}.l3dd[open]>summary{margin-bottom:10px}
 .item .tr{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}.item .tr .t{flex:1;min-width:0}.item .tr .m.d{margin-top:1px;flex:none;white-space:nowrap}
 .feedback{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)}
 .btn{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;text-align:center}
@@ -298,7 +299,7 @@ const L3RAW=D.l3||{};
 const PEOPLE={};(D.people||[]).forEach(p=>{if(p&&p.id)PEOPLE[p.id]=p});
 const TYPES=(D.itemTypes||[]);
 const L2PAGES=D.l2Pages||{};
-const ITEMS=(D.items||[]).map(i=>Object.assign({step:'',l3:'',escalateTo:'',complexity:'',link:'',description:'',duration:'',requireAccess:false,newBadge:'auto',companies:[],document:null,approvedBy:'',approvedAt:''},i));
+const ITEMS=(D.items||[]).map(i=>Object.assign({step:'',l3:'',escalateTo:'',complexity:'',link:'',description:'',duration:'',requireAccess:false,newBadge:'auto',companies:[],document:null,approvedBy:'',approvedByName:'',approvedAt:'',updatedByName:''},i));
 const TOWERNAMES=D.towerNames||{};
 const GLOSSARY=(D.glossary||[]).map(g=>({term:String(g.term||''),meaning:String(g.meaning||''),towers:Array.isArray(g.towers)?g.towers.map(String):[]}));
 const SYN={};Object.entries(D.synonyms||{}).forEach(([k,v])=>{SYN[norm(k)]=(Array.isArray(v)?v:[v]).map(norm)});
@@ -579,8 +580,10 @@ function viewHome(){
 }
 function l3Section(c){
   const fs=L3[c]||[];
-  return `<section class="panel pad"><h3 class="sec">Functions (L3)</h3>${fs.length?`<div class="l3">${fs.map(f=>`<div class="l3card ${state.flashFn===f.code?'flash':''}" id="${fnId(f.code)}"><span class="c">${esc(f.code)}</span>${esc(f.name)}${f.details.length?`<details><summary>Details</summary><ul>${f.details.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:''}</div>`).join('')}</div>`:'<p class="sub">No functions listed for this service.</p>'}</section>`;
+  /* a closed dropdown below the knowledge; it opens by itself when a search result points at one of its functions */
+  return `<details class="panel pad l3dd" id="l3dd" ${state.l3open||state.flashFn?'open':''}><summary><h3 class="sec">Functions (L3)</h3></summary>${fs.length?`<div class="l3">${fs.map(f=>`<div class="l3card ${state.flashFn===f.code?'flash':''}" id="${fnId(f.code)}"><span class="c">${esc(f.code)}</span>${esc(f.name)}${f.details.length?`<details><summary>Details</summary><ul>${f.details.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:''}</div>`).join('')}</div>`:'<p class="sub">No functions listed for this service.</p>'}</details>`;
 }
+document.addEventListener('toggle',e=>{if(e.target.id==='l3dd')state.l3open=e.target.open},true);
 const metaRow=cells=>{const h=cells.join('');return h?`<div class="meta">${h}</div>`:''};
 function viewL2(){
   const c=state.l2,m=meta(c),node=L2INDEX[c],cov=covOf(c),nm=nameOf(c);
@@ -590,7 +593,7 @@ function viewL2(){
    <section class="panel pad"><div class="titlerow"><div><h2><span style="color:var(--muted)">${esc(c)}</span> ${esc(nm)}</h2><p class="sub">${esc(m.intro||'No knowledge content has been added for this service yet.')}</p></div>
    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="pill p-${cov}">${COV[cov]}</span>${ST[m.status]?`<span class="pill ${ST[m.status]}">${esc(m.status)}</span>`:''}<button type="button" class="linkbtn" data-legend aria-haspopup="dialog" aria-expanded="false">What do the labels mean?</button></div></div>
    ${metaRow([fieldShown('owner')?`<div><b>Page owner</b>${personBtn(m.owner,'Page owner · '+nm)}</div>`:'',fieldShown('expert')?`<div><b>Ask the expert</b>${personBtn(m.expert,'Ask the expert · '+nm)}</div>`:'',fieldShown('approver')?`<div><b>Approved by</b>${personBtn(m.approver,(approved?'Approved by':'Approver (approval pending)')+' · '+nm)}${approved?'':' <span class="pill p-draft" style="margin-top:4px">Pending</span>'}</div>`:'',fieldShown('lastReviewed')?`<div><b>Last reviewed</b>${m.lastReviewed?fmt(m.lastReviewed):'<span class="tba">Not yet</span>'}</div>`:''])}</section>`;
-  let body=l3Section(c);
+  let body='';
   const steps=stepsOf(c);
   if(cov==='none'&&!items.length&&!steps){
     body+=`<section class="panel pad empty-state"><h3 class="sec">Content not started</h3><p class="sub">The functions above are defined in the service taxonomy, but no SOPs, guides or videos have been added yet. Content is added through the KM governance steps: Tower Head meeting, PIC meeting, input, review and approval.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary" data-req="${esc(c)}">Request this content</button><button type="button" class="btn" data-view="home">Back to home</button></div></section>`;
@@ -604,7 +607,7 @@ function viewL2(){
     const loose=items.filter(i=>(!i.step||!steps.some(s=>s.name===i.step))&&!typeHidden(c,i.type,1));
     if(loose.length)body+=`<section class="panel pad"><h3 class="sec">Not linked to a process step</h3><div class="recent">${loose.map(i=>itemCard(i)).join('')}</div></section>`;
   } else body+=`<section><h3 class="sec">Knowledge for this service</h3>${assetGrid(items,c)}</section>`;
-  return head+body+`<section class="panel pad">${feedback()}</section>`;
+  return head+body+l3Section(c)+`<section class="panel pad">${feedback()}</section>`;
 }
 function viewSearch(){
   const q=state.q,r=search(q);const by=k=>r.filter(x=>x.o.kind===k).map(x=>x.o);
@@ -682,14 +685,14 @@ function openItem(id){
   const vc=window.kmCountView?window.kmCountView(it.id):{counted:false};
   const fnc=it.l3?l3Find(it.l2,it.l3):null,link=safeUrl(it.link),lbl=it.requireAccess?'Request access in Microsoft Loop':'Open in Microsoft Loop';
   const isEx=it.type==='Exception Handling'||it.escalateTo||it.complexity;
-  const hasDoc=!!(it.document&&it.document.file)&&!it.requireAccess,apprBy=it.status==='Approved'&&it.approvedBy&&PEOPLE[it.approvedBy];
+  const hasDoc=!!(it.document&&it.document.file)&&!it.requireAccess,apprBy=it.status==='Approved'?((it.approvedBy&&PEOPLE[it.approvedBy]&&PEOPLE[it.approvedBy].name)||it.approvedByName||''):'';
   document.getElementById('drawerRoot').innerHTML=`<div class="drawer-bg" data-close></div><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${badges(it)}${eye(it.id)}</span><button type="button" class="btn" data-close aria-label="Close the detail panel">Close</button></div>
    <h3 id="dTitle">${esc(it.title)}</h3>
    ${it.description?`<p class="sub">${esc(it.description)}</p>`:''}
-   ${apprBy?`<p class="apprline">Approved by ${esc(PEOPLE[it.approvedBy].name)} on ${fmt(it.approvedAt)}</p>`:''}
+   ${apprBy?`<p class="apprline">Approved by ${esc(apprBy)} on ${fmt(it.approvedAt)}</p>`:''}
    ${it.requireAccess?`<div class="lockbox"><b>Require access.</b> This file holds customer or bank details, so it is only open to people with permission. Ask the owner for access.</div>`:''}
-   <div class="meta" style="margin-top:0"><div><b>Type</b>${esc(it.type)}</div><div><b>Service</b>${esc(it.l2+' '+nameOf(it.l2))}</div>${it.step?`<div><b>Process step</b>${esc(it.step)}</div>`:''}${fnc?`<div><b>L3 function</b>${esc(fnc.code+' '+fnc.name)}</div>`:''}<div><b>Owner</b>${personBtn(it.owner,'Owner · '+it.title)}</div>${isEx?`<div><b>Escalate to</b>${personBtn(it.escalateTo,'Escalation · '+it.title)}</div><div><b>Complexity</b>${it.complexity?esc(it.complexity):'<span class="tba">Not set</span>'}</div>`:''}<div><b>Version</b>${esc(it.version||'')}</div><div><b>Last updated</b>${fmt(it.updated)}${personName(it.updatedBy)?' by '+esc(personName(it.updatedBy)):''}</div>${it.duration?`<div><b>Duration</b>${esc(it.duration)}</div>`:''}<div><b>Companies</b>${esc((it.companies||[]).join(', '))}</div></div>
+   <div class="meta" style="margin-top:0"><div><b>Type</b>${esc(it.type)}</div><div><b>Service</b>${esc(it.l2+' '+nameOf(it.l2))}</div>${it.step?`<div><b>Process step</b>${esc(it.step)}</div>`:''}${fnc?`<div><b>L3 function</b>${esc(fnc.code+' '+fnc.name)}</div>`:''}<div><b>Owner</b>${personBtn(it.owner,'Owner · '+it.title)}</div>${isEx?`<div><b>Escalate to</b>${personBtn(it.escalateTo,'Escalation · '+it.title)}</div><div><b>Complexity</b>${it.complexity?esc(it.complexity):'<span class="tba">Not set</span>'}</div>`:''}<div><b>Version</b>${esc(it.version||'')}</div><div><b>Last updated</b>${fmt(it.updated)}${personName(it.updatedBy)?' by '+esc(personName(it.updatedBy)):it.updatedByName?' by '+esc(it.updatedByName):''}</div>${it.duration?`<div><b>Duration</b>${esc(it.duration)}</div>`:''}<div><b>Companies</b>${esc((it.companies||[]).join(', '))}</div></div>
    <div class="acts">${hasDoc?`<a class="btn primary" href="document.html?item=${encodeURIComponent(it.id)}">View document</a>`:''}${link?`<a class="btn ${hasDoc?'':'primary'}" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${lbl}</a>`:hasDoc?'':`<button type="button" class="btn primary" disabled title="${lbl}">Link not added yet</button>`}<button type="button" class="btn" data-copylink="${esc(it.id)}">Copy link to this item</button></div>
    ${hist(it.id)}
    <p class="note">Labels are set by KM admins. “New” shows until you open an updated item.${vc.reason==='admin'?' Views are not counted while you are logged in as an admin or looking at the admin draft.':''}</p></div>`;

@@ -3292,232 +3292,589 @@ window.KM_DATA = {
         "name": "Finance & Accounting",
         "code": "3",
         "desc": "Credit, receivables, payables, record to report, tax, treasury and planning.",
-        "links": {
-          "2": [
-            {
-              "title": "3.1 Order to Cash",
-              "href": "index.html#l2-3.1.1"
-            },
-            {
-              "title": "3.1.1 Credit Management",
-              "href": "index.html#l2-3.1.1"
-            },
-            {
-              "title": "3.2 Purchase to Pay",
-              "href": "index.html#l2-3.2.1"
+        "paths": {
+          "3.1": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "3.1 Order to Cash (O2C)",
+                  "href": "index.html#l2-3.1.1"
+                },
+                {
+                  "title": "3.1.1 Credit Management",
+                  "href": "index.html#l2-3.1.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "LC review process map",
+                  "href": "index.html#l2-3.1.1/step-5"
+                }
+              ],
+              "5": [
+                {
+                  "title": "Credit decision walkthrough",
+                  "href": "index.html#l2-3.1.1/step-1"
+                }
+              ],
+              "7": [
+                {
+                  "title": "LC clause checklist",
+                  "href": "index.html#item-lc-qrd"
+                },
+                {
+                  "title": "Account Receivables",
+                  "href": "index.html#l2-3.1.2"
+                }
+              ],
+              "8": [
+                {
+                  "title": "LC exception handling",
+                  "href": "index.html#l2-3.1.1/step-5"
+                }
+              ],
+              "9": [
+                {
+                  "title": "LC review & consultation",
+                  "href": "index.html#l2-3.1.1/step-5"
+                }
+              ],
+              "11": [
+                {
+                  "title": "Credit Management scenario",
+                  "href": "index.html#l2-3.1.1"
+                }
+              ]
             }
-          ],
-          "3": [
-            {
-              "title": "LC review process map",
-              "href": "index.html#l2-3.1.1/step-5"
-            },
-            {
-              "title": "Invoice Receiving",
-              "href": "index.html#l2-3.2.1"
+          },
+          "3.2": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "3.2 Purchase to Pay (P2P)",
+                  "href": "index.html#l2-3.2.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "Invoice Receiving",
+                  "href": "index.html#l2-3.2.1"
+                }
+              ],
+              "5": [
+                {
+                  "title": "3.2.1 Invoice Receiving",
+                  "href": "index.html#l2-3.2.1"
+                }
+              ],
+              "7": [
+                {
+                  "title": "3.2.2 Invoice Validation",
+                  "href": "index.html#l2-3.2.2"
+                }
+              ],
+              "8": [
+                {
+                  "title": "3.2.3 Travel & Entertainment",
+                  "href": "index.html#l2-3.2.3"
+                }
+              ],
+              "9": [
+                {
+                  "title": "3.2.4 Vendor Data Management (PO & Non-PO)",
+                  "href": "index.html#l2-3.2.4"
+                }
+              ],
+              "11": [
+                {
+                  "title": "3.2.1 Invoice Receiving",
+                  "href": "index.html#l2-3.2.1"
+                }
+              ]
             }
-          ],
-          "5": [
-            {
-              "title": "Credit decision walkthrough",
-              "href": "index.html#l2-3.1.1/step-1"
+          },
+          "3.3": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "3.3 Record to Report (R2R)",
+                  "href": "index.html#l2-3.3.1"
+                },
+                {
+                  "title": "3.3.1 Master Data Management",
+                  "href": "index.html#l2-3.3.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "3.3.2 General Ledger (GL) Accounting",
+                  "href": "index.html#l2-3.3.2"
+                }
+              ],
+              "5": [
+                {
+                  "title": "3.3.3 Fixed Assets Accounting",
+                  "href": "index.html#l2-3.3.3"
+                }
+              ],
+              "7": [
+                {
+                  "title": "3.3.4 Lease Accounting",
+                  "href": "index.html#l2-3.3.4"
+                }
+              ],
+              "8": [
+                {
+                  "title": "3.3.5 Intercompany Accounting",
+                  "href": "index.html#l2-3.3.5"
+                }
+              ],
+              "9": [
+                {
+                  "title": "3.3.6 Financial Close & Consolidation",
+                  "href": "index.html#l2-3.3.6"
+                }
+              ],
+              "11": [
+                {
+                  "title": "3.3.7 Statutory & Regulatory Reporting",
+                  "href": "index.html#l2-3.3.7"
+                }
+              ]
             }
-          ],
-          "7": [
-            {
-              "title": "LC clause checklist",
-              "href": "index.html#item-lc-qrd"
-            },
-            {
-              "title": "Account Receivables",
-              "href": "index.html#l2-3.1.2"
+          },
+          "3.4": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "3.4 Tax",
+                  "href": "index.html#l2-3.4.1"
+                },
+                {
+                  "title": "3.4.1 Tax Data Management",
+                  "href": "index.html#l2-3.4.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "3.4.2 Tax Calculation & Validation",
+                  "href": "index.html#l2-3.4.2"
+                }
+              ],
+              "5": [
+                {
+                  "title": "3.4.3 Tax Reporting & Compliance",
+                  "href": "index.html#l2-3.4.3"
+                }
+              ],
+              "7": [
+                {
+                  "title": "3.4.4 Tax Reconciliation",
+                  "href": "index.html#l2-3.4.4"
+                }
+              ],
+              "8": [
+                {
+                  "title": "3.4.5 Tax Audit Report",
+                  "href": "index.html#l2-3.4.5"
+                }
+              ],
+              "9": [
+                {
+                  "title": "3.4.6 Tax Refund & Recovery",
+                  "href": "index.html#l2-3.4.6"
+                }
+              ],
+              "11": [
+                {
+                  "title": "3.4.1 Tax Data Management",
+                  "href": "index.html#l2-3.4.1"
+                }
+              ]
             }
-          ],
-          "8": [
-            {
-              "title": "LC exception handling",
-              "href": "index.html#l2-3.1.1/step-5"
+          },
+          "3.5": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "3.5 Treasury",
+                  "href": "index.html#l2-3.5.1"
+                },
+                {
+                  "title": "3.5.1 Front Office Operations",
+                  "href": "index.html#l2-3.5.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "3.5.2 Back Office Operations",
+                  "href": "index.html#l2-3.5.2"
+                }
+              ],
+              "5": [
+                {
+                  "title": "3.5.3 Control & Payment",
+                  "href": "index.html#l2-3.5.3"
+                }
+              ],
+              "7": [
+                {
+                  "title": "3.5.1 Front Office Operations",
+                  "href": "index.html#l2-3.5.1"
+                }
+              ],
+              "8": [
+                {
+                  "title": "3.5.2 Back Office Operations",
+                  "href": "index.html#l2-3.5.2"
+                }
+              ],
+              "9": [
+                {
+                  "title": "3.5.3 Control & Payment",
+                  "href": "index.html#l2-3.5.3"
+                }
+              ],
+              "11": [
+                {
+                  "title": "3.5.1 Front Office Operations",
+                  "href": "index.html#l2-3.5.1"
+                }
+              ]
             }
-          ],
-          "9": [
-            {
-              "title": "LC review & consultation",
-              "href": "index.html#l2-3.1.1/step-5"
+          },
+          "3.6": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "3.6 Energy Risk Accounting (ERA)",
+                  "href": "index.html#l2-3.6.1"
+                },
+                {
+                  "title": "3.6.1 Cost Accounting & Controlling",
+                  "href": "index.html#l2-3.6.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "3.6.2 Inventory Counting & Reconciliation",
+                  "href": "index.html#l2-3.6.2"
+                }
+              ],
+              "5": [
+                {
+                  "title": "3.6.1 Cost Accounting & Controlling",
+                  "href": "index.html#l2-3.6.1"
+                }
+              ],
+              "7": [
+                {
+                  "title": "3.6.2 Inventory Counting & Reconciliation",
+                  "href": "index.html#l2-3.6.2"
+                }
+              ],
+              "8": [
+                {
+                  "title": "3.6.1 Cost Accounting & Controlling",
+                  "href": "index.html#l2-3.6.1"
+                }
+              ],
+              "9": [
+                {
+                  "title": "3.6.2 Inventory Counting & Reconciliation",
+                  "href": "index.html#l2-3.6.2"
+                }
+              ],
+              "11": [
+                {
+                  "title": "3.6.1 Cost Accounting & Controlling",
+                  "href": "index.html#l2-3.6.1"
+                }
+              ]
             }
-          ],
-          "11": [
-            {
-              "title": "Credit Management scenario",
-              "href": "index.html#l2-3.1.1"
+          },
+          "3.7": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "3.7 Fin Planning & Analysis (FP&A)",
+                  "href": "index.html#l2-3.7.1"
+                },
+                {
+                  "title": "3.7.1 Planning & Budgeting",
+                  "href": "index.html#l2-3.7.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "3.7.2 Management Reporting",
+                  "href": "index.html#l2-3.7.2"
+                }
+              ],
+              "5": [
+                {
+                  "title": "3.7.3 Profitability Analysis",
+                  "href": "index.html#l2-3.7.3"
+                }
+              ],
+              "7": [
+                {
+                  "title": "3.7.4 Investment Controlling",
+                  "href": "index.html#l2-3.7.4"
+                }
+              ],
+              "8": [
+                {
+                  "title": "3.7.1 Planning & Budgeting",
+                  "href": "index.html#l2-3.7.1"
+                }
+              ],
+              "9": [
+                {
+                  "title": "3.7.2 Management Reporting",
+                  "href": "index.html#l2-3.7.2"
+                }
+              ],
+              "11": [
+                {
+                  "title": "3.7.3 Profitability Analysis",
+                  "href": "index.html#l2-3.7.3"
+                }
+              ]
             }
-          ]
+          }
         }
       },
       {
         "name": "Customer Operations",
         "code": "1",
         "desc": "Customer data, contracts, orders, billing and collections.",
-        "links": {
-          "2": [
-            {
-              "title": "1.1 Customer Success",
-              "href": "index.html#l2-1.1.3"
-            },
-            {
-              "title": "Supporting activities & reporting",
-              "href": "index.html#l2-1.1.9"
+        "paths": {
+          "1.1": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "1.1 Customer Success",
+                  "href": "index.html#l2-1.1.3"
+                },
+                {
+                  "title": "Supporting activities & reporting",
+                  "href": "index.html#l2-1.1.9"
+                }
+              ],
+              "3": [
+                {
+                  "title": "Capture & Monitor Orders",
+                  "href": "index.html#l2-1.1.3"
+                },
+                {
+                  "title": "Fulfil Orders",
+                  "href": "index.html#l2-1.1.4"
+                }
+              ],
+              "5": [
+                {
+                  "title": "Fulfil Orders walkthrough",
+                  "href": "index.html#l2-1.1.4"
+                }
+              ],
+              "7": [
+                {
+                  "title": "Proforma invoice",
+                  "href": "index.html#l2-1.1.5"
+                },
+                {
+                  "title": "Shipping instructions",
+                  "href": "index.html#l2-1.1.4"
+                }
+              ],
+              "8": [
+                {
+                  "title": "LC review with Finance",
+                  "href": "index.html#l2-3.1.1/step-5"
+                },
+                {
+                  "title": "Collection Management",
+                  "href": "index.html#l2-1.1.6"
+                }
+              ],
+              "9": [
+                {
+                  "title": "Billing & Invoicing",
+                  "href": "index.html#l2-1.1.5"
+                }
+              ],
+              "11": [
+                {
+                  "title": "Order-to-delivery scenario",
+                  "href": "index.html#l2-1.1.4"
+                }
+              ]
             }
-          ],
-          "3": [
-            {
-              "title": "Capture & Monitor Orders",
-              "href": "index.html#l2-1.1.3"
-            },
-            {
-              "title": "Fulfil Orders",
-              "href": "index.html#l2-1.1.4"
-            }
-          ],
-          "5": [
-            {
-              "title": "Fulfil Orders walkthrough",
-              "href": "index.html#l2-1.1.4"
-            }
-          ],
-          "7": [
-            {
-              "title": "Proforma invoice",
-              "href": "index.html#l2-1.1.5"
-            },
-            {
-              "title": "Shipping instructions",
-              "href": "index.html#l2-1.1.4"
-            }
-          ],
-          "8": [
-            {
-              "title": "LC review with Finance",
-              "href": "index.html#l2-3.1.1/step-5"
-            },
-            {
-              "title": "Collection Management",
-              "href": "index.html#l2-1.1.6"
-            }
-          ],
-          "9": [
-            {
-              "title": "Billing & Invoicing",
-              "href": "index.html#l2-1.1.5"
-            }
-          ],
-          "11": [
-            {
-              "title": "Order-to-delivery scenario",
-              "href": "index.html#l2-1.1.4"
-            }
-          ]
+          }
         }
       },
       {
         "name": "Procurement",
         "code": "2",
         "desc": "Procurement operations and commercial operations (S2C).",
-        "links": {
-          "2": [
-            {
-              "title": "2.1 Procurement Operations",
-              "href": "index.html#l2-2.1.4"
-            },
-            {
-              "title": "2.2 Commercial Operations (S2C)",
-              "href": "index.html#l2-2.2.1"
+        "paths": {
+          "2.1": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "2.1 Procurement Operations",
+                  "href": "index.html#l2-2.1.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "Request to Purchase",
+                  "href": "index.html#l2-2.1.4"
+                }
+              ],
+              "5": [
+                {
+                  "title": "Spot Buy walkthrough",
+                  "href": "index.html#l2-2.1.7"
+                }
+              ],
+              "7": [
+                {
+                  "title": "Vendor Data Management",
+                  "href": "index.html#l2-2.1.1"
+                }
+              ],
+              "8": [
+                {
+                  "title": "Outline Agreement Management",
+                  "href": "index.html#l2-2.1.3"
+                }
+              ],
+              "9": [
+                {
+                  "title": "Request to Purchase",
+                  "href": "index.html#l2-2.1.4"
+                }
+              ],
+              "11": [
+                {
+                  "title": "2.1.1 Vendor Data Management (PO)",
+                  "href": "index.html#l2-2.1.1"
+                }
+              ]
             }
-          ],
-          "3": [
-            {
-              "title": "Request to Purchase",
-              "href": "index.html#l2-2.1.4"
+          },
+          "2.2": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "2.2 Commercial Operations (S2C)",
+                  "href": "index.html#l2-2.2.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "2.2.1 Contract Management",
+                  "href": "index.html#l2-2.2.1"
+                }
+              ],
+              "5": [
+                {
+                  "title": "2.2.2 Strategic / Agile Sourcing",
+                  "href": "index.html#l2-2.2.2"
+                }
+              ],
+              "7": [
+                {
+                  "title": "2.2.1 Contract Management",
+                  "href": "index.html#l2-2.2.1"
+                }
+              ],
+              "8": [
+                {
+                  "title": "2.2.2 Strategic / Agile Sourcing",
+                  "href": "index.html#l2-2.2.2"
+                }
+              ],
+              "9": [
+                {
+                  "title": "2.2.1 Contract Management",
+                  "href": "index.html#l2-2.2.1"
+                }
+              ],
+              "11": [
+                {
+                  "title": "Sourcing scenario",
+                  "href": "index.html#l2-2.2.2"
+                }
+              ]
             }
-          ],
-          "5": [
-            {
-              "title": "Spot Buy walkthrough",
-              "href": "index.html#l2-2.1.7"
-            }
-          ],
-          "7": [
-            {
-              "title": "Vendor Data Management",
-              "href": "index.html#l2-2.1.1"
-            }
-          ],
-          "8": [
-            {
-              "title": "Outline Agreement Management",
-              "href": "index.html#l2-2.1.3"
-            }
-          ],
-          "9": [
-            {
-              "title": "Request to Purchase",
-              "href": "index.html#l2-2.1.4"
-            }
-          ],
-          "11": [
-            {
-              "title": "Sourcing scenario",
-              "href": "index.html#l2-2.2.2"
-            }
-          ]
+          }
         }
       },
       {
         "name": "Human Resources",
         "code": "4",
         "desc": "Employee data, recruitment and payroll data preparation.",
-        "links": {
-          "2": [
-            {
-              "title": "4.1 Human Resources Operations",
-              "href": "index.html#l2-4.1.1"
+        "paths": {
+          "4.1": {
+            "desc": "",
+            "links": {
+              "2": [
+                {
+                  "title": "4.1 Human Resources Operations",
+                  "href": "index.html#l2-4.1.1"
+                }
+              ],
+              "3": [
+                {
+                  "title": "Employee Data Management",
+                  "href": "index.html#l2-4.1.1"
+                }
+              ],
+              "5": [
+                {
+                  "title": "Recruitment walkthrough",
+                  "href": "index.html#l2-4.1.2"
+                }
+              ],
+              "7": [
+                {
+                  "title": "Payroll data preparation",
+                  "href": "index.html#l2-4.1.3"
+                }
+              ],
+              "8": [
+                {
+                  "title": "Employee data exceptions",
+                  "href": "index.html#l2-4.1.1"
+                }
+              ],
+              "9": [
+                {
+                  "title": "Recruitment",
+                  "href": "index.html#l2-4.1.2"
+                }
+              ],
+              "11": [
+                {
+                  "title": "Payroll scenario",
+                  "href": "index.html#l2-4.1.3"
+                }
+              ]
             }
-          ],
-          "3": [
-            {
-              "title": "Employee Data Management",
-              "href": "index.html#l2-4.1.1"
-            }
-          ],
-          "5": [
-            {
-              "title": "Recruitment walkthrough",
-              "href": "index.html#l2-4.1.2"
-            }
-          ],
-          "7": [
-            {
-              "title": "Payroll data preparation",
-              "href": "index.html#l2-4.1.3"
-            }
-          ],
-          "8": [
-            {
-              "title": "Employee data exceptions",
-              "href": "index.html#l2-4.1.1"
-            }
-          ],
-          "9": [
-            {
-              "title": "Recruitment",
-              "href": "index.html#l2-4.1.2"
-            }
-          ],
-          "11": [
-            {
-              "title": "Payroll scenario",
-              "href": "index.html#l2-4.1.3"
-            }
-          ]
+          }
         }
       }
     ],

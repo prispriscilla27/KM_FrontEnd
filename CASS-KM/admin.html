@@ -300,7 +300,9 @@ function loadDraft(){
   if(DR&&META.n===0&&DR.settings.version<PUB.settings.version)DR=null;      /* nothing unpublished and a newer file exists: start from it */
   if(DR&&META.n===0&&DR.settings.version===PUB.settings.version&&DR.settings.lastPublished!==PUB.settings.lastPublished)DR=null;
   if(!DR){DR=clone(PUB);META={n:0}}
-  if(!DR.views)DR.views={updated:'',sample:false,months:{}};if(!('viewsEndpoint' in DR.settings))DR.settings.viewsEndpoint='';
+  if(!DR.views)DR.views={updated:'',sample:false,months:{}};
+  /* drafts from before L1 learning paths: take the paths from the published file */
+  (DR.academy.towers||[]).forEach(t=>{if(!t.paths){const pt=((PUB.academy||{}).towers||[]).find(x=>x.code===t.code);if(pt&&pt.paths){t.paths=clone(pt.paths);delete t.links}}});if(!('viewsEndpoint' in DR.settings))DR.settings.viewsEndpoint='';
   saveDraft();
 }
 function saveDraft(){try{localStorage.setItem(DKEY,JSON.stringify(DR));localStorage.setItem(DMETA,JSON.stringify(META));STORE_OK=true}catch(e){STORE_OK=false}}
@@ -344,8 +346,12 @@ function saveAccounts(){try{localStorage.setItem(AKEY,JSON.stringify(ACC))}catch
 const SALT=()=>((DR||PUB).settings.passwordSalt||'cass-km');
 const pwHash=(user,pw)=>sha256(SALT()+'|'+String(user).toLowerCase()+'|'+pw);
 const acct=id=>ACC?ACC.accounts.find(a=>a.id===id):null;
-const acctByUser=u=>ACC?ACC.accounts.find(a=>a.username.toLowerCase()===String(u).trim().toLowerCase()):null;
-const acctOfPerson=pid=>pid&&ACC?ACC.accounts.find(a=>a.personId===pid):null;
+const acctByUser=u=>ACC?ACC.accounts.find(a=>a.username===String(u).trim()):null;   /* usernames are case-sensitive (no two may differ only in capitals) */
+/* Linked people: a Super admin account can link several people (all equal, none is the "main" one); other accounts link one. */
+const pidsOf=a=>!a?[]:Array.isArray(a.personIds)&&a.personIds.length?a.personIds.slice():(a.personId?[a.personId]:[]);
+const myPid=a=>{const l=pidsOf(a);return l.length===1?l[0]:''};   /* the one person to record, or '' when several people share the account */
+const isMine=(a,pid)=>!!pid&&pidsOf(a).includes(pid);
+const acctOfPerson=pid=>pid&&ACC?ACC.accounts.find(a=>pidsOf(a).includes(pid)):null;
 const ALLT=()=>(DR||PUB).taxonomy.map(a=>a.code);
 const towersOf=a=>!a?[]:(a.type==='superadmin'||(a.towers||[]).includes('all'))?ALLT():(a.towers||[]);
 const TYPE_LABEL={superadmin:'Super admin',head:'Tower head',editor:'Tower editor'};
@@ -419,16 +425,50 @@ function tickLock(){
   const s=lockState(),left=Math.ceil((s.until-Date.now())/1000);
   if(left>0){btn.disabled=true;err.textContent='Too many wrong attempts. Try again in '+left+' seconds.';lockTimer=setInterval(()=>{const l=Math.ceil((lockState().until-Date.now())/1000);if(l<=0){clearInterval(lockTimer);btn.disabled=false;err.textContent=''}else err.textContent='Too many wrong attempts. Try again in '+l+' seconds.'},1000)}
 }
+
+/* ---- Account lock after 3 wrong passwords ----
+   No server: the count and the automatic lock live in this browser (localStorage). 3 wrong passwords in total for an existing
+   username lock that account in this browser until a Super admin unlocks it (Settings › Accounts › Unlock, then publish:
+   km-accounts.js then carries unlockedAt, which lifts the browser lock everywhere once the page is reloaded). A Super admin can
+   also set "Locked" on purpose; that is published in km-accounts.js and applies on every computer. Super admin accounts are only
+   paused for 15 minutes, because nobody might be left to unlock them. Super admins see lock events from this browser in a pop-up
+   at login and under the bell. */
+const FAILK='cassKM.fails',BLOCKK='cassKM.blocks',LEVK='cassKM.lockEvents',LOCK_N=3,SUP_PAUSE=15*60e3;
+const jl=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return v==null?d:v}catch(e){return d}};
+const jsv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+function browserLock(a){const all=jl(BLOCKK,{}),b=all[a.id];if(!b)return null;
+  const un=Date.parse(a.unlockedAt||'')||0;if(un>=b.at||(a.type==='superadmin'&&Date.now()-b.at>=SUP_PAUSE)){delete all[a.id];jsv(BLOCKK,all);return null}return b}
+const isLocked=a=>!!a&&(!!a.locked||!!browserLock(a));
+function clearBrowserLock(id){const all=jl(BLOCKK,{});delete all[id];jsv(BLOCKK,all);const f=jl(FAILK,{});delete f[id];jsv(FAILK,f)}
+const LOCK_MSG='This account is locked. Ask Process Excellence to unlock it.';
+function lockMsg(a){if(a.locked)return LOCK_MSG;const b=browserLock(a);if(!b)return '';if(a.type==='superadmin'){const m=Math.max(1,Math.ceil((SUP_PAUSE-(Date.now()-b.at))/60e3));return `Too many wrong passwords. This Super admin account is paused in this browser for ${m} more minute${m===1?'':'s'}.`}return LOCK_MSG+' (Locked after 3 wrong passwords.)'}
+function wrongPassword(a){const f=jl(FAILK,{}),n=(f[a.id]||0)+1;
+  if(n<LOCK_N){f[a.id]=n;jsv(FAILK,f);return false}
+  delete f[a.id];jsv(FAILK,f);const all=jl(BLOCKK,{});all[a.id]={at:Date.now(),username:a.username};jsv(BLOCKK,all);
+  const ev=jl(LEVK,[]);ev.unshift({id:'lk-'+Date.now().toString(36),acc:a.id,name:a.name,username:a.username,at:nowJ(),sup:a.type==='superadmin',done:false});jsv(LEVK,ev.slice(0,50));return true}
+const openLockEvents=()=>jl(LEVK,[]).filter(e=>!e.done&&acct(e.acc));
+function doneLockEvent(id){const ev=jl(LEVK,[]);ev.forEach(e=>{if(e.id===id||e.acc===id)e.done=true});jsv(LEVK,ev)}
+function setLocked(x,on,via){if(!need('accounts'))return false;if(x.id===me.id){deny('You cannot lock your own account.');return false}
+  if(on){x.locked=true;x.lockedAt=nowJ()}else{x.locked=false;x.unlockedAt=new Date().toISOString();clearBrowserLock(x.id)}
+  doneLockEvent(x.id);ACC.dirty=true;saveAccounts();commit('edited','Accounts',x.id,`Account ${x.username} ${on?'locked':'unlocked'}${via?' ('+via+')':''}`,{tower:'',accounts:true});return true}
+function lockEventsHtml(){const ev=openLockEvents();if(!ev.length)return '';
+  return `<section aria-labelledby="remL"><h3 id="remL">Locked accounts · ${ev.length}</h3><ul class="list">${ev.map(e=>{const x=acct(e.acc);return `<li><div class="t"><b>${esc(x.name)}</b> <span class="muted small">(${esc(x.username)})</span><div class="muted small">${e.sup?'Paused for 15 minutes':'Locked'} after 3 wrong passwords in this browser · ${fmtDT(e.at)}</div></div><span class="row">${e.sup?'':`<button type="button" class="btn small primary" data-lk="unlock" data-id="${esc(x.id)}">Unlock</button><button type="button" class="btn small" data-lk="lock" data-id="${esc(x.id)}" ${x.locked?'disabled':''}>Lock on every computer</button>`}<button type="button" class="btn small" data-lk="ok" data-id="${esc(e.id)}">Dismiss</button></span></li>`}).join('')}</ul>
+   <p class="hint">Only lockouts that happened in this browser show here: the site has no server to report lockouts from other computers. After you unlock, publish so the change reaches the person's computer, and tell them they can try again.</p></section>`}
+function lockAct(b){const k=b.dataset.lk,id=b.dataset.id;if(k==='ok'){doneLockEvent(id);return true}const x=acct(id);if(!x)return true;
+  if(setLocked(x,k==='lock',k==='lock'?'after 3 wrong passwords':'')){toast(k==='lock'?'Locked on every computer once you publish.':'Unlocked. Publish, then tell the person they can try again.');if(CUR==='set')rerender();renderBell()}return true}
 function doLogin(){
   const s=lockState();if(s.until>Date.now()){tickLock();return}
   const u=$('#lu').value.trim(),p=$('#lp').value,err=$('#loginErr');
   if(!u||!p){err.textContent=!u?'Enter your username.':'Enter your password.';return}
-  const a=acctByUser(u),ok=!!a&&pwHash(a.username,p)===a.passwordHash;
+  const a=acctByUser(u);
+  if(a&&a.active&&isLocked(a)){err.textContent=lockMsg(a);$('#lp').value='';return}
+  const ok=!!a&&pwHash(a.username,p)===a.passwordHash;
   if(ok&&!a.active){err.textContent='This account is disabled. Ask AdminPE.';return}
-  if(ok){setLock({fails:0,until:0});me={id:a.id,name:a.name,username:a.username,t:Date.now(),fresh:true};touch();startApp(true);return}
+  if(ok){setLock({fails:0,until:0});clearBrowserLock(a.id);me={id:a.id,name:a.name,username:a.username,t:Date.now(),fresh:true};touch();startApp(true);return}
+  if(a&&a.active&&wrongPassword(a)){err.textContent=lockMsg(a);$('#lp').value='';return}
   s.fails=(s.fails||0)+1;
   if(s.fails>=5){s.fails=0;s.until=Date.now()+60000;setLock(s);tickLock();return}
-  setLock(s);err.textContent='That username or password is not correct. Ask Process Excellence if you need access.';$('#lp').value='';$('#lp').focus();
+  setLock(s);err.textContent='That username or password is not correct. After 3 wrong passwords the account is locked. Ask Process Excellence if you need access.';$('#lp').value='';$('#lp').focus();
 }
 function renderSetPassword(a){
   document.title='Set a new password · CASS Admin';
@@ -457,6 +497,7 @@ function markVisited(){const a=ME();if(!a)return;try{localStorage.setItem(VKEY(a
 function startApp(fresh){
   loadDraft();
   const a=ME();if(!a||!a.active)return logout('');
+  if(a.locked)return logout(LOCK_MSG);
   if(a.mustChange)return renderSetPassword(a);
   if(fresh||me.prev===undefined){let pv=null;try{pv=localStorage.getItem(VKEY(a.id))}catch(e){}me.prev=pv;me.fresh=false;touch()}
   PREV=me.prev;
@@ -467,9 +508,9 @@ function startApp(fresh){
 
 /* ---- My account ---- */
 function openMyAccount(){
-  const a=ME();if(!a)return;const p=person(a.personId);
+  const a=ME();if(!a)return;const pl=pidsOf(a).map(person).filter(Boolean),p=pl[0];
   const m=modal(`<h2>My account</h2>
-   <dl class="kv"><dt>Name</dt><dd>${esc(a.name)}</dd><dt>Username</dt><dd>${esc(a.username)}</dd><dt>Account type</dt><dd><span class="pill p-role">${TYPE_LABEL[a.type]}</span></dd><dt>Linked person</dt><dd>${p?esc(p.name)+' · '+esc(p.role):'<span class="muted">None</span>'}</dd><dt>Towers</dt><dd>${a.type==='superadmin'?'<span class="pill p-role">All towers</span>':towerPills(a.towers)}</dd><dt>Roles</dt><dd>${(a.roles||[]).length?a.roles.map(r=>`<span class="pill p-role">${esc(ROLE_LABEL[r]||r)}</span>`).join(' '):'<span class="muted">None</span>'} <button type="button" class="linkbtn" data-x="people">Roles are set on the People directory</button></dd></dl>
+   <dl class="kv"><dt>Name</dt><dd>${esc(a.name)}</dd><dt>Username</dt><dd>${esc(a.username)}</dd><dt>Account type</dt><dd><span class="pill p-role">${TYPE_LABEL[a.type]}</span></dd><dt>${pl.length>1?'Linked people':'Linked person'}</dt><dd>${pl.length?pl.map(x=>esc(x.name)+' · '+esc(x.role)).join('<br>'):'<span class="muted">None</span>'}</dd><dt>Towers</dt><dd>${a.type==='superadmin'?'<span class="pill p-role">All towers</span>':towerPills(a.towers)}</dd><dt>Roles</dt><dd>${(a.roles||[]).length?a.roles.map(r=>`<span class="pill p-role">${esc(ROLE_LABEL[r]||r)}</span>`).join(' '):'<span class="muted">None</span>'} <button type="button" class="linkbtn" data-x="people">Roles are set on the People directory</button></dd></dl>
    <h3 style="margin-top:6px">Change password</h3>
    <div class="g3"><div class="fld"><label for="mp0">Current password</label><input id="mp0" type="password" autocomplete="current-password"></div><div class="fld"><label for="mp1">New password (10+ characters)</label><input id="mp1" type="password" autocomplete="new-password"></div><div class="fld"><label for="mp2">Repeat new password</label><input id="mp2" type="password" autocomplete="new-password"></div></div>
    <div class="err" id="mpErr" role="alert"></div><p class="hint">The new password works on this computer straight away and for everyone once km-accounts.js is published${can(a,'publish')?'':' (send your changes to your tower head)'}. Use a strong, unique password.</p>
@@ -487,7 +528,7 @@ function openMyAccount(){
 
 /* ---- Reminder pop-up at login (tower heads and AdminPE), smaller note for tower editors ---- */
 const lastChange=it=>(it.versions&&it.versions[0]&&it.versions[0].at)||((it.updated||'1970-01-01')+'T00:00:00+07:00');
-const lastBy=it=>(it.versions&&it.versions[0]&&it.versions[0].by)||personName(it.updatedBy);
+const lastBy=it=>(it.versions&&it.versions[0]&&it.versions[0].by)||personName(it.updatedBy)||it.updatedByName||'';
 const isNewSince=(at,prev)=>!prev||Date.parse(at)>Date.parse(prev);
 function statusMoves(it){const out=[];(it.versions||[]).forEach(v=>(v.changes||[]).forEach(c=>{if(c.f==='status')out.push({at:v.at,by:v.by,from:c.from,to:c.to})}));return out}
 const editedAfterApproval=it=>{const m=statusMoves(it)[0];return !!m&&m.from==='Approved'&&m.to==='In review'};
@@ -496,15 +537,17 @@ function waitingFor(a){
   const byNew=(x,y)=>lastChange(y).localeCompare(lastChange(x));
   return {review:scope.filter(i=>i.status==='In review').sort(byNew),drafts:scope.filter(i=>i.status==='Draft').sort(byNew),towers:tw};
 }
-function bellCount(){const a=ME();if(!a||a.type==='editor')return 0;const w=waitingFor(a);return w.review.length+w.drafts.filter(i=>isNewSince(lastChange(i),PREV)).length}
+function bellCount(){const a=ME();if(!a||a.type==='editor')return 0;const w=waitingFor(a);return (a.type==='superadmin'?openLockEvents().length:0)+w.review.length+w.drafts.filter(i=>isNewSince(lastChange(i),PREV)).length}
 function greet(){const a=ME();if(!a)return false;return a.type==='editor'?editorNote(a,true):reminder(true)}
 function reminder(atLogin){
   const a=ME();if(!a||a.type==='editor')return false;const w=waitingFor(a);
-  if(atLogin&&!w.review.length&&!w.drafts.some(i=>isNewSince(lastChange(i),PREV)))return false;
+  const lk=a.type==='superadmin'?lockEventsHtml():'';
+  if(atLogin&&!lk&&!w.review.length&&!w.drafts.some(i=>isNewSince(lastChange(i),PREV)))return false;
   const row=i=>{const l=l2Info(i.l2);return `<li><div class="t"><b>${esc(i.title)}</b> ${isNewSince(lastChange(i),PREV)?'<span class="pill p-new">New</span>':''}${editedAfterApproval(i)?' <span class="pill p-draft">Edited after approval</span>':''}<div class="muted small">${esc(i.type)} · ${esc(i.l2)} ${esc(l?l.name:'')} · ${statusPill(i.status)} · ${esc(lastBy(i)||'—')}, ${fmtDT(lastChange(i))}</div></div><button type="button" class="btn small primary" data-rv="${esc(i.id)}">Review</button></li>`};
   const nd=w.drafts.filter(i=>isNewSince(lastChange(i),PREV)).length;
   const m=modal(`<div class="row between"><h2 id="remT">Waiting for your approval</h2><span class="muted small">${fmtD(todayJ())}</span></div>
    <div>${a.type==='superadmin'?'<span class="pill p-role">All towers</span>':towerPills(w.towers)}</div>
+   <div id="remLk">${lk}</div>
    <section aria-labelledby="remA"><h3 id="remA">Needs approval · ${w.review.length}</h3>${w.review.length?`<ul class="list">${w.review.map(row).join('')}</ul>`:'<p class="okrow">Nothing is waiting for approval.</p>'}</section>
    <section aria-labelledby="remD"><div class="row between"><h3 id="remD" style="margin:0">Drafts in your tower · ${w.drafts.length}${nd?` <span class="pill p-new">${nd} new</span>`:''}</h3>${w.drafts.length?'<button type="button" class="btn small" data-x="toggle" aria-expanded="false">Show</button>':''}</div><ul class="list" id="remDrafts" hidden style="margin-top:8px">${w.drafts.map(row).join('')}</ul></section>
    <p class="hint">Items appear here once they are in your data: after publishing or after you merge a changes file.</p>
@@ -512,7 +555,7 @@ function reminder(atLogin){
   m.el.querySelector('.dlg').setAttribute('aria-labelledby','remT');
   const done=visited=>{m.close();if(visited)markVisited()};
   m.tryClose=()=>done(true);   /* Escape counts as Close; only "Remind me later" keeps the items marked New */
-  m.el.addEventListener('click',e=>{const b=e.target.closest('[data-x],[data-rv]');if(!b)return;
+  m.el.addEventListener('click',e=>{const lb=e.target.closest('[data-lk]');if(lb){lockAct(lb);$('#remLk',m.el).innerHTML=lockEventsHtml();return}const b=e.target.closest('[data-x],[data-rv]');if(!b)return;
     if(b.dataset.rv){done(true);openItem(b.dataset.rv)}
     else if(b.dataset.x==='toggle'){const l=$('#remDrafts',m.el);l.hidden=!l.hidden;b.textContent=l.hidden?'Show':'Hide';b.setAttribute('aria-expanded',String(!l.hidden))}
     else if(b.dataset.x==='later')m.close();
@@ -522,7 +565,7 @@ function reminder(atLogin){
   return true;
 }
 function editorNote(a,atLogin){
-  const mine=DR.items.filter(i=>i.owner&&i.owner===a.personId);
+  const mine=DR.items.filter(i=>isMine(a,i.owner));
   const other=m=>m.by!==a.name&&!!PREV&&isNewSince(m.at,PREV);
   const appr=mine.filter(i=>statusMoves(i).some(m=>m.to==='Approved'&&other(m))).length;
   const back=mine.filter(i=>i.status==='Draft'&&statusMoves(i).some(m=>m.from==='In review'&&m.to==='Draft'&&other(m))).length;
@@ -621,8 +664,9 @@ function pkRender(box,q){
   const pop=$('.pop',box),cur=$('input[type=hidden]',box).value,Q=(q||'').toLowerCase(),role=box.dataset.role;
   const list=DR.people.filter(p=>!Q||(p.name+' '+p.role+' '+p.team).toLowerCase().includes(Q)).sort((a,b)=>a.name.localeCompare(b.name));
   const opt=p=>`<button type="button" class="opt ${p.id===cur?'on':''}" data-v="${esc(p.id)}">${esc(p.name)} ${rolesOf(p.id).map(r=>`<span class="pill p-role mini">${esc(ROLE_LABEL[r])}</span>`).join(' ')}<small>${esc(p.role)} · ${esc(p.team)}</small></button>`;
-  const sug=role?list.filter(p=>rolesOf(p.id).includes(role)):[],rest=role?list.filter(p=>!rolesOf(p.id).includes(role)):list;
-  pop.innerHTML=`<input type="search" class="pks" placeholder="Search name or role" aria-label="Search people" value="${esc(q||'')}">${box.dataset.opt?`<button type="button" class="opt ${!cur?'on':''}" data-v="">To be assigned</button>`:''}${sug.length?`<div class="pkh">Suggested · ${esc(ROLE_LABEL[role])}</div>${sug.map(opt).join('')}<div class="pkh">Everyone else</div>`:''}${rest.map(opt).join('')||(sug.length?'':'<span class="muted small" style="padding:6px">No one matches.</span>')}${can(ME(),'people.edit')?'<button type="button" class="opt add" data-add="1">+ Add new person</button>':''}`;
+  const team=ME()&&pidsOf(ME()).length>1&&box.dataset.pk!=='addPid'&&box.dataset.pk!=='personId'?pidsOf(ME()):[],tl=list.filter(p=>team.includes(p.id)),list2=list.filter(p=>!team.includes(p.id));   /* shared account: its people first */
+  const sug=role?list2.filter(p=>rolesOf(p.id).includes(role)):[],rest=role?list2.filter(p=>!rolesOf(p.id).includes(role)):list2;
+  pop.innerHTML=`<input type="search" class="pks" placeholder="Search name or role" aria-label="Search people" value="${esc(q||'')}">${box.dataset.opt?`<button type="button" class="opt ${!cur?'on':''}" data-v="">To be assigned</button>`:''}${tl.length?`<div class="pkh">Suggested · ${esc(ME().name)}</div>${tl.map(opt).join('')}${sug.length?'':'<div class="pkh">Everyone else</div>'}`:''}${sug.length?`<div class="pkh">Suggested · ${esc(ROLE_LABEL[role])}</div>${sug.map(opt).join('')}<div class="pkh">Everyone else</div>`:''}${rest.map(opt).join('')||(sug.length?'':'<span class="muted small" style="padding:6px">No one matches.</span>')}${can(ME(),'people.edit')?'<button type="button" class="opt add" data-add="1">+ Add new person</button>':''}`;
 }
 function pkSet(box,id){
   const h=$('input[type=hidden]',box);h.value=id||'';$('.pkb',box).innerHTML=pkLabel(id);$('.pop',box).hidden=true;
@@ -788,7 +832,7 @@ function buildFile(data){
   out.items.sort((a,b)=>a.l2.localeCompare(b.l2,'en',{numeric:true})||a.title.localeCompare(b.title));
   return DATA_HEADER+'window.KM_DATA = '+JSON.stringify(out,null,2)+';\n';
 }
-function buildAccountsFile(acc){const o={version:acc.version,accounts:acc.accounts.map(a=>({id:a.id,name:a.name,username:a.username,personId:a.personId||'',type:a.type,towers:a.towers,roles:a.roles||[],passwordHash:a.passwordHash,mustChange:!!a.mustChange,active:!!a.active,created:a.created||'',createdBy:a.createdBy||'',...(a.sample?{sample:true}:{})}))};return ACC_HEADER+'window.KM_ACCOUNTS = '+JSON.stringify(o,null,2)+';\n'}
+function buildAccountsFile(acc){const o={version:acc.version,accounts:acc.accounts.map(a=>({id:a.id,name:a.name,username:a.username,personId:a.personId||'',...(Array.isArray(a.personIds)&&a.personIds.length?{personIds:a.personIds}:{}),type:a.type,towers:a.towers,roles:a.roles||[],passwordHash:a.passwordHash,mustChange:!!a.mustChange,active:!!a.active,...(a.locked?{locked:true,lockedAt:a.lockedAt||''}:{}),...(a.unlockedAt?{unlockedAt:a.unlockedAt}:{}),created:a.created||'',createdBy:a.createdBy||'',...(a.sample?{sample:true}:{})}))};return ACC_HEADER+'window.KM_ACCOUNTS = '+JSON.stringify(o,null,2)+';\n'}
 /* Prepare the next published version without touching the draft until a publish succeeds. */
 function preparePublish(){
   const nv=Math.max(PUB.settings.version,DR.settings.version)+(META.n>0||DR.settings.version===PUB.settings.version?1:0),day=todayJ();
@@ -1173,8 +1217,8 @@ function bulkApply(label,fn,{approve}={}){
   const a=ME(),its=selItems();if(!its.length)return;
   const bad=its.find(i=>!can(a,'item.edit',i));if(bad)return deny(lockText(bad));
   if(approve&&its.some(i=>!can(a,'approve',i)))return deny(denyText('approve'));
-  its.forEach(i=>{const before=clone(i);fn(i);i.updated=todayJ();i.updatedBy=a.personId||'';
-    if(i.status==='Approved'&&before.status!=='Approved'){i.approvedBy=a.personId||'';i.approvedAt=todayJ()}else if(i.status!=='Approved'){i.approvedBy='';i.approvedAt=''}
+  its.forEach(i=>{const before=clone(i);fn(i);i.updated=todayJ();i.updatedBy=myPid(a);i.updatedByName=myPid(a)?'':a.name;
+    if(i.status==='Approved'&&before.status!=='Approved'){i.approvedBy=myPid(a);i.approvedByName=myPid(a)?'':a.name;i.approvedAt=todayJ()}else if(i.status!=='Approved'){i.approvedBy='';i.approvedByName='';i.approvedAt=''}
     const ch=diffFields(before,i,[...TRACK,...OTHER]);historyEntry(i,ch,'Bulk change: '+label,'none');
     if(i.status==='Approved'&&before.status!=='Approved')commit('approved','Knowledge items',i.id,`Approved “${i.title}”`,{title:i.title});
   });
@@ -1205,8 +1249,8 @@ ACTS.itemDel=el=>{const it=byId(DR.items,el.dataset.id);if(!it)return;if(!can(ME
 const newItemId=t=>{let id;do{id=slug(t).slice(0,40)+'-'+rid()}while(byId(DR.items,id));return id};
 ACTS.itemDup=el=>{
   const a=ME(),it=byId(DR.items,el.dataset.id);if(!it)return;if(!can(a,'item.add',it.l2))return deny(lockText(it));
-  const c=clone(it);c.title=('Copy of '+it.title).slice(0,120);c.id=newItemId(c.title);c.status='Draft';c.approvedBy='';c.approvedAt='';c.updated=todayJ();c.updatedBy=a.personId||'';c.version='0.1';c.document=null;
-  if(!can(a,'item.owner',it))c.owner=a.personId||c.owner;
+  const c=clone(it);c.title=('Copy of '+it.title).slice(0,120);c.id=newItemId(c.title);c.status='Draft';c.approvedBy='';c.approvedByName='';c.approvedAt='';c.updated=todayJ();c.updatedBy=myPid(a);c.updatedByName=myPid(a)?'':a.name;c.version='0.1';c.document=null;
+  if(!can(a,'item.owner',it))c.owner=myPid(a)||c.owner;
   c.versions=[{v:'0.1',at:nowJ(),by:me.name,note:`Duplicated from “${it.title}”`,kind:'new',changes:[]}];
   DR.items.push(c);commit('added','Knowledge items',c.id,`Duplicated “${it.title}” as “${c.title}” (Draft)`,{title:c.title});renderItemsTbl();toast('Copy created as Draft.');
 };
@@ -1222,7 +1266,7 @@ function statusSavedDlg(st){
 function itemForm(it){
   const a=ME(),isNew=!it,ro=!isNew&&!can(a,'item.edit',it);
   const ownerRO=isNew?a.type==='editor':!can(a,'item.owner',it);
-  const o=it?Object.assign({},it,{newBadge:nbNorm(it.newBadge)}):{title:'',type:DR.itemTypes[0].name,l2:'',step:'',l3:'',status:'Draft',owner:a.personId||'',escalateTo:'',complexity:'Low',version:'0.1',link:'',description:'',duration:'',requireAccess:false,newBadge:'auto',companies:[...DR.settings.companies],document:null,versions:[]};
+  const o=it?Object.assign({},it,{newBadge:nbNorm(it.newBadge)}):{title:'',type:DR.itemTypes[0].name,l2:'',step:'',l3:'',status:'Draft',owner:myPid(a),escalateTo:'',complexity:'Low',version:'0.1',link:'',description:'',duration:'',requireAccess:false,newBadge:'auto',companies:[...DR.settings.companies],document:null,versions:[]};
   const allowed=ro?null:towersOf(a);
   const st={doc:o.document?clone(o.document):null,up:null,upView:null,removed:false,viewRemoved:false,err:'',warn:'',kind:null,noteTouched:false};
   const body=`<div data-tab="d">
@@ -1232,7 +1276,7 @@ function itemForm(it){
    <div class="fld" data-f="l2"><span class="lb req">Service</span><div class="g3"><select name="l0" id="f_l0" aria-label="Tower (L0)"></select><select name="l1" id="f_l1" aria-label="Process (L1)"></select><select name="l2" id="f_l2" aria-label="Service (L2)"></select></div><div class="hint">Choose tower, then process, then service.${!ro&&a.type!=='superadmin'?' You can only choose services in your own tower.':''} There is no separate SAP or Systems &amp; Tools section.</div><div class="err"></div></div>
    <div id="stepWrap">${fld('step','Process step','<select id="f_step" name="step"></select>')}</div>
    <div id="l3Wrap">${fld('l3','Function (L3, optional)','<select id="f_l3" name="l3"></select>',{hint:'Read-only list of the functions for this service.'})}</div>
-   <div class="fld" data-f="status"><span class="lb">Status</span><div class="radios">${STATUSES.map(s=>`<label><input type="radio" name="status" value="${s}" ${o.status===s?'checked':''}> ${statusPill(s)}</label>`).join('')}</div><div class="hint" id="apprHint"></div>${o.status==='Approved'&&o.approvedBy?`<div class="okrow">Approved by ${esc(personName(o.approvedBy))} on ${fmtD(o.approvedAt)}</div>`:''}<div class="banner warn" id="apprWarn" hidden>Saving will send this item back for approval.</div><div class="err"></div></div>
+   <div class="fld" data-f="status"><span class="lb">Status</span><div class="radios">${STATUSES.map(s=>`<label><input type="radio" name="status" value="${s}" ${o.status===s?'checked':''}> ${statusPill(s)}</label>`).join('')}</div><div class="hint" id="apprHint"></div>${o.status==='Approved'&&o.approvedBy?`<div class="okrow">Approved by ${esc(personName(o.approvedBy)||o.approvedByName||'')} on ${fmtD(o.approvedAt)}</div>`:''}<div class="banner warn" id="apprWarn" hidden>Saving will send this item back for approval.</div><div class="err"></div></div>
    <div class="fld" data-f="owner"><label class="lb req">Owner</label>${pk('owner',o.owner,{label:'Owner',role:'itemOwner',readOnly:ownerRO||ro})}${ownerRO&&!ro?'<div class="hint">Only the tower head or AdminPE can change the owner.</div>':''}<div class="err"></div></div>
    <div id="excWrap" class="g2"><div class="fld" data-f="escalateTo"><label class="lb">Escalate to</label>${pk('escalateTo',o.escalateTo,{optional:1,label:'Escalate to',role:'escalateTo',readOnly:ro})}<div class="err"></div></div>${fld('complexity','Complexity',sel('complexity',['Low','Medium','High'],o.complexity||'Low'))}</div>
    <div id="docWrap"></div>
@@ -1347,7 +1391,7 @@ async function saveItem(it,v,st,formItem){
   const a=ME(),isNew=!it;
   if(isNew?!need('item.add',v.l2):(!need('item.edit',it)||!need('item.add',v.l2)))return false;
   const next=formItem(v);
-  if(!can(a,'item.owner',it||{l2:v.l2})||(isNew&&a.type==='editor'))next.owner=it?it.owner:(a.personId||next.owner);
+  if(!can(a,'item.owner',it||{l2:v.l2})||(isNew&&a.type==='editor'))next.owner=it?it.owner:(myPid(a)||next.owner);
   const appr=can(a,'approve',next.l2),content=it?diffFields(it,next,CONTENT).length>0:false;
   /* an editor changing the content of an Approved item sends it back for approval; otherwise only approvers may set Approved */
   let autoBack=false;
@@ -1363,11 +1407,11 @@ async function saveItem(it,v,st,formItem){
   }
   if(next.document&&!next.document.viewFile){next.document.viewFile='';next.document.viewName=''}
   const day=todayJ();
-  if(next.status==='Approved'&&(!it||it.status!=='Approved')){next.approvedBy=a.personId||'';next.approvedAt=day}
-  else if(next.status==='Approved'){next.approvedBy=it.approvedBy||'';next.approvedAt=it.approvedAt||''}
-  else{next.approvedBy='';next.approvedAt=''}
+  if(next.status==='Approved'&&(!it||it.status!=='Approved')){next.approvedBy=myPid(a);next.approvedByName=myPid(a)?'':a.name;next.approvedAt=day}
+  else if(next.status==='Approved'){next.approvedBy=it.approvedBy||'';next.approvedByName=it.approvedByName||'';next.approvedAt=it.approvedAt||''}
+  else{next.approvedBy='';next.approvedByName='';next.approvedAt=''}
   if(isNew){
-    const n=Object.assign({id},next,{updated:day,updatedBy:a.personId||'',version:'0.1',versions:[{v:'0.1',at:nowJ(),by:me.name,note:'First version',kind:'new',changes:[]}]});
+    const n=Object.assign({id},next,{updated:day,updatedBy:myPid(a),updatedByName:myPid(a)?'':a.name,version:'0.1',versions:[{v:'0.1',at:nowJ(),by:me.name,note:'First version',kind:'new',changes:[]}]});
     DR.items.push(n);commit('added','Knowledge items',id,`Added “${n.title}” under ${n.l2} as ${n.status}`,{title:n.title});
     if(n.status==='Approved')commit('approved','Knowledge items',id,`Approved “${n.title}”`,{title:n.title});
     toast('Item added.');if(CUR==='items')renderItemsTbl();if(appr&&n.status!=='Draft')setTimeout(()=>statusSavedDlg(n.status),60);return true;
@@ -1377,7 +1421,7 @@ async function saveItem(it,v,st,formItem){
   const trackedCh=changes.filter(c=>TRACK.includes(c.f)),kind=trackedCh.length?(v.kind||'none'):'none';
   const nv=kind==='none'?it.version:bumpV(it.version,kind);
   const prevStatus=it.status;
-  Object.assign(it,next,{updated:day,updatedBy:a.personId||''});it.version=nv;
+  Object.assign(it,next,{updated:day,updatedBy:myPid(a),updatedByName:myPid(a)?'':a.name});it.version=nv;
   it.versions=it.versions||[];it.versions.unshift({v:nv,at:nowJ(),by:me.name,note:(v.note||'').trim()||(kind==='none'&&trackedCh.length?'No new version (typo or label only)':''),kind,changes});if(it.versions.length>30)it.versions.length=30;
   commit('edited','Knowledge items',it.id,(kind!=='none'?`v${nv}: `:'')+chSummary(changes)+(autoBack?' (sent back for approval)':''),{title:it.title});
   if(it.status==='Approved'&&prevStatus!=='Approved')commit('approved','Knowledge items',it.id,`Approved “${it.title}”`,{title:it.title});
@@ -1792,8 +1836,12 @@ const range=ws=>{ws=[...ws].sort((a,b)=>a-b);if(!ws.length)return 'no weeks';con
 const coversText=t=>t.id==='final'?`${range(t.weeks)}, with extra weight on ${range(AC().settings.finalRecentWeeks).toLowerCase()}`:range(t.weeks);
 const MTYPES=()=>[...DR.itemTypes.map(t=>t.name),'Glossary','Service page'];
 const tSlug=t=>slug(t.name);
-const previewWeek=(n,t)=>`academy-week.html?week=${n}&tower=${tSlug(t)}&as=admin#preview`;
-const previewTest=(id,t)=>`academy-test.html?test=${id}&tower=${tSlug(t)}&as=admin#preview`;
+/* Academy pathways: one per L1 of each tower; pages per week live in towers[i].paths[<L1 code>].links */
+function APATHS(){const out=[];AC().towers.forEach(t=>{const tx=DR.taxonomy.find(x=>x.code===t.code),l1=(tx&&tx.l1)||[];if(!t.paths)t.paths={};
+  l1.forEach(L=>{if(!t.paths[L.code])t.paths[L.code]={desc:'',links:l1.length===1&&t.links?clone(t.links):{}};out.push({t,l1:L.code,l1name:L.name,multi:l1.length>1,key:t.code+'|'+L.code,label:l1.length>1?t.name+' › '+L.name:t.name,short:l1.length>1?L.code:t.name.split(' ')[0].replace('&','')})})});return out}
+const pathQ=p=>p.t?`&tower=${tSlug(p.t)}${p.multi?'&l1='+encodeURIComponent(p.l1):''}`:(()=>{const a=APATHS().find(x=>x.t===p);return `&tower=${tSlug(p)}${a&&a.multi?'&l1='+encodeURIComponent(a.l1):''}`})();
+const previewWeek=(n,p)=>`academy-week.html?week=${n}${pathQ(p)}&as=admin#preview`;
+const previewTest=(id,t)=>`academy-test.html?test=${id}${pathQ(t)}&as=admin#preview`;
 VIEWS.acad={
   preset(p){if(p&&p.tab)UI.acad.tab=p.tab},
   render(){
@@ -1828,26 +1876,27 @@ function pathHtml(){
    <label class="sw"><input type="checkbox" data-on="acSw" name="lockWeeksInOrder" ${s.lockWeeksInOrder?'checked':''}><span><b>Lock weeks in order</b><br><span class="hint">Week n opens only after every material in week n−1 is finished.</span></span></label>
    <label class="sw"><input type="checkbox" data-on="acSw" name="lockAfterCheckpoint" ${s.lockAfterCheckpoint?'checked':''}><span><b>Lock weeks after a checkpoint is taken</b><br><span class="hint">The weeks a checkpoint covers can no longer be changed once the joiner has taken it.</span></span></label></section>
   <section class="panel pad gap"><h2>Towers</h2><p class="sub">Names follow the service taxonomy. The description shows on the tower cards.</p>
-   <div class="gap">${AC().towers.map((t,i)=>`<div class="matrow"><div class="row between"><span class="pill tw tw-${t.code}">${esc(t.name)}</span><span class="row"><button type="button" class="btn small primary" data-act="acTowerSave" data-i="${i}">Save description</button></span></div><textarea aria-label="Description for ${esc(t.name)}" id="td${i}" style="min-height:52px">${esc(t.desc)}</textarea></div>`).join('')}</div></section>
-  <section class="panel pad gap"><h2>Weeks</h2><p class="sub">Each week has learning goals, materials every tower sees, and Knowledge Centre pages for each tower. Preview shows the draft as a new joiner would see it.</p>
-   <div class="tablewrap"><table><thead><tr><th>Week</th><th>Materials</th><th>Tower pages</th><th>Preview as</th><th>Actions</th></tr></thead><tbody>${AC().weeks.map(w=>{const c=AC().weekContent[w.n]||{materials:[]};const tl=AC().towers.map(t=>(t.links[w.n]||[]).length);
-    return `<tr><td><b>Week ${w.n}</b> · ${esc(w.title)}<small>${esc(w.hours)} · ${esc(w.desc)}</small></td><td>${c.materials.length}${c.materials.some(m=>m.tba)?` <span class="pill p-draft">${c.materials.filter(m=>m.tba).length} to be added</span>`:''}</td><td>${tl.some(x=>x)?AC().towers.map((t,i)=>tl[i]?`<span class="pill tw tw-${t.code}" title="${esc(t.name)}">${tl[i]}</span>`:'').join(' '):'<span class="muted">None</span>'}</td><td><div class="chips">${AC().towers.map(t=>`<a class="chip tchip tw-${t.code}" href="${previewWeek(w.n,t)}" target="_blank" rel="noopener" title="Preview week ${w.n} as ${esc(t.name)}">${esc(t.name.split(' ')[0].replace('&',''))}</a>`).join('')}</div></td><td class="acts"><button type="button" class="btn small" data-act="acWeek" data-n="${w.n}">${can(ME(),'academy')?'Edit week':'View week'}</button></td></tr>`}).join('')}</tbody></table></div></section>`;
+   <div class="gap">${AC().towers.map((t,i)=>`<div class="matrow"><div class="row between"><span class="pill tw tw-${t.code}">${esc(t.name)}</span><span class="row"><button type="button" class="btn small primary" data-act="acTowerSave" data-i="${i}">Save description</button></span></div><textarea aria-label="Description for ${esc(t.name)}" id="td${i}" style="min-height:52px">${esc(t.desc)}</textarea>${APATHS().filter(p=>p.t===t&&p.multi).map(p=>`<div class="fld" style="margin-top:6px"><label class="lb" for="ad-${esc(p.key)}">Area ${esc(p.l1+' '+p.l1name)} · description on the area card (optional)</label><div class="row"><input type="text" class="grow" id="ad-${esc(p.key)}" value="${esc(p.t.paths[p.l1].desc||'')}" placeholder="Leave empty to list its services"><button type="button" class="btn small" data-act="acAreaSave" data-k="${esc(p.key)}">Save</button></div></div>`).join('')}</div>`).join('')}</div></section>
+  <section class="panel pad gap"><h2>Weeks</h2><p class="sub">Each week has learning goals, materials every tower sees, and Knowledge Centre pages for each learning path (one per tower area, L1). Preview shows the draft as a new joiner would see it.</p>
+   <div class="tablewrap"><table><thead><tr><th>Week</th><th>Materials</th><th>Pages per learning path</th><th>Preview as</th><th>Actions</th></tr></thead><tbody>${AC().weeks.map(w=>{const c=AC().weekContent[w.n]||{materials:[]};const AP=APATHS(),tl=AP.map(p=>((p.t.paths[p.l1].links||{})[w.n]||[]).length);
+    return `<tr><td><b>Week ${w.n}</b> · ${esc(w.title)}<small>${esc(w.hours)} · ${esc(w.desc)}</small></td><td>${c.materials.length}${c.materials.some(m=>m.tba)?` <span class="pill p-draft">${c.materials.filter(m=>m.tba).length} to be added</span>`:''}</td><td>${tl.some(x=>x)?AP.map((p,i)=>tl[i]?`<span class="pill tw tw-${p.t.code}" title="${esc(p.label)}">${p.multi?esc(p.l1)+': ':''}${tl[i]}</span>`:'').join(' '):'<span class="muted">None</span>'}</td><td><div class="chips">${AP.map(p=>`<a class="chip tchip tw-${p.t.code}" href="${previewWeek(w.n,p)}" target="_blank" rel="noopener" title="Preview week ${w.n} as ${esc(p.label)}">${esc(p.short)}</a>`).join('')}</div></td><td class="acts"><button type="button" class="btn small" data-act="acWeek" data-n="${w.n}">${can(ME(),'academy')?'Edit week':'View week'}</button></td></tr>`}).join('')}</tbody></table></div></section>`;
 }
 ON.acSw=el=>{AC().settings[el.name]=el.checked;commit('edited','Academy','rules',`${el.name==='lockWeeksInOrder'?'Lock weeks in order':'Lock weeks after a checkpoint is taken'} ${el.checked?'on':'off'}`);toast('Saved.')};
+ACTS.acAreaSave=el=>{if(!need('academy'))return;const p=APATHS().find(x=>x.key===el.dataset.k);if(!p)return;const v=$('#ad-'+CSS.escape(p.key)).value.trim(),pl=p.t.paths[p.l1];if(v===(pl.desc||''))return toast('No changes to save.');pl.desc=v;commit('edited','Academy',p.t.code,`Area description edited: ${p.label}`);toast('Saved.')};
 ACTS.acTowerSave=el=>{const t=AC().towers[+el.dataset.i],v=$('#td'+el.dataset.i).value.trim();if(!v)return toast('The description cannot be empty.');if(v===t.desc)return toast('No changes to save.');t.desc=v;commit('edited','Academy',t.code,`Tower description edited: ${t.name}`);toast('Description saved.')};
 ACTS.acWeek=el=>weekForm(+el.dataset.n);
 function weekForm(n){
   const w=AC().weeks.find(x=>x.n===n),c0=AC().weekContent[n]||{goals:[],materials:[]};
-  let mats=clone(c0.materials),links={};AC().towers.forEach(t=>links[t.code]=clone(t.links[n]||[]));let tw=AC().towers[0].code;
+  const AP=APATHS();let mats=clone(c0.materials),links={};AP.forEach(p=>links[p.key]=clone((p.t.paths[p.l1].links||{})[n]||[]));let tw=AP[0].key;
   const matHtml=()=>mats.length?mats.map((m,i)=>`<div class="matrow" data-i="${i}"><div class="g2"><div class="fld"><label class="lb">Type</label><select data-k="type">${MTYPES().map(t=>`<option ${t===m.type?'selected':''}>${esc(t)}</option>`).join('')}</select></div><div class="fld"><label class="lb">Time</label><input type="text" data-k="time" value="${esc(m.time)}" placeholder="e.g. 20 min"></div></div>
      <div class="fld"><label class="lb">Title</label><input type="text" data-k="title" value="${esc(m.title)}"></div><div class="fld"><label class="lb">Description</label><input type="text" data-k="desc" value="${esc(m.desc)}"></div>
      <div class="fld"><label class="lb">Link (empty = placeholder content)</label><div class="row"><input type="text" data-k="href" value="${esc(m.href||'')}" class="grow" placeholder="index.html#l2-… or https://…"><button type="button" class="btn small" data-pickl="m">Pick Knowledge Centre link</button></div></div>
      <div class="row between"><label class="checks"><span><input type="checkbox" data-k="tba" ${m.tba?'checked':''}> To be added (not counted for progress)</span></label><span class="row"><button type="button" class="btn small" data-mv="-1" ${i===0?'disabled':''} aria-label="Move up">↑</button><button type="button" class="btn small" data-mv="1" ${i===mats.length-1?'disabled':''} aria-label="Move down">↓</button><button type="button" class="btn small danger" data-del>Delete</button></span></div></div>`).join(''):'<p class="muted small">No materials yet.</p>';
-  const linkHtml=()=>`<div class="chips" role="tablist">${AC().towers.map(t=>`<button type="button" class="chip tchip tw-${t.code} ${t.code===tw?'on':''}" data-tw="${t.code}">${esc(t.name)}</button>`).join('')}</div><div class="gap" style="margin-top:8px">${links[tw].map((l,i)=>`<div class="matrow" data-i="${i}"><div class="fld"><label class="lb">Label</label><input type="text" data-k="title" value="${esc(l.title)}"></div><div class="fld"><label class="lb">Link</label><div class="row"><input type="text" data-k="href" value="${esc(l.href)}" class="grow"><button type="button" class="btn small" data-pickl="l">Pick Knowledge Centre link</button></div></div><div><button type="button" class="btn small danger" data-ldel>Delete</button></div></div>`).join('')||'<p class="muted small">No Knowledge Centre pages for this tower this week.</p>'}</div><div style="margin-top:8px"><button type="button" class="btn small" data-ladd>+ Add page</button></div>`;
+  const linkHtml=()=>`<div class="chips" role="tablist">${AP.map(p=>`<button type="button" class="chip tchip tw-${p.t.code} ${p.key===tw?'on':''}" data-tw="${esc(p.key)}" title="${esc(p.label)}">${esc(p.multi?p.l1+' '+p.l1name:p.t.name)}${links[p.key].length?` · ${links[p.key].length}`:''}</button>`).join('')}</div><p class="hint" style="margin:6px 0 0">Editing: <b>${esc((AP.find(p=>p.key===tw)||{}).label||'')}</b></p><div class="gap" style="margin-top:8px">${links[tw].map((l,i)=>`<div class="matrow" data-i="${i}"><div class="fld"><label class="lb">Label</label><input type="text" data-k="title" value="${esc(l.title)}"></div><div class="fld"><label class="lb">Link</label><div class="row"><input type="text" data-k="href" value="${esc(l.href)}" class="grow"><button type="button" class="btn small" data-pickl="l">Pick Knowledge Centre link</button></div></div><div><button type="button" class="btn small danger" data-ldel>Delete</button></div></div>`).join('')||'<p class="muted small">No Knowledge Centre pages for this tower this week.</p>'}</div><div style="margin-top:8px"><button type="button" class="btn small" data-ladd>+ Add page</button></div>`;
   const body=`<div class="g2">${fld('title','Title',inp('title',w.title),{req:1})}${fld('hours','Hours (about)',inp('hours',w.hours,'placeholder="e.g. 2 h"'))}</div>${fld('desc','Description',`<textarea id="f_desc" name="desc" style="min-height:56px">${esc(w.desc)}</textarea>`)}
    ${fld('goals','Learning goals (one per line)',`<textarea id="f_goals" name="goals" style="min-height:90px">${esc(c0.goals.join('\n'))}</textarea>`)}
    <div><h3>Materials every tower sees</h3><p class="banner warn small" style="margin:0 0 8px">Joiners’ finished materials are saved by id. Deleting a material, or replacing it with a new one, changes joiners’ progress for this week. To change the content of a material, edit it instead.</p><div id="mats" class="gap">${matHtml()}</div><div style="margin-top:8px"><button type="button" class="btn small" data-madd>+ Add material</button></div></div>
-   <div><h3>Knowledge Centre pages per tower</h3><p class="hint">These are added to the materials for that tower only.</p><div id="tlinks">${linkHtml()}</div></div>`;
+   <div><h3>Knowledge Centre pages per learning path</h3><p class="hint">Each tower area (L1) has its own learning path. These pages are added to the materials for that path only. The number shows how many pages a path has this week.</p><div id="tlinks">${linkHtml()}</div></div>`;
   openPanel({title:`Edit week ${n}`,body,readOnly:!can(ME(),'academy'),roText:'View only. Only AdminPE can change the Academy.',
     validate(v){const e={};if(!v.title.trim())e.title='Enter a title.';return e},
     onOpen(rec,form){
@@ -1870,7 +1919,7 @@ function weekForm(n){
         else if(e.target.dataset.pickl){openLinkPicker(h=>{links[tw][i].href=h;if(!links[tw][i].title){const m=h.match(/#l2-([0-9.]+)/);if(m)links[tw][i].title=l2Label(m[1])}redrawL()})}});
     },
     onSave(v,rec){
-      if(mats.some(m=>!m.title.trim())||AC().towers.some(t=>links[t.code].some(l=>!l.title.trim()||!l.href.trim()))){toast('Every material and page needs a title (pages also need a link).');return false}
+      if(mats.some(m=>!m.title.trim())||AP.some(p=>links[p.key].some(l=>!l.title.trim()||!l.href.trim()))){toast('Every material and page needs a title (pages also need a link).');return false}
       const allIds=new Set();Object.values(AC().weekContent).forEach(c=>c.materials.forEach(m=>allIds.add(m.id)));
       /* new ids get a random part so an id that was deleted is never handed out again (joiners' progress is saved by id) */
       mats.forEach(m=>{if(!m.id){let id;do{id=`w${n}-m${rid()}${rid()}`}while(allIds.has(id));m.id=id;allIds.add(id)}});
@@ -1880,7 +1929,7 @@ function weekForm(n){
       if(w.title!==v.title.trim())ch.push('title');if(w.desc!==v.desc.trim())ch.push('description');if(w.hours!==v.hours.trim())ch.push('hours');
       if(JSON.stringify(c0.goals)!==JSON.stringify(goals))ch.push('goals');
       if(JSON.stringify(c0.materials)!==JSON.stringify(cleanM))ch.push(`materials (${cleanM.length})`);
-      AC().towers.forEach(t=>{const nl=links[t.code].map(l=>({title:l.title.trim(),href:l.href.trim()}));if(JSON.stringify(t.links[n]||[])!==JSON.stringify(nl)){ch.push('pages for '+t.name);if(nl.length)t.links[n]=nl;else delete t.links[n]}});
+      AP.forEach(p=>{const pl=p.t.paths[p.l1];if(!pl.links)pl.links={};const nl=links[p.key].map(l=>({title:l.title.trim(),href:l.href.trim()}));if(JSON.stringify(pl.links[n]||[])!==JSON.stringify(nl)){ch.push('pages for '+p.label);if(nl.length)pl.links[n]=nl;else delete pl.links[n]}});
       if(!ch.length){toast('No changes to save.');return}
       w.title=v.title.trim();w.desc=v.desc.trim();w.hours=v.hours.trim();AC().weekContent[n]={goals,materials:cleanM};
       commit('edited','Academy','week-'+n,`Week ${n}: ${ch.join(', ')} edited`);toast('Week saved.');rerender();
@@ -2229,8 +2278,8 @@ function accountsHtml(){
    <div class="banner warn">${esc(GUARD_NOTE)} Use strong, unique passwords: the hashed passwords sit in km-accounts.js in the shared folder.</div>
    ${noHead.length?`<div class="banner info">No active tower head for ${noHead.map(t=>esc(t.name)).join(', ')}. Items there can only be approved by AdminPE.</div>`:''}
    ${ACC.accounts.some(x=>x.sample)?'<div class="banner warn"><b>Delete the sample accounts before go-live.</b></div>':''}
-   <div class="tablewrap"><table><thead><tr><th>Name</th><th>Username</th><th>Linked person</th><th>Type</th><th>Towers</th><th>Status</th><th>Actions</th></tr></thead><tbody>${ACC.accounts.map(x=>{const self=x.id===me.id;return `<tr><td><b>${esc(x.name)}</b>${x.sample?' <span class="pill p-draft">sample</span>':''}${self?' <span class="pill p-review">you</span>':''}</td><td><code>${esc(x.username)}</code></td><td>${x.personId?esc(personName(x.personId)):'<span class="muted">None</span>'}</td><td>${TYPE_LABEL[x.type]}</td><td>${x.type==='superadmin'?'<span class="pill p-role">All towers</span>':towerPills(x.towers)}</td><td>${x.active?'<span class="pill p-ok">Active</span>':'<span class="pill p-bad">Disabled</span>'}${x.mustChange?' <span class="pill p-draft">Must change password</span>':''}</td>
-    <td class="acts"><button type="button" class="btn small" data-act="accEdit" data-id="${esc(x.id)}">Edit</button><button type="button" class="btn small" data-act="accReset" data-id="${esc(x.id)}">Reset password</button><button type="button" class="btn small" data-act="accToggle" data-id="${esc(x.id)}" ${self?'disabled title="You cannot disable yourself."':''}>${x.active?'Disable':'Enable'}</button><button type="button" class="btn small danger" data-act="accDel" data-id="${esc(x.id)}" ${self?'disabled title="You cannot delete yourself."':''}>Delete</button></td></tr>`}).join('')}</tbody></table></div>
+   <div class="tablewrap"><table><thead><tr><th>Name</th><th>Username</th><th>Linked person</th><th>Type</th><th>Towers</th><th>Status</th><th>Actions</th></tr></thead><tbody>${ACC.accounts.map(x=>{const self=x.id===me.id;return `<tr><td><b>${esc(x.name)}</b>${x.sample?' <span class="pill p-draft">sample</span>':''}${self?' <span class="pill p-review">you</span>':''}</td><td><code>${esc(x.username)}</code></td><td>${pidsOf(x).length?pidsOf(x).map(id=>esc(personName(id))).join('<br>'):'<span class="muted">None</span>'}</td><td>${TYPE_LABEL[x.type]}</td><td>${x.type==='superadmin'?'<span class="pill p-role">All towers</span>':towerPills(x.towers)}</td><td>${x.active?'<span class="pill p-ok">Active</span>':'<span class="pill p-bad">Disabled</span>'}${x.locked?' <span class="pill p-bad">Locked</span>':browserLock(x)?` <span class="pill p-bad" title="After 3 wrong passwords in this browser">${x.type==='superadmin'?'Paused here':'Locked here'}</span>`:''}${x.mustChange?' <span class="pill p-draft">Must change password</span>':''}</td>
+    <td class="acts"><button type="button" class="btn small" data-act="accEdit" data-id="${esc(x.id)}">Edit</button><button type="button" class="btn small" data-act="accReset" data-id="${esc(x.id)}">Reset password</button><button type="button" class="btn small" data-act="accToggle" data-id="${esc(x.id)}" ${self?'disabled title="You cannot disable yourself."':''}>${x.active?'Disable':'Enable'}</button><button type="button" class="btn small" data-act="accLock" data-id="${esc(x.id)}" ${self?'disabled title="You cannot lock yourself."':''}>${isLocked(x)?'Unlock':'Lock'}</button><button type="button" class="btn small danger" data-act="accDel" data-id="${esc(x.id)}" ${self?'disabled title="You cannot delete yourself."':''}>Delete</button></td></tr>`}).join('')}</tbody></table></div>
    <div class="fld"><span class="lb">Who can publish</span><div class="radios"><label><input type="radio" name="publishers" value="heads" data-on="setPub" ${pubAll?'':'checked'}> AdminPE and tower heads only (recommended)</label><label><input type="radio" name="publishers" value="all" data-on="setPub" ${pubAll?'checked':''}> Every account</label></div><div class="hint">Others get “Send my changes”: a changes file their tower head merges. With “Every account”, only one person should publish at a time and the next person imports the newest files first.</div></div>
    <p class="hint">Roles are not set here: they are set on the People directory.</p></section>`;
 }
@@ -2265,8 +2314,9 @@ function accForm(x,presetPid){
   if(presetPid&&!o.username){const p=person(presetPid);if(p)o.username=p.name.toLowerCase().replace(/[^a-z0-9]+/g,'.').replace(/^\.|\.$/g,'')}
   let pw='';const self=x&&x.id===me.id;
   const body=`${fld('name','Name',inp('name',o.name,'autocomplete="off"'),{req:1})}
-   ${fld('username','Username',inp('username',o.username,'autocomplete="off" maxlength="30"'),{req:1,hint:'3 to 30 letters, numbers or dots, for example tasha.verlinden. Not case-sensitive.'})}
-   <div class="fld" data-f="personId"><label class="lb">Linked person</label>${pk('personId',o.personId,{optional:1,label:'Linked person'})}<div class="hint">From the People directory. One person can have only one account.</div><div class="err"></div></div>
+   ${fld('username','Username',inp('username',o.username,'autocomplete="off" maxlength="30"'),{req:1})}
+   <div class="fld" data-f="personId" ${o.type==='superadmin'?'hidden':''}><label class="lb">Linked person</label>${pk('personId',o.personId,{optional:1,label:'Linked person'})}<div class="hint">From the People directory. One person can have only one account.</div><div class="err"></div></div>
+   <div class="fld" data-f="personIds" ${o.type==='superadmin'?'':'hidden'}><span class="lb">Linked people</span><input type="hidden" name="personIds" value="${esc(pidsOf(o).join(','))}"><div class="chips" id="pidChips"></div>${pk('addPid','',{label:'Add a person'})}<div class="hint">Super admin only: link everyone who shares this account (for example the Process Excellence team). They are all equal. Each person can be linked to one account only.</div><div class="err"></div></div>
    <div class="g2">${fld('type','Account type',sel('type',[['superadmin','Super admin'],['head','Tower head'],['editor','Tower editor']],o.type,self?'disabled':''),{hint:self?'You cannot change your own type.':''})}
    <div class="fld" data-f="active"><span class="lb">Status</span><div class="radios"><label><input type="radio" name="active" value="1" ${o.active?'checked':''}> Active</label><label><input type="radio" name="active" value="0" ${o.active?'':'checked'} ${self?'disabled':''}> Disabled</label></div><div class="err"></div></div></div>
    <div class="fld" data-f="towers"><span class="lb">Tower(s)</span><div class="checks">${DR.taxonomy.map(t=>`<label><input type="checkbox" name="towers" value="${t.code}" ${o.towers.includes(t.code)?'checked':''}> <span class="pill tw tw-${t.code}">${esc(t.name)}</span></label>`).join('')}</div><div class="hint">Tower heads and editors need at least one. A Super admin covers all towers.</div><div class="err"></div></div>
@@ -2275,21 +2325,30 @@ function accForm(x,presetPid){
    <p class="hint">Roles are set on the People directory, not here.</p>`;
   openPanel({title:isNew?'Add account':'Edit account',body,saveLabel:isNew?'Create account':'Save changes',
     validate(v){const e={};if(!v.name.trim())e.name='Enter a name.';
-      const u=v.username.trim();if(!/^[A-Za-z0-9.]{3,30}$/.test(u))e.username='Use 3 to 30 letters, numbers or dots.';else if(ACC.accounts.some(y=>y!==x&&y.username.toLowerCase()===u.toLowerCase()))e.username='This username is already taken.';
-      if(v.personId&&ACC.accounts.some(y=>y!==x&&y.personId===v.personId))e.personId=`${personName(v.personId)} already has an account.`;
-      const type=self?x.type:v.type;if(type!=='superadmin'&&!v.towers.length)e.towers='Choose at least one tower.';
+      const u=v.username.trim();if(!/^[A-Za-z0-9._-]{3,30}$/.test(u))e.username='Use 3 to 30 characters: letters, numbers, dots (.), underscores (_) or dashes (-). No spaces or other symbols. Capitals count.';else if(ACC.accounts.some(y=>y!==x&&y.username.toLowerCase()===u.toLowerCase()))e.username=ACC.accounts.some(y=>y!==x&&y.username===u)?'This username is already taken.':'This username is already taken with different capitals. Usernames may not differ only in capitals.';
+      const type=self?x.type:v.type;
+      if(type==='superadmin'){const ids=(v.personIds||'').split(',').filter(Boolean),taken=ids.filter(id=>ACC.accounts.some(y=>y!==x&&pidsOf(y).includes(id)));if(taken.length)e.personIds=`${taken.map(personName).join(', ')} already ${taken.length===1?'has':'have'} another account.`}
+      else if(v.personId&&ACC.accounts.some(y=>y!==x&&pidsOf(y).includes(v.personId)))e.personId=`${personName(v.personId)} already has an account.`;if(type!=='superadmin'&&!v.towers.length)e.towers='Choose at least one tower.';
       if(isNew&&!pw)e.pw='Generate a temporary password first.';
       if(x&&x.type==='superadmin'&&x.active&&activeSupers().length===1&&(type!=='superadmin'||v.active==='0'))e.type='This is the last active Super admin. Keep at least one.';
       return e},
-    onOpen(rec,form){form.addEventListener('click',e=>{if(e.target.closest('[data-genpw]')){pw=tempPassword();$('#pwOut',form).textContent=pw;$('[data-cppw]',form).hidden=false;rec.markDirty()}else if(e.target.closest('[data-cppw]'))copyText(pw).then(()=>toast('Password copied.'),()=>toast('Select the password and press Ctrl+C.'))})},
+    onOpen(rec,form){
+      const hid=$('[name=personIds]',form),chips=$('#pidChips',form),ids=()=>hid.value.split(',').filter(Boolean);
+      const draw=()=>{chips.innerHTML=ids().map(id=>`<span class="chip on">${esc(personName(id)||id)} <button type="button" class="linkbtn" style="color:inherit" data-rmpid="${esc(id)}" aria-label="Remove ${esc(personName(id))}">×</button></span>`).join('')||'<span class="muted small">No one linked yet.</span>'};draw();
+      chips.addEventListener('click',e=>{const b=e.target.closest('[data-rmpid]');if(!b)return;hid.value=ids().filter(x=>x!==b.dataset.rmpid).join(',');draw();rec.markDirty()});
+      $('[name=addPid]',form).addEventListener('input',e=>{const id=e.target.value;if(id&&!ids().includes(id)){hid.value=[...ids(),id].join(',');draw();rec.markDirty()}const box=e.target.closest('.pk');e.target.value='';$('.pkb',box).innerHTML='<span class="muted">+ Add a person</span>'});
+      $('.pk[data-pk=addPid] .pkb',form).innerHTML='<span class="muted">+ Add a person</span>';
+      const ty=$('[name=type]',form);if(ty)ty.addEventListener('change',()=>{const sup=ty.value==='superadmin';$('[data-f=personId]',form).hidden=sup;$('[data-f=personIds]',form).hidden=!sup;
+        if(sup&&!ids().length){const one=$('[name=personId]',form).value;if(one){hid.value=one;draw()}}});
+      form.addEventListener('click',e=>{if(e.target.closest('[data-genpw]')){pw=tempPassword();$('#pwOut',form).textContent=pw;$('[data-cppw]',form).hidden=false;rec.markDirty()}else if(e.target.closest('[data-cppw]'))copyText(pw).then(()=>toast('Password copied.'),()=>toast('Select the password and press Ctrl+C.'))})},
     onSave(v){
       if(!need('accounts'))return false;
       const type=self?x.type:v.type,towers=type==='superadmin'?['all']:v.towers,active=self?true:v.active==='1';
-      const val={name:v.name.trim(),username:v.username.trim(),personId:v.personId||'',type,towers,active};
+      const ids=type==='superadmin'?(v.personIds||'').split(',').filter(Boolean):[],val={name:v.name.trim(),username:v.username.trim(),personId:type==='superadmin'?'':(v.personId||''),personIds:ids,type,towers,active};
       if(isNew){const n=Object.assign({id:'acc-'+slug(val.username)+'-'+rid()},val,{roles:[],passwordHash:pwHash(val.username,pw),mustChange:true,created:todayJ(),createdBy:me.name});ACC.accounts.push(n);ACC.dirty=true;saveAccounts();
         commit('added','Accounts',n.id,`Created account ${n.username} (${TYPE_LABEL[n.type]}${n.type==='superadmin'?'':', '+towers.map(towerName).join(', ')})`,{tower:towers[0]==='all'?'':towers[0],accounts:true});
         setTimeout(()=>showPasswords([{name:n.name,username:n.username,pw}],'Account created'),60)}
-      else{const ch=[];if(x.name!==val.name)ch.push('name');if(x.username!==val.username)ch.push(`username ${x.username} → ${val.username}`);if(x.personId!==val.personId)ch.push(`linked person → ${personName(val.personId)}`);if(x.type!==val.type)ch.push(`type ${TYPE_LABEL[x.type]} → ${TYPE_LABEL[val.type]}`);if(JSON.stringify(x.towers)!==JSON.stringify(val.towers))ch.push('towers → '+(val.type==='superadmin'?'all':val.towers.map(towerName).join(', ')));if(x.active!==val.active)ch.push(val.active?'enabled':'disabled');if(!!x.mustChange!==!!v.mustChange)ch.push('must change password '+(v.mustChange?'on':'off'));
+      else{const ch=[];if(x.name!==val.name)ch.push('name');if(x.username!==val.username)ch.push(`username ${x.username} → ${val.username}`);if(JSON.stringify(pidsOf(x))!==JSON.stringify(pidsOf(val)))ch.push(`linked ${pidsOf(val).length>1?'people':'person'} → ${pidsOf(val).map(personName).join(', ')||'none'}`);if(x.type!==val.type)ch.push(`type ${TYPE_LABEL[x.type]} → ${TYPE_LABEL[val.type]}`);if(JSON.stringify(x.towers)!==JSON.stringify(val.towers))ch.push('towers → '+(val.type==='superadmin'?'all':val.towers.map(towerName).join(', ')));if(x.active!==val.active)ch.push(val.active?'enabled':'disabled');if(!!x.mustChange!==!!v.mustChange)ch.push('must change password '+(v.mustChange?'on':'off'));
         if(!ch.length){toast('No changes to save.');return}
         const hashChanged=x.username.toLowerCase()!==val.username.toLowerCase();
         Object.assign(x,val,{mustChange:!!v.mustChange});if(hashChanged){const p2=tempPassword();x.passwordHash=pwHash(x.username,p2);x.mustChange=true;setTimeout(()=>showPasswords([{name:x.name,username:x.username,pw:p2}],'New temporary password (the username changed)'),60)}
@@ -2299,6 +2358,8 @@ function accForm(x,presetPid){
 }
 ACTS.accReset=el=>{if(!need('accounts'))return;const x=acct(el.dataset.id);if(!x)return;
   confirmDlg({title:`Reset the password for ${x.name}?`,body:'<p>A new temporary password is generated and shown once. The old password stops working, and they must set a new one at the next login.</p>',ok:'Reset password',onOk:()=>{const pw=tempPassword();x.passwordHash=pwHash(x.username,pw);x.mustChange=true;ACC.dirty=true;saveAccounts();commit('edited','Accounts',x.id,`Password reset for ${x.username}`,{tower:'',accounts:true});rerender();showPasswords([{name:x.name,username:x.username,pw}],'Temporary password')}})};
+ACTS.accLock=el=>{const x=acct(el.dataset.id);if(!x)return;const on=!isLocked(x);if(on)confirmDlg({title:'Lock '+x.name+'?',body:`<p>${esc(x.username)} cannot log in until a Super admin unlocks it. It applies on every computer once you publish.</p>`,ok:'Lock account',danger:true,onOk:()=>{if(setLocked(x,true))rerender()}});else if(setLocked(x,false)){rerender();toast('Unlocked. Publish, then tell the person they can try again.')}};
+NEED.accLock="accounts";
 ACTS.accToggle=el=>{if(!need('accounts'))return;const x=acct(el.dataset.id);if(!x)return;
   if(x.id===me.id)return deny('You cannot disable yourself.');
   if(x.active&&x.type==='superadmin'&&activeSupers().length===1)return deny('This is the last active Super admin.');

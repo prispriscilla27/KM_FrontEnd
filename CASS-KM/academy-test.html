@@ -133,7 +133,7 @@ const params=new URLSearchParams(location.search);
 const id=TESTS[params.get('test')]?params.get('test'):ORDER[0],T=TESTS[id];
 const tower=towerFromQuery();
 const ADMIN=!!window.KM_PREVIEW&&params.get('as')==='admin';
-const BACK='new-joiner-academy.html'+(tower?'#tower-'+slug(tower):'');
+const BACK='new-joiner-academy.html'+(tower?pathHash(tower):'');
 const IS_FINAL=id==='final'||(T.weeks||[]).length>=NWEEKS;
 const lower=s=>String(s).charAt(0).toLowerCase()+String(s).slice(1);
 const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
@@ -159,7 +159,7 @@ const usable=q=>{const t=typeOf(q);if(!t){console.warn('[academy] question',q.id
 
 /* From the bank: questions for "All" or this tower, from the weeks the test covers. The final checkpoint takes finalRecentShare from finalRecentWeeks. */
 function pick(){
-  const pool=BANK.filter(q=>(q.tower==='All'||q.tower===tower)&&(T.weeks||[]).includes(+q.week)&&usable(q));
+  const pool=BANK.filter(q=>(q.tower==='All'||q.tower===towerOf(tower))&&(T.weeks||[]).includes(+q.week)&&usable(q));
   const n=Math.min(+T.count||pool.length,pool.length);
   let chosen;
   if(IS_FINAL&&Array.isArray(AS.finalRecentWeeks)&&AS.finalRecentWeeks.length){
@@ -177,7 +177,7 @@ let picked=[];
 function start(){
   $('tTitle').textContent=T.title+(tower?' · '+tower:'');$('tSub').textContent='Covers '+coversText()+'.';
   document.title=T.title+' · CASS Academy';
-  if(!tower)return guard('Choose your tower first','The test follows your tower’s learning path. Pick your tower in the Academy first.');
+  if(!tower)return guard('Choose your learning path first','The test follows your learning path. Pick your tower and area in the Academy first.');
   const done=doneOf(tower),st=testOpen(T,done,tower);
   if(!st.open&&!ADMIN)return guard('This test is locked',st.why);
   picked=pick();
@@ -214,7 +214,7 @@ function submit(e){
   const lockMsg=!AS.lockAfterCheckpoint?'':(IS_FINAL?'Every week is now locked.':(T.covers||'The weeks this test covers')+' are now locked.');
   $('resultSlot').innerHTML=`<div class="result ${passed?'pass':'fail'}" id="result" tabindex="-1"><h2>${passed?'Passed':'Not passed yet'}</h2><div class="score">${score}% <span>${ok} of ${picked.length} correct</span></div>
    <p class="sub">${passed?'Well done.':'The pass mark is '+esc(AS.passMark)+'%.'} ${weeks.length?'Revisit week'+(weeks.length>1?'s ':' ')+weeks.join(', ')+' in the Knowledge Centre.':''} ${esc(lockMsg)}</p>
-   <div class="actions"><a class="btn" href="${BACK}">Back to my journey</a><a class="btn ghost" href="academy-test.html?test=${encodeURIComponent(id)}&tower=${encodeURIComponent(slug(tower))}${ADMIN?'&as=admin':''}">Retake with new questions</a></div></div>`;
+   <div class="actions"><a class="btn" href="${BACK}">Back to my journey</a><a class="btn ghost" href="academy-test.html?test=${encodeURIComponent(id)}${pathQuery(tower)}${ADMIN?'&as=admin':''}">Retake with new questions</a></div></div>`;
   $('submitBtn').hidden=true;
   const r=$('result');r.scrollIntoView({block:'start'});r.focus({preventScroll:true});
 }

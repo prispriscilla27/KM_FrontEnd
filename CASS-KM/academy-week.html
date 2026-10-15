@@ -142,8 +142,8 @@ const n=Math.min(last,Math.max(first,parseInt(params.get('week'),10)||first));
 const tower=towerFromQuery();
 const ADMIN=!!window.KM_PREVIEW&&params.get('as')==='admin';   /* admin preview: show the week even if it is still locked */
 const W=WEEKS.find(x=>x.n===n)||WEEKS[0];
-const BACK='new-joiner-academy.html'+(tower?'#tower-'+slug(tower):'');
-const qs=k=>'academy-week.html?week='+k+'&tower='+encodeURIComponent(slug(tower))+(ADMIN?'&as=admin':'');
+const BACK='new-joiner-academy.html'+(tower?pathHash(tower):'');
+const qs=k=>'academy-week.html?week='+k+pathQuery(tower)+(ADMIN?'&as=admin':'');
 let mats=[];
 function stop(title,msg,btn){
   $('wTitle').textContent='Week '+n+' · '+W.title;$('wSub').textContent=tower?tower:'';
@@ -163,7 +163,7 @@ function matRow(m,i,P,I){
   return `<div class="mat ${fin?'fin':''} ${m.tba?'tba':''}">${st}<div><div>${tags}</div><h3>${esc(m.title)}</h3><p>${esc(m.desc)}</p></div><div class="macts">${acts}</div></div>`;
 }
 function render(focusSel){
-  if(!tower)return stop('Choose your tower first','The weeks follow your tower’s learning path. Pick your tower in the Academy first.','Go to the Academy');
+  if(!tower)return stop('Choose your learning path first','The weeks follow your learning path. Pick your tower and area in the Academy first.','Go to the Academy');
   const Wk=weekInfo(tower),done=Wk.done,P=Wk.P,I=Wk.info[n];
   const reason=ADMIN?'':lockReason(n,done,tower);
   if(reason)return stop('This week is locked',`${reason.replace(' to open this week.','')} to open week ${n}.`,'Back to my journey');

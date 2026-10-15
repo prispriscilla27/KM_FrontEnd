@@ -11,25 +11,43 @@ const TOWERS=(A&&A.towers)||[],WEEKS=((A&&A.weeks)||[]).slice().sort((a,b)=>a.n-
 ((A&&A.tests)||[]).forEach(t=>{TESTS[t.id]=t});
 const NWEEKS=WEEKS.length;
 const BANK=(A&&A.questions)||[];
-const towerObj=name=>TOWERS.find(t=>t.name===name)||null;
-const towerFromQuery=()=>{let q='';try{q=new URLSearchParams(location.search).get('tower')||''}catch(e){}const t=TOWERS.find(x=>slug(x.name)===q);return t?t.name:''};
+/* Pathways: one per L1 of each tower (service taxonomy in KM.taxonomy). A pathway is named by its key: the tower name when the
+   tower has one L1 (so progress saved before L1 pathways existed is kept), otherwise "Tower › L1 name". */
+const TAX=(window.KM&&window.KM.taxonomy)||[];
+const PATHS=[];TOWERS.forEach(T=>{const tx=TAX.find(x=>x.code===T.code),l1=(tx&&tx.l1)||[];
+  if(!l1.length)PATHS.push({key:T.name,tower:T.name,code:T.code,l1:'',l1name:'',multi:false,l2:[]});
+  l1.forEach(L=>PATHS.push({key:l1.length>1?T.name+' › '+L.name:T.name,tower:T.name,code:T.code,l1:L.code,l1name:L.name,multi:l1.length>1,l2:L.l2||[]}))});
+const pathObj=k=>PATHS.find(p=>p.key===k)||null;
+const pathsOf=towerName=>PATHS.filter(p=>p.tower===towerName);
+/* towerObj accepts a tower name or a pathway key */
+const towerObj=k=>{const p=pathObj(k);return TOWERS.find(t=>t.name===(p?p.tower:k))||null};
+const towerOf=k=>{const p=pathObj(k);return p?p.tower:k};
+/* URL part for a pathway: &tower=<slug>[&l1=<code>]; the hash on the Academy page: #tower-<slug>[/<l1 code>] */
+const pathQuery=k=>{const p=pathObj(k);return p?'&tower='+encodeURIComponent(slug(p.tower))+(p.multi?'&l1='+encodeURIComponent(p.l1):''):''};
+const pathHash=k=>{const p=pathObj(k);return p?'#tower-'+slug(p.tower)+(p.multi?'/'+p.l1:''):''};
+const pathFrom=(towerSlug,l1)=>{const T=TOWERS.find(x=>slug(x.name)===towerSlug);if(!T)return '';const ps=pathsOf(T.name);if(ps.length===1)return ps[0].key;const p=ps.find(x=>x.l1===l1);return p?p.key:''};
+const towerFromQuery=()=>{let q='',l='';try{const u=new URLSearchParams(location.search);q=u.get('tower')||'';l=u.get('l1')||''}catch(e){}return pathFrom(q,l)};
 /* Only relative Knowledge Centre links or http(s) links are followed. */
 function safeHref(u){u=String(u||'').trim();if(!u)return '';if(/^https?:\/\//i.test(u))return u;if(!/^[a-z][a-z0-9+.-]*:/i.test(u)&&!u.startsWith('//'))return u;return ''}
 
 /* Materials of one week for one tower: the list every tower sees, then that tower's own Knowledge Centre pages ("Service page"). */
 function materialsFor(n,tower){
   const c=(A&&A.weekContent&&A.weekContent[n])||{materials:[]},L=(c.materials||[]).map(m=>Object.assign({href:'',tba:false},m));
-  const T=towerObj(tower);
-  ((T&&T.links&&T.links[n])||[]).forEach((l,i)=>L.push({id:'w'+n+'-svc-'+slug(l.title)+'-'+(i+1),type:'Service page',title:l.title,time:l.time||'20 min',desc:l.desc||'Read this page in the Knowledge Centre.',href:l.href||'',tba:false}));
+  const T=towerObj(tower),P=pathObj(tower),pl=T&&T.paths&&P&&T.paths[P.l1];
+  (((pl&&pl.links)||(T&&T.links)||{})[n]||[]).forEach((l,i)=>L.push({id:'w'+n+'-svc-'+slug(l.title)+'-'+(i+1),type:'Service page',title:l.title,time:l.time||'20 min',desc:l.desc||'Read this page in the Knowledge Centre.',href:l.href||'',tba:false}));
   return L;
 }
 const countable=(n,t)=>materialsFor(n,t).filter(m=>!m.tba);
 
-/* Progress per tower, saved as acad-<tower name>: {fin:[material ids finished], opn:[material ids opened], man:[weeks marked done by hand]} */
-function prog(t){const v=store.get('acad-'+t,null);const arr=x=>Array.isArray(x)?x:[];return v&&typeof v==='object'&&!Array.isArray(v)?{fin:arr(v.fin),opn:arr(v.opn),man:arr(v.man).map(Number)}:{fin:[],opn:[],man:[]}}
+/* Progress per pathway, saved as acad-<pathway key>: {fin:[material ids finished], opn:[material ids opened], man:[weeks marked done by hand]} */
+/* A pathway of a tower with several L1s starts from the progress saved for the tower before L1 pathways existed (copied once). */
+function migrate(t){const p=pathObj(t);if(!p||!p.multi||store.get('acadMig-'+t,0))return;store.set('acadMig-'+t,1);
+  if(store.get('acad-'+t,null)==null){const old=store.get('acad-'+p.tower,null);if(old!=null)store.set('acad-'+t,old)}
+  ORDER.forEach(id=>{if(store.get('acadTest-'+t+'-'+id,null)==null){const r=store.get('acadTest-'+p.tower+'-'+id,null);if(r!=null)store.set('acadTest-'+t+'-'+id,r)}})}
+function prog(t){migrate(t);const v=store.get('acad-'+t,null);const arr=x=>Array.isArray(x)?x:[];return v&&typeof v==='object'&&!Array.isArray(v)?{fin:arr(v.fin),opn:arr(v.opn),man:arr(v.man).map(Number)}:{fin:[],opn:[],man:[]}}
 const saveProg=(t,p)=>store.set('acad-'+t,p);
 /* Test results, saved as acadTest-<tower name>-<testId>: {score, passed, date} */
-const result=(t,id)=>{const r=store.get('acadTest-'+t+'-'+id,null);return r&&typeof r==='object'?r:null};
+const result=(t,id)=>{migrate(t);const r=store.get('acadTest-'+t+'-'+id,null);return r&&typeof r==='object'?r:null};
 /* Weeks covered by a checkpoint that has been taken can no longer be changed (admin switch: lockAfterCheckpoint). */
 function frozenSet(t){const s=new Set();if(!AS.lockAfterCheckpoint)return s;ORDER.forEach(id=>{if(result(t,id))(TESTS[id].weeks||[]).forEach(n=>s.add(+n))});return s}
 /* One pass over the weeks: finished/total materials, whether each week is complete,

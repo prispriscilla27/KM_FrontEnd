@@ -66,13 +66,13 @@ If the browser blocks storage, the site still works; it just will not remember t
 
 ## New Joiner Academy
 
-A guided 12-week onboarding pathway, one per tower. Open `new-joiner-academy.html`.
+A guided 12-week onboarding pathway for each **area** (L1) of each tower, for example Procurement › Commercial Operations (S2C). Open `new-joiner-academy.html`.
 
-- **Pick a tower first.** The page always starts with the four tower cards, also after a reload. Choosing a tower shows only that tower's path; "← Back to towers" returns to the four cards. A link such as `new-joiner-academy.html#tower-customer-operations` opens one tower directly (the other slugs are `finance-and-accounting`, `procurement` and `human-resources`), so you can send a new joiner the right link.
+- **Pick a tower, then an area.** The page always starts with the four tower cards, also after a reload. Towers with several areas (Procurement: 2, Finance & Accounting: 7) then show one card per area (L1); towers with one area (Customer Operations, Human Resources) go straight to their path. "← Back to areas" / "← Back to towers" go back a step. Each path page has a **Services in this area** dropdown that lists that area's L2 services with links to the Knowledge Centre. Links such as `new-joiner-academy.html#tower-procurement/2.2` open an area directly.
 - **Weeks and progress circles.** Each week has a circle that fills as its materials are finished ("2/5"). Open a material (a Knowledge Centre page, or a placeholder for now), then mark it as finished. When every material is finished the circle turns green and the next week opens. Materials marked "To be added" are greyed and not counted; a week whose materials are all still to be added has a "Mark week as done" button instead.
 - **Checkpoints.** Checkpoint 1 (weeks 1–4), Checkpoint 2 (weeks 5–8) and Checkpoint 3 (weeks 9–12) open after the weeks they cover; the Final checkpoint opens after week 12 and Checkpoint 3. Once a checkpoint is taken, the weeks it covers are locked and can no longer be changed (retakes are allowed). Questions are drawn at random from the question bank; the 51 questions now in place are samples, and the test format is still to be decided.
-- **What admins can change** (in `admin.html`): the weeks, goals, materials, each tower's linked pages, the tests, the questions, the pass mark (70%) and the switches `lockWeeksInOrder`, `lockAfterCheckpoint` and `requirePassToUnlockNextWeek` (off for now: a failed test does not block the next week). A material's `id` must never change once joiners have used it, because finished materials are saved by id.
-- **Saved on this device only.** Progress and test results stay in the joiner's own browser. They do not move to another computer or browser, and clearing the browser data removes them. This is a convenience, not security: anyone can still open any tower's pages from the Knowledge Centre itself, and could clear their browser storage to start again. Real access control comes from the Microsoft Loop and folder permissions.
+- **What admins can change** (in `admin.html`): the weeks, goals, materials, each learning path's linked Knowledge Centre pages, area descriptions, the tests, the questions, the pass mark (70%) and the switches `lockWeeksInOrder`, `lockAfterCheckpoint` and `requirePassToUnlockNextWeek`. Checkpoint tests are shared by all areas of a tower. Each area's path started as a copy of its tower's path, with its links pointing to that area's own L2 pages.
+- **Saved on this device only.** Progress and test results stay in the joiner's own browser. They do not move to another computer or browser, and clearing the browser data removes them. This is a convenience, not security: anyone can still open any tower's pages from the Knowledge Centre itself, and could clear their browser storage to start again. Real access control comes from the Microsoft Loop and folder permissions. Progress is saved per area. Progress saved before areas existed is kept: the first time someone opens an area of their tower, it starts from their earlier tower progress.
 - **Demo reset.** Add `?demo=1` to the address (`new-joiner-academy.html?demo=1`) to show a "Reset my progress" button for demos. It also clears test results, so do not share that link with real joiners.
 
 ## Admin guide
@@ -90,15 +90,26 @@ Everyone has their own login. There are three account types:
 | **Tower editor** | Other staff | Items of their own tower(s) only: add, edit, delete, Draft or In review. The owner of a new item is set to them. Everything else is view only. |
 
 - Everyone who is logged in can see every tower's items, the dashboard and the change log. Items of other towers show a lock and open read-only.
+- **The Super admin account can be shared:** in Settings › Accounts › Edit, a Super admin links several people under **Linked people** (for example the whole Process Excellence team). They are all equal: there is no main person, so a new item added from this account starts with no owner and the team is suggested first; approvals and edits show the account name (“Approved by Process Excellence”). Each person can be linked to only one account.
+- **Locked accounts:** 3 wrong passwords in total lock the account **in that browser** until a Super admin unlocks it. Super admins see lockouts from their own browser in the login pop-up and under the bell, with **Unlock** and **Lock on every computer**. In Settings › Accounts a Super admin can also **Lock** or **Unlock** any other account; this is saved in `km-accounts.js`, so it applies on every computer after publishing (an unlock reaches the person's browser once the new `km-accounts.js` is in the folder and they reload). Super admin accounts are only paused for 15 minutes, so nobody is left without a way in. Lockouts on other people's computers cannot reach you: there is no server.
 - **Only AdminPE** creates, edits, disables and deletes accounts and resets passwords (Settings › Accounts). New accounts get a temporary password (shown once) and must set their own at the first login. For a demo, **Create sample accounts** makes four tower heads and four editors from the sample people. Delete the sample accounts before go-live.
 - **Approving:** only AdminPE or the tower head of the item's tower can set an item (or a service page) to Approved. The item then shows “Approved by … on …” in the Knowledge Centre once it is published. If an editor later changes the content of an Approved item, it goes back to In review automatically.
 - Tower heads (and AdminPE) see a **Waiting for approval** pop-up after logging in, and a bell in the top bar reopens it. Editors see a short note when their items were approved or sent back.
 - **Roles** (Page owner, Ask the expert, Approved by, Item owner, Escalate to) are set on the **People directory** with **Edit roles**. They only decide who is suggested first in the people pickers; they never limit what someone can edit. “Approved by” is a label: approving needs a Tower head or Super admin account.
 
+### Change an area's learning path (Academy)
+
+1. Log in as AdminPE and open **Academy (pathway and tests)** in the menu.
+2. Under **Weeks**, click **Edit week** on the week you want to change.
+3. In **Knowledge Centre pages per learning path**, click the area's tab (for example **2.2 Commercial Operations (S2C)**). The number on a tab is how many pages that path has this week.
+4. Add a page with **+ Add page** and **Pick Knowledge Centre link**, change a label, or remove a page. Only that area changes.
+5. **Save**, then check it with the area's chip under **Preview as** (for example `2.2`), then publish.
+6. Optional: under **Towers**, give an area a short description for its card (otherwise the card lists its services).
+
 ### Log in
 
 1. Open `admin.html` from the same folder (or click **Admin login** in the top bar of any page).
-2. Enter your username and password. The username is not case-sensitive.
+2. Enter your username and password. The username is case-sensitive: type it exactly, capitals included (for example `AdminPE`). Usernames use 3 to 30 letters, numbers, dots, underscores or dashes.
 3. After 5 wrong attempts in a row, login is blocked for 60 seconds. You are signed out after 30 minutes without activity, or when you click **Log out**. Your draft is kept.
 
 **First login: username `AdminPE`, password `PE2026`.** Change it before go-live (it is easy to guess): **My account** (top bar) › Change password (at least 10 characters), then publish so `km-accounts.js` is updated. Passwords are stored only as salted SHA-256 hashes in `km-accounts.js`. Because that file sits in the shared folder, everyone should use a strong, unique password. **Forgot a password?** AdminPE resets it in Settings › Accounts. If AdminPE itself is locked out, restore `km-accounts.js` from a backup.
@@ -168,6 +179,11 @@ Until step 2 is done the page is in **demo mode**: each browser only counts its 
 ### Be honest about what this protects
 
 **These permissions and the approval rule are a guardrail inside the admin page, not security.** This is a static site with no server: anyone who can write to the shared folder or edit the page code can bypass them, and uploaded documents are plain files that anyone who can open the site folder (or knows a file's path) can open. Real protection comes from **folder permissions** (only the people who publish should have write access; readers read-only) and from **Loop/SharePoint permissions** for restricted content, which belongs behind Require access, never in `documents/`. The browser also cannot write into a plain shared folder without the admin choosing it (Publish to folder) or extracting the zip; until then only the admin's own browser shows the changes.
+
+## Decisions to revisit
+
+- **How new joiners keep their Academy progress.** Today it stays in each joiner's browser. Decide whether joiners get an account (through Admin) or a separate login page, so progress follows them.
+- **Lockout notifications.** Super admins only see lockouts that happened in their own browser. If IT provides a server address (for example the view-counting address), lockouts could be reported there too.
 
 ## Notes
 

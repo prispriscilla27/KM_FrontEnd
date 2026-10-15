@@ -138,6 +138,7 @@ h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
 .reset{border:0;background:none;color:var(--muted);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;margin-top:10px}
 @media (max-width:950px){.months{grid-template-columns:minmax(0,1fr)}}
 [hidden]{display:none!important}
+.svcdd{margin:10px 0 4px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--surface)}.svcdd summary{cursor:pointer;font-weight:650;font-size:13.5px}.svcdd ul{list-style:none;margin:8px 0 2px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:4px 14px}.svcdd a{display:block;padding:4px 0;font-size:13px;color:var(--brand);text-decoration:none}.svcdd a:hover{text-decoration:underline}.svcdd a b{color:var(--muted);font-weight:600;margin-right:4px}
 </style>
 </head>
 <body>
@@ -147,14 +148,16 @@ h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
 <main class="page wrap" id="page">
   <section class="panel pad" id="picker">
     <h2 id="pickH" tabindex="-1">Choose your tower</h2>
-    <p class="sub">Choose the department you are a part of.</p>
+    <p class="sub" id="pickSub">Choose the department you are a part of.</p>
+    <button type="button" class="back" id="pickBack" hidden>← Back to towers</button>
     <div class="pick" id="pickList"></div>
   </section>
   <section class="panel pad" id="journey" hidden aria-labelledby="jH">
     <div class="phead">
-      <div><h2 id="jH" tabindex="-1"></h2><p class="sub">Your 12-week onboarding journey. Only this tower’s learning path is shown.</p></div>
+      <div><h2 id="jH" tabindex="-1"></h2><p class="sub" id="jSub">Your 12-week onboarding journey. Only this tower’s learning path is shown.</p></div>
       <button type="button" class="back" id="backBtn">← Back to towers</button>
     </div>
+    <details class="svcdd" id="svcDd"><summary>Services in this area</summary><ul id="svcList"></ul></details>
     <div class="bar" role="img" id="barWrap"><span id="bar"></span></div>
     <div class="progress"><b id="progress"></b><span id="nextUp"></span></div>
     <p class="note">Progress and test results are saved on this device only.</p>
@@ -176,9 +179,10 @@ academyBanner('Progress and test results are saved on this device only.');
 const TEST_PAGE='academy-test.html',WEEK_PAGE='academy-week.html';
 const DEMO=/[?&]demo=1(&|$)/.test(location.search);
 function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>{t.hidden=true},2600)}
-/* The tower is only kept in memory: opening or reloading this page always shows the towers first. */
-let tower='';
-const q=t=>'&tower='+encodeURIComponent(slug(t));
+/* The pathway is only kept in memory: opening or reloading this page always shows the towers first.
+   tower = the chosen pathway key (see academy-data.js); pickT = a tower with several L1s whose area is still to be chosen. */
+let tower='',pickT='';
+const q=t=>pathQuery(t);
 const lower=s=>String(s).charAt(0).toLowerCase()+String(s).slice(1);
 function testBox(T,done,final){
   const st=testOpen(T,done,tower),r=result(tower,T.id);
@@ -202,12 +206,21 @@ function weekCard(w,W){
 function render(){
   $('picker').hidden=!!tower;$('journey').hidden=!tower;$('months').hidden=!tower;$('finalBox').hidden=!tower;
   if(!tower){
-    $('pickList').innerHTML=TOWERS.map(t=>`<button type="button" class="tcard tw-${esc(t.code)}" data-tower="${esc(t.name)}"><b>${esc(t.name)}</b><span>${esc(t.desc)}</span><i aria-hidden="true">Open my 12-week path →</i></button>`).join('');
+    const PT=pickT?towerObj(pickT):null;
+    $('pickH').textContent=PT?'Choose your area in '+PT.name:'Choose your tower';
+    $('pickSub').textContent=PT?'Choose the area you work in. Each area has its own 12-week learning path.':'Choose the department you are a part of.';
+    $('pickBack').hidden=!PT;
+    $('pickList').innerHTML=PT?pathsOf(PT.name).map(p=>{const pl=PT.paths&&PT.paths[p.l1],d=(pl&&pl.desc)||'';return `<button type="button" class="tcard tw-${esc(PT.code)}" data-path="${esc(p.key)}"><b>${esc(p.l1+' '+p.l1name)}</b><span>${d?esc(d)+'<br>':''}${p.l2.length} service${p.l2.length===1?'':'s'}: ${esc(p.l2.slice(0,3).map(x=>x.name).join(', '))}${p.l2.length>3?'…':''}</span><i aria-hidden="true">Open my 12-week path →</i></button>`}).join('')
+      :TOWERS.map(t=>`<button type="button" class="tcard tw-${esc(t.code)}" data-tower="${esc(t.name)}"><b>${esc(t.name)}</b><span>${esc(t.desc)}</span><i aria-hidden="true">${pathsOf(t.name).length>1?'Choose my area →':'Open my 12-week path →'}</i></button>`).join('');
     $('months').innerHTML='';$('finalBox').innerHTML='';
     return;
   }
-  const W=weekInfo(tower),done=W.done,T=towerObj(tower);
-  $('jH').innerHTML=`${esc(tower)} <span class="pill tw tw-${esc(T.code)}" style="font-size:12px">Your tower</span>`;
+  const W=weekInfo(tower),done=W.done,T=towerObj(tower),PA=pathObj(tower);
+  $('jH').innerHTML=`${esc(PA&&PA.multi?PA.tower+' › '+PA.l1name:tower)} <span class="pill tw tw-${esc(T.code)}" style="font-size:12px">${PA&&PA.multi?'Your area':'Your tower'}</span>`;
+  $('jSub').textContent=PA&&PA.multi?'Your 12-week onboarding journey. Only this area’s learning path is shown.':'Your 12-week onboarding journey. Only this tower’s learning path is shown.';
+  $('backBtn').textContent=PA&&PA.multi?'← Back to areas':'← Back to towers';
+  const L2=(PA&&PA.l2)||[];$('svcDd').hidden=!L2.length;
+  $('svcList').innerHTML=L2.map(x=>`<li><a href="index.html#l2-${encodeURIComponent(x.code)}"><b>${esc(x.code)}</b> ${esc(x.name)}</a></li>`).join('');
   const months=[['Month 1 · Understand',1,4],['Month 2 · Practice',5,8],['Month 3 · Apply',9,12]];
   $('months').innerHTML=months.map(([title,a,b])=>`<div class="panel month"><h3>${title}</h3>${WEEKS.filter(w=>w.n>=a&&w.n<=b).map(w=>weekCard(w,W)).join('')}</div>`).join('');
   const pct=Math.round(done.length/NWEEKS*100);
@@ -221,12 +234,15 @@ function render(){
   else $('finalBox').hidden=true;
   $('resetBtn').hidden=!DEMO;
 }
-function choose(t){if(!towerObj(t))return;tower=t;render();$('jH').focus()}
-function back(){tower='';render();$('pickH').focus()}
+function choose(t){if(!pathObj(t))return;tower=t;pickT='';render();$('jH').focus()}
+function chooseTower(name){const ps=pathsOf(name);if(!ps.length)return;if(ps.length===1)return choose(ps[0].key);pickT=name;tower='';render();$('pickH').focus()}
+function back(){const p=pathObj(tower);pickT=p&&p.multi?p.tower:'';tower='';render();$('pickH').focus()}
 document.addEventListener('click',e=>{
   const t=e.target.closest('button,a');if(!t)return;
   if(t.disabled||t.getAttribute('aria-disabled')==='true'){e.preventDefault();return}
-  if(t.dataset.tower)choose(t.dataset.tower);
+  if(t.dataset.tower)chooseTower(t.dataset.tower);
+  else if(t.dataset.path)choose(t.dataset.path);
+  else if(t.id==='pickBack'){pickT='';render();$('pickH').focus()}
   else if(t.id==='backBtn')back();
   else if(t.id==='resetBtn'&&DEMO){if(confirm('Demo only: reset progress and test results for '+tower+'?')){resetTower(tower);render();toast('Progress reset for '+tower+'.')}}
 });
@@ -235,9 +251,9 @@ document.addEventListener('click',e=>{
 function openFromHash(){
   const hv=location.hash.match(/^#tower-(.+)$/);if(!hv)return false;
   let s=hv[1];try{s=decodeURIComponent(s)}catch(e){}
-  const m=TOWERS.find(t=>slug(t.name)===s);
+  const [ts,l1]=s.split('/'),m=TOWERS.find(t=>slug(t.name)===ts);
   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
-  if(m){choose(m.name);return true}
+  if(m){const k=pathFrom(ts,l1||'');if(k)choose(k);else chooseTower(m.name);return true}
   return false;
 }
 window.addEventListener('hashchange',openFromHash);
