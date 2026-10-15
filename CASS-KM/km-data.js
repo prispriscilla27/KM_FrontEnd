@@ -2061,7 +2061,7 @@ window.KM_DATA = {
       "desc": "Checklists and job aids."
     },
     {
-      "name": "SOP / DTP",
+      "name": "SOP",
       "desc": "Controlled procedures and desktop procedures."
     },
     {
@@ -2494,7 +2494,7 @@ window.KM_DATA = {
     {
       "id": "lc-dtp",
       "title": "LC Review – Desktop Procedure",
-      "type": "SOP / DTP",
+      "type": "SOP",
       "l2": "3.1.1",
       "step": "LC Review & Consultation",
       "l3": "",
@@ -4155,7 +4155,7 @@ window.KM_DATA = {
         "materials": [
           {
             "id": "w7-m1",
-            "type": "SOP / DTP",
+            "type": "SOP",
             "title": "Using an SOP step by step",
             "time": "15 min",
             "desc": "How to follow a desktop procedure and where to note issues.",

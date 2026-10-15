@@ -312,7 +312,7 @@ const CAP={Service:4,Function:4,Document:4,Process:2,Tower:1,Glossary:2,Person:2
 const STOP=new Set(['of','and','the','for','to','in','a','an','on','with','by']);
 const COV={covered:'Covered',partial:'Partial',none:'Not started'};
 const ST={'Approved':'p-approved','Draft':'p-draft','In review':'p-review'};
-const TYPESHORT={'Quick Reference Guide':'QRD','SOP / DTP':'SOP / DTP','Video':'Video','Training Material':'Training','Templates & Forms':'Template','Exception Handling':'Exception','Lessons & Real Examples':'Lesson'};
+const TYPESHORT={'Quick Reference Guide':'QRD','SOP':'SOP','Video':'Video','Training Material':'Training','Templates & Forms':'Template','Exception Handling':'Exception','Lessons & Real Examples':'Lesson'};
 
 /* ---------- Helpers ---------- */
 function norm(s){return String(s==null?'':s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9.\/ ]+/g,' ').replace(/\.(?![0-9])/g,' ').replace(/(^|[^0-9])\./g,'$1 ').replace(/\s+/g,' ').trim()}

@@ -301,6 +301,8 @@ function loadDraft(){
   if(DR&&META.n===0&&DR.settings.version===PUB.settings.version&&DR.settings.lastPublished!==PUB.settings.lastPublished)DR=null;
   if(!DR){DR=clone(PUB);META={n:0}}
   if(!DR.views)DR.views={updated:'',sample:false,months:{}};
+  /* drafts from before "SOP / DTP" was renamed "SOP" */
+  if(DR.itemTypes.some(t=>t.name==='SOP / DTP')&&!DR.itemTypes.some(t=>t.name==='SOP')&&PUB.itemTypes.some(t=>t.name==='SOP')){const R=n=>n==='SOP / DTP'?'SOP':n;DR.itemTypes.forEach(t=>t.name=R(t.name));DR.items.forEach(i=>i.type=R(i.type));Object.values((DR.academy||{}).weekContent||{}).forEach(c=>(c.materials||[]).forEach(m=>m.type=R(m.type)));const sp=DR.settings.servicePage;if(sp){sp.hideTypesAll=(sp.hideTypesAll||[]).map(R);Object.values(sp.hideTypes||{}).forEach(l=>l.forEach((x,j)=>l[j]=R(x)))}}
   /* drafts from before L1 learning paths: take the paths from the published file */
   (DR.academy.towers||[]).forEach(t=>{if(!t.paths){const pt=((PUB.academy||{}).towers||[]).find(x=>x.code===t.code);if(pt&&pt.paths){t.paths=clone(pt.paths);delete t.links}}});if(!('viewsEndpoint' in DR.settings))DR.settings.viewsEndpoint='';
   saveDraft();
