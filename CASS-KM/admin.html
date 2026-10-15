@@ -716,7 +716,13 @@ function readZip(u8){
     const ds=lo+30+v.getUint16(lo+26,true)+v.getUint16(lo+28,true);out[name]=u8.slice(ds,ds+size);p+=46+nl+xl+cl}
   return out;
 }
-function saveBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+function saveLink(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+/* Downloads. Inside the claude.ai page viewer a normal download link is blocked, so the viewer's own "downloads" feature is used there
+   (it asks the person to confirm). It does not accept .js files: those are saved as .js.txt (remove ".txt" before putting the file in
+   the folder). Everywhere else (shared folder, web server) this is a normal browser download. */
+let _dl;const viewerDownloads=()=>_dl||(_dl=(window.claude&&typeof window.claude.use==='function')?window.claude.use('downloads').catch(()=>null):Promise.resolve(null));
+function saveBlob(blob,name){return viewerDownloads().then(dl=>{if(!dl){saveLink(blob,name);return true}const fn=/\.js$/i.test(name)?name+'.txt':name;
+  return dl.save({filename:fn,data:blob}).then(()=>{if(fn!==name)toast(`Saved as ${fn}. Rename it to ${name} (remove “.txt”) before putting it in the site folder.`);return true},e=>{const c=e&&e.code;if(c==='declined'){toast('Download cancelled. Nothing was marked as published.');return false}if(c==='rate_limited'){toast('Another download is waiting for your answer. Try again in a moment.');return false}toast('This viewer could not save the file. Trying a normal download…');saveLink(blob,name);return true})})}   /* resolves true when the file was handed over */
 function copyText(t){return new Promise((ok,no)=>{const fb=()=>{try{const x=document.createElement('textarea');x.value=t;x.style.cssText='position:fixed;opacity:0';document.body.appendChild(x);x.select();const r=document.execCommand('copy');x.remove();r?ok():no()}catch(e){no()}};try{navigator.clipboard&&window.isSecureContext?navigator.clipboard.writeText(t).then(ok,fb):fb()}catch(e){fb()}})}
 
 /* ---- Link picker: builds Knowledge Centre deep links (L2, optional step, optional item) ---- */
@@ -871,9 +877,9 @@ async function publishDlg(){
   m.el.addEventListener('click',async e=>{const b=e.target.closest('[data-x]');if(!b)return;const x=b.dataset.x;
     if(x==='c')return m.close();
     if(x==='forget'){await idbDel('handles','site').catch(()=>{});toast('The page will ask for the folder next time.');return}
-    if(x==='js'){if(docs.length&&!(await confirmAsync('Publish without the documents?',`<p>${plural(docs.length,'new document file')} would be missing from the folder. Use the zip or Publish to folder to include them.</p>`,'Download km-data.js only')))return;saveBlob(new Blob([buildFile(P.data)],{type:'text/javascript'}),'km-data.js');done('js')}
+    if(x==='js'){if(docs.length&&!(await confirmAsync('Publish without the documents?',`<p>${plural(docs.length,'new document file')} would be missing from the folder. Use the zip or Publish to folder to include them.</p>`,'Download km-data.js only')))return;if(await saveBlob(new Blob([buildFile(P.data)],{type:'text/javascript'}),'km-data.js'))done('js')}
     else if(x==='acc'){saveBlob(new Blob([buildAccountsFile(P.acc)],{type:'text/javascript'}),'km-accounts.js');toast('km-accounts.js downloaded.')}
-    else if(x==='zip'){saveBlob(await makeZip(files()),`cass-km-publish_${P.day}.zip`);done('zip')}
+    else if(x==='zip'){if(await saveBlob(await makeZip(files()),`cass-km-publish_${P.day}.zip`))done('zip')}
     else if(x==='fs'){try{if(await writeToFolder(files()))done('folder')}catch(err){if(err&&err.name==='AbortError')return;infoDlg('Could not write to the folder',`<p>${esc(err&&err.message||err)}</p><p>Use <b>Download .zip</b> instead.</p>`)}}
   });
 }

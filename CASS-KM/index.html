@@ -563,7 +563,7 @@ const fieldShown=k=>!(SP.hideFields||{})[k];
 function assetGrid(list,c,emptyMsg){
   const shown=TYPES.filter(t=>!typeHidden(c,t.name,list.filter(i=>i.type===t.name).length));
   if(!shown.length)return `<p class="sub">${emptyMsg||'Nothing to show for this service yet.'}</p>`;
-  return `<div class="assets">${shown.map(t=>{const its=list.filter(i=>i.type===t.name);return `<div class="panel asset ${its.length?'':'empty'}"><h4>${esc(t.name)}<span class="n">${its.length||''}</span></h4>${its.length?its.map(i=>itemCard(i)).join(''):`<p class="desc">${esc(t.desc)}<br>Not available yet.</p>`}</div>`}).join('')}</div>`;
+  return `<div class="assets">${shown.map(t=>{const its=list.filter(i=>i.type===t.name);return `<div class="panel asset ${its.length?'':'empty'}"><h4>${esc(t.name)}<span class="n">${its.length||''}</span></h4>${its.length?its.map(i=>itemCard(i)).join(''):`<p class="desc">${t.desc?esc(t.desc)+'<br>':''}Not available yet.</p>`}</div>`}).join('')}</div>`;
 }
 function feedback(){return `<div class="feedback"><span>Was this page helpful?</span><button type="button" class="btn" data-fb="yes">Yes</button><button type="button" class="btn" data-fb="no">No</button><button type="button" class="btn" data-fb="edit" aria-expanded="false" aria-controls="fbForm">Suggest an edit</button></div><div id="fbForm" hidden style="margin-top:10px"><label for="fbText" class="sub">What should change? Write a note, copy it, then paste it into Teams or email to the page owner.</label><textarea id="fbText"></textarea><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary" data-fb="copy">Copy note for the page owner</button><button type="button" class="btn" data-fb="cancel">Cancel</button></div></div>`}
 

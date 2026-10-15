@@ -2062,7 +2062,7 @@ window.KM_DATA = {
     },
     {
       "name": "SOP",
-      "desc": "Controlled procedures and desktop procedures."
+      "desc": ""
     },
     {
       "name": "Video",
@@ -2813,13 +2813,6 @@ window.KM_DATA = {
       "meaning": "Curriculum Vitae: a candidate’s résumé.",
       "towers": [
         "4"
-      ]
-    },
-    {
-      "term": "DTP",
-      "meaning": "Desktop Procedure: step-by-step instructions for one task.",
-      "towers": [
-        "all"
       ]
     },
     {
@@ -4045,15 +4038,6 @@ window.KM_DATA = {
             "title": "How to read a process map",
             "time": "10 min",
             "desc": "Steps, role tags and the highlighted pilot step.",
-            "href": "",
-            "tba": false
-          },
-          {
-            "id": "w3-m2",
-            "type": "Training Material",
-            "title": "SOP, DTP and quick reference guide: what is the difference?",
-            "time": "15 min",
-            "desc": "When to use each type of document.",
             "href": "",
             "tba": false
           }
