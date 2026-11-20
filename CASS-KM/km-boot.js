@@ -55,6 +55,82 @@
   window.kmViewsFmt=function(n){n=+n||0;if(n<1000)return String(n);var k=n/1000;return (k<10?(Math.round(k*10)/10):Math.round(k))+'k'};
   window.kmEyeSvg='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false" style="vertical-align:-2px"><path d="M1 8s2.6-4.5 7-4.5S15 8 15 8s-2.6 4.5-7 4.5S1 8 1 8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>';
   window.kmEye=function(id){var n=window.kmViews(id);return '<span class="kmviews" title="'+n.toLocaleString('en-GB')+(n===1?' view':' views')+'" aria-label="'+n.toLocaleString('en-GB')+(n===1?' view':' views')+'">'+window.kmEyeSvg+' '+window.kmViewsFmt(n)+'</span>'};
+  /* ---- Welcome pop-up, page guides and common questions (texts: Admin > Settings, Super Admin only) ----
+     The welcome pop-up shows once per browser, on the home page. A page guide shows once per page; all guides can show again after
+     12 hours without any activity on the site. Both can be closed (x, Esc, or clicking outside the welcome). The "?" button in the top
+     bar shows the welcome or the guide of the current page again. "?guide=show" in the address (Admin > Settings preview links)
+     shows them without remembering that they were seen. */
+  var WK='cassKM.welcomeSeen',GK='cassKM.guideSeen',AK='cassKM.lastActive',IDLE=12*3600e3,curKey='';
+  function esc2(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function cfg(){return (window.KM&&window.KM.settings)||{}}
+  function forced(){return /[?&]guide=show(&|$)/.test(location.search)}
+  function touchActive(){try{if(L)L.setItem(AK,String(Date.now()))}catch(e){}}
+  (function(){var last=0;try{last=+(L&&L.getItem(AK))||0}catch(e){}
+    if(last&&Date.now()-last>IDLE){try{L.removeItem(GK)}catch(e){}}      /* 12 hours without activity: guides may show again */
+    touchActive();var t=0;
+    ['click','keydown','scroll','touchstart','pointerdown'].forEach(function(ev){addEventListener(ev,function(){var n=Date.now();if(n-t>20000){t=n;touchActive()}},{passive:true,capture:true})});
+    addEventListener('pagehide',touchActive)})();
+  var logoImg='<img src="cass-logo.png" alt="Chandra Asri Sentral Solusi (CASS)">';
+  function css(){if(document.getElementById('kmpopcss'))return;var st=document.createElement('style');st.id='kmpopcss';st.textContent=
+   '.kmlogo{display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(105deg,var(--hdr1,#052944),var(--hdr1b,#07527e));border-radius:18px;padding:14px 22px}.kmlogo img{display:block;height:54px;width:auto}'+
+   '.kmw{position:fixed;inset:0;z-index:300;background:rgba(5,20,35,.55);display:grid;place-items:center;padding:16px;animation:kmFade .2s ease}'+
+   '.kmw-card{position:relative;background:var(--surface,#fff);color:var(--ink,#16324a);border-radius:22px;width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:30px 32px 28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35)}'+
+   '.kmw-card::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:linear-gradient(90deg,var(--hdr1,#052944),var(--hdr2,#0b6899),var(--hdr3,#15a9c8))}'+
+   '.kmw-x{position:absolute;right:12px;top:14px;border:0;background:var(--surface-2,#eef4f9);color:var(--muted,#5d7385);width:32px;height:32px;border-radius:50%;font-size:20px;line-height:1;cursor:pointer}.kmw-x:hover{color:var(--ink,#16324a)}'+
+   '.kmw-card h2{margin:16px 0 8px;font-size:23px;line-height:1.25}.kmw-card p{margin:0 0 14px;color:var(--muted,#5d7385);font-size:14.5px;line-height:1.6}'+
+   '.kmw-card ol{list-style:none;margin:0 auto 20px;padding:0;display:grid;gap:8px;max-width:420px;text-align:left}.kmw-card li{display:flex;gap:12px;align-items:center;background:var(--surface-2,#eef4f9);border-radius:12px;padding:10px 12px;font-size:13.5px}'+
+   '.kmw-card li i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--brand,#0a6fc2);color:var(--on-brand,#fff);display:grid;place-items:center;font-style:normal;font-weight:700;font-size:13px}'+
+   '.kmw-go{border:0;background:var(--brand,#0a6fc2);color:var(--on-brand,#fff);font:700 15px var(--font,system-ui,sans-serif);padding:12px 28px;border-radius:999px;cursor:pointer;box-shadow:0 8px 20px rgba(10,111,194,.35)}.kmw-go:hover{filter:brightness(1.08)}'+
+   '.kmw-x:focus-visible,.kmw-go:focus-visible,.kmg-x:focus-visible,.kmhelp:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}'+
+   '.kmg{position:fixed;z-index:250;top:74px;left:50%;transform:translateX(-50%);width:min(780px,calc(100vw - 24px));display:flex;gap:14px;align-items:center;background:linear-gradient(105deg,var(--hdr1,#052944),var(--hdr1b,#07527e));color:#fff;border-radius:16px;padding:12px 52px 12px 14px;box-shadow:0 14px 36px rgba(5,20,35,.4);animation:kmIn .3s ease}'+
+   '.kmg .kmlogo{flex:none;padding:7px 12px;border-radius:12px;background:rgba(255,255,255,.1)}.kmg .kmlogo img{height:30px}.kmg-t{min-width:0}.kmg-l{font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a9d8ee;margin-bottom:2px}.kmg-m{font-size:14px;line-height:1.5}'+
+   '.kmg-x{position:absolute;right:10px;top:10px;border:0;background:rgba(255,255,255,.16);color:#fff;width:30px;height:30px;border-radius:50%;font-size:19px;line-height:1;cursor:pointer}.kmg-x:hover{background:rgba(255,255,255,.3)}'+
+   '@media (max-width:560px){.kmg{align-items:flex-start;padding-right:46px}.kmg .kmlogo{display:none}.kmlogo img{height:44px}.kmw-card{padding:26px 20px 22px}}'+
+   '.kmhelp{margin-left:6px;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,.55);background:transparent;color:#fff;font:700 15px var(--font,system-ui,sans-serif);cursor:pointer;display:inline-grid;place-items:center;padding:0}.kmhelp:hover{background:rgba(255,255,255,.16)}.kmhelp[hidden]{display:none}'+
+   '.kmfaq{margin-top:4px}.kmfaq-h{margin:0 0 10px;font-size:15px}.kmfaq-i{background:var(--surface,#fff);border:1px solid var(--line,#dae4ed);border-radius:14px;margin-bottom:8px;overflow:hidden}'+
+   '.kmfaq-i summary{cursor:pointer;padding:13px 16px;font-weight:650;font-size:14px;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center}.kmfaq-i summary::-webkit-details-marker{display:none}.kmfaq-i summary::after{content:"";flex:none;width:8px;height:8px;border-right:2px solid var(--muted,#5d7385);border-bottom:2px solid var(--muted,#5d7385);transform:rotate(45deg);margin:-3px 2px 0 0}.kmfaq-i[open] summary::after{transform:rotate(-135deg);margin-top:3px}'+
+   '.kmfaq-i div{padding:0 16px 14px;color:var(--muted,#5d7385);font-size:13.5px;line-height:1.6}.kmfaq-i summary:focus-visible{outline:3px solid #f59e0b;outline-offset:-3px}'+
+   '@keyframes kmFade{from{opacity:0}to{opacity:1}}@keyframes kmIn{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}@media (prefers-reduced-motion:reduce){.kmw,.kmg{animation:none}}';
+   document.head.appendChild(st)}
+  function seenMap(){try{var v=JSON.parse((L&&L.getItem(GK))||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{}}catch(e){return {}}}
+  function closeGuide(){var g=document.querySelector('.kmg');if(g)g.remove()}
+  /* welcome pop-up */
+  function closeWelcome(){var w=document.querySelector('.kmw');if(!w)return;var back=w._back;w.remove();document.documentElement.style.overflow='';if(back&&back.focus&&document.contains(back))try{back.focus()}catch(e){}}
+  function openWelcome(w){
+    css();closeGuide();closeWelcome();
+    var steps=(w.steps||[]).filter(function(x){return x&&(x.lead||x.text)}).slice(0,3);
+    var o=document.createElement('div');o.className='kmw';o._back=document.activeElement;
+    o.innerHTML='<div class="kmw-card" role="dialog" aria-modal="true" aria-labelledby="kmwT"><button type="button" class="kmw-x" aria-label="Close">×</button><span class="kmlogo">'+logoImg+'</span><h2 id="kmwT">'+esc2(w.title)+'</h2>'+(w.text?'<p>'+esc2(w.text)+'</p>':'')+
+      (steps.length?'<ol>'+steps.map(function(x,i){return '<li><i>'+(i+1)+'</i><div>'+(x.lead?'<b>'+esc2(x.lead)+'</b> ':'')+esc2(x.text)+'</div></li>'}).join('')+'</ol>':'')+'<button type="button" class="kmw-go">'+esc2(w.button||'Start exploring')+'</button></div>';
+    document.body.appendChild(o);document.documentElement.style.overflow='hidden';
+    var go=o.querySelector('.kmw-go'),x=o.querySelector('.kmw-x');go.focus();
+    o.addEventListener('click',function(e){if(e.target===o||e.target===x||e.target===go)closeWelcome()});
+    o.addEventListener('keydown',function(e){if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeWelcome()}else if(e.key==='Tab'){var f=[x,go],i=f.indexOf(document.activeElement);e.preventDefault();f[(i+(e.shiftKey?-1:1)+f.length)%f.length].focus()}});
+  }
+  window.kmWelcome=function(force){var w=cfg().welcome;if(!w||w.on===false||!w.title)return false;
+    if(!force&&!forced()){try{if(L&&L.getItem(WK))return false;L.setItem(WK,String(Date.now()))}catch(e){return false}}
+    openWelcome(w);return true};
+  /* page guides */
+  function guideOf(key){var g=(cfg().guides||{})[key];return g&&g.on!==false&&String(g.text||'').trim()?g:null}
+  function helpBtn(){return document.querySelector('.kmhelp')}
+  function updateHelp(){var b=helpBtn();if(!b)return;var on=curKey==='home'?!!(cfg().welcome&&cfg().welcome.on!==false&&cfg().welcome.title):!!guideOf(curKey);b.hidden=!on}
+  window.kmGuide=function(key,force){curKey=key;updateHelp();closeGuide();var g=guideOf(key);if(!g)return false;
+    if(document.querySelector('.kmw'))return false;
+    if(!force&&!forced()){var m=seenMap();if(m[key])return false;m[key]=Date.now();try{L.setItem(GK,JSON.stringify(m))}catch(e){return false}}
+    css();var d=document.createElement('div');d.className='kmg';d.setAttribute('role','status');d.setAttribute('aria-live','polite');
+    d.innerHTML='<span class="kmlogo">'+logoImg+'</span><div class="kmg-t"><div class="kmg-l">Guide</div><div class="kmg-m">'+esc2(g.text)+'</div></div><button type="button" class="kmg-x" aria-label="Close this guide">×</button>';
+    document.body.appendChild(d);d.querySelector('.kmg-x').addEventListener('click',closeGuide);return true};
+  /* the page tells us where the visitor is; home = the welcome pop-up */
+  window.kmPage=function(key){curKey=key;updateHelp()};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.querySelector('.kmg')&&!document.querySelector('.kmw'))closeGuide()});
+  /* common questions (max 3 per page) as ready-made HTML for the page to insert */
+  window.kmFaq=function(key){var f=(cfg().faqs||{})[key];if(!f||f.on===false)return '';css();
+    var items=(f.items||[]).filter(function(i){return i&&String(i.q||'').trim()&&String(i.a||'').trim()}).slice(0,3);if(!items.length)return '';
+    return '<section class="kmfaq" aria-labelledby="kmfaq-'+esc2(key)+'"><h3 class="kmfaq-h" id="kmfaq-'+esc2(key)+'">Common questions</h3>'+items.map(function(i){return '<details class="kmfaq-i"><summary>'+esc2(i.q)+'</summary><div>'+esc2(i.a)+'</div></details>'}).join('')+'</section>'};
+  function initHelp(){var nav=document.querySelector('header .nav');if(!nav||nav.querySelector('.kmhelp')||!window.KM)return;css();
+    var b=document.createElement('button');b.type='button';b.className='kmhelp';b.textContent='?';b.setAttribute('aria-label','Show the help for this page');b.title='Help for this page';b.hidden=true;
+    b.addEventListener('click',function(){if(curKey==='home')window.kmWelcome(true);else window.kmGuide(curKey,true)});nav.appendChild(b);updateHelp()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initHelp);else initHelp();
   function bar(){
     if(!window.KM){
       document.body.insertAdjacentHTML('afterbegin','<div style="padding:24px;font:15px system-ui,sans-serif"><b>km-data.js could not be loaded.</b><p>Check that km-data.js sits in the same folder as this page and reload (Ctrl+F5).</p></div>');return}

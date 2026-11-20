@@ -30,7 +30,144 @@ window.KM_DATA = {
     "adminNames": [
       "Jules Pemberton",
       "Tasha Verlinden"
-    ]
+    ],
+    "welcome": {
+      "on": true,
+      "title": "Welcome to the CASS Knowledge Centre!",
+      "text": "Everything you need to do your job well: procedures, guides and videos, organised by service.",
+      "steps": [
+        {
+          "lead": "Search",
+          "text": "for a topic, such as “letter of credit”"
+        },
+        {
+          "lead": "Browse",
+          "text": "the service list: tower, process, then service"
+        },
+        {
+          "lead": "Open a process step",
+          "text": "to find its SOP, guides and videos"
+        }
+      ],
+      "button": "Start exploring →"
+    },
+    "guides": {
+      "service": {
+        "on": true,
+        "text": "Select a step on the process map to see its SOPs, guides and videos. Items marked “Require access” need permission from the owner."
+      },
+      "search": {
+        "on": true,
+        "text": "Results are grouped by type. Open a result to read it, or try a shorter word or a service code such as 3.1.1."
+      },
+      "glossary": {
+        "on": true,
+        "text": "Look up an abbreviation, or choose your tower to see only the terms for your role."
+      },
+      "academy": {
+        "on": true,
+        "text": "Choose your tower first. Towers with several areas then ask you to pick your area, and each area has its own 12-week path."
+      },
+      "path": {
+        "on": true,
+        "text": "Take it one week at a time: finish each material and the next week opens. Checkpoint tests mark the end of each month."
+      },
+      "week": {
+        "on": true,
+        "text": "Open each material, then mark it as finished. When every material is finished the week is complete and the next one opens."
+      },
+      "test": {
+        "on": true,
+        "text": "Answer every question, then submit. You can retake a checkpoint if you want a better score."
+      },
+      "document": {
+        "on": true,
+        "text": "Read the document on this page. A Download button appears only when the owner allows it."
+      }
+    },
+    "faqs": {
+      "home": {
+        "on": true,
+        "items": [
+          {
+            "q": "What is the difference between an SOP and a Quick Reference Guide?",
+            "a": "An SOP describes a process step by step and is the controlled version. A Quick Reference Guide is a short summary for people who already know the process."
+          },
+          {
+            "q": "I cannot find my service. What do I do?",
+            "a": "Use the filter above the service list, or search by the service code, for example 3.1.1. A service marked “Not started” has no content yet."
+          },
+          {
+            "q": "What does “Require access” mean?",
+            "a": "The file holds customer or bank details, so it is only open to people with permission. Open the item and ask the owner for access."
+          }
+        ]
+      },
+      "service": {
+        "on": true,
+        "items": [
+          {
+            "q": "What do Covered, Partial and Not started mean?",
+            "a": "Covered means the service has its main content. Partial means it has some content, not all. Not started means no SOPs, guides or videos have been added yet."
+          },
+          {
+            "q": "Who do I tell if something is missing or out of date?",
+            "a": "Use “Suggest an edit” at the bottom of the page. It writes a note for you to send to the page owner in Teams or email."
+          },
+          {
+            "q": "What is the process map?",
+            "a": "It lists the steps of the service in order. Select a step to see its SOPs, guides and videos. The highlighted step is the one the current knowledge covers."
+          }
+        ]
+      },
+      "search": {
+        "on": true,
+        "items": [
+          {
+            "q": "Nothing matches my search. What now?",
+            "a": "Try a shorter word, a service code such as 3.1.1, or an abbreviation. You can also browse the service list on the left."
+          },
+          {
+            "q": "Can I search by code or abbreviation?",
+            "a": "Yes. Type a service or function code, or an abbreviation such as LC. Glossary terms are searched too."
+          },
+          {
+            "q": "How are the results ordered?",
+            "a": "Results are grouped by type: documents, services, functions and glossary terms. Within each group the best match comes first."
+          }
+        ]
+      },
+      "glossary": {
+        "on": true,
+        "items": [
+          {
+            "q": "How do I see only the terms for my tower?",
+            "a": "Choose your tower above the list. “Not assigned yet” shows terms that no tower has claimed."
+          },
+          {
+            "q": "A term is missing or the meaning is wrong. Who do I tell?",
+            "a": "Tell the Process Excellence team. Only admins can add or change terms."
+          }
+        ]
+      },
+      "academy": {
+        "on": true,
+        "items": [
+          {
+            "q": "Which tower or area should I choose?",
+            "a": "Choose the one you work in. If you are unsure, ask your team lead."
+          },
+          {
+            "q": "Will I lose my progress if I close the page?",
+            "a": "No. Your progress is saved in this browser on this device. It does not move to another computer or browser."
+          },
+          {
+            "q": "Why is a week locked?",
+            "a": "Weeks open in order: finish every material in a week to open the next one. Checkpoint tests unlock after the weeks they cover."
+          }
+        ]
+      }
+    }
   },
   "taxonomy": [
     {

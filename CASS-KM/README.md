@@ -18,6 +18,7 @@ The CASS Knowledge Centre is an internal website for CASS (Chandra Asri Sentral 
 | `admin.html` | The admin page: individual logins, add, edit and delete content, approvals, versions, documents, people and roles, glossary, Academy, then publish. |
 | `km-accounts.js` | The admin accounts (names, usernames, account type, towers, roles and password hashes). **Only `admin.html` loads it**; reader pages never do. |
 | `documents/` | Uploaded documents, written here when an admin publishes. Created automatically on the first publish with a document. |
+| `cass-logo.png` | The CASS logo (white, on a transparent background). It is shown on a dark badge in the welcome pop-up and the page guides. |
 | `km-boot.js` | A small shared loader that every reader page loads right after `km-data.js`. It hands the content to the page. It also shows an admin their own unpublished changes: in a browser where changes were saved in `admin.html` and not published yet, every page (search included) uses that draft, with an orange bar on top. **Show published version** on the bar switches back for that tab. Other people's browsers never see the draft. |
 | `reference/service-taxonomy.json` | The source of the taxonomy (towers, processes, services) and the L3 functions. `km-data.js` was built from it. |
 | `reference/glossary-seed.json` | The starting glossary (66 terms with tower tags). |
@@ -58,7 +59,7 @@ These are personal and stay in that person's browser only. They are never shared
 
 - which items you have opened (this drives the orange **New** badge, which comes back when an admin updates an item),
 - your company filter (All, APS, ACE or AMS),
-- whether the "Start here" box is open or closed,
+- whether you have seen the welcome pop-up and each page's guide (and when you were last active on the site),
 - your New Joiner Academy progress and test results,
 - which entries you opened today and the views you made (so the same entry is counted once a day, and the eye number updates straight away).
 
@@ -158,6 +159,19 @@ The site has no server, so publishing writes three things into the site folder: 
 - Hiding a category removes only its **box** from the service page. Its entries can still be found through search, Recently updated and item links. Process steps always show; a step with nothing left to show says so. Content coverage by tower still counts every entry.
 - Like every change, it reaches readers when you publish.
 
+### Welcome pop-up, page guides and common questions (Super Admin)
+
+**Admin › Settings › Pop-ups and common questions** (AdminPE / Super admin only). Readers see changes after you publish.
+
+- **Welcome pop-up.** Shown once per browser to a first-time visitor on the Knowledge Centre home (not when they arrive through a link to a service page). Title, introduction, three steps and the button label can be edited, or the whole pop-up switched off. It replaces the old “Start here” box.
+- **Page guides.** One sentence in a closable pop-up (× at the top right, or Esc) with the CASS logo. Pages: service page, search results, glossary, Academy (choose tower and area), Academy learning path, Academy week, Academy test and the document viewer. Each can be edited or switched off; an empty text means no guide.
+  - A guide shows **once per page**. It can show again after a visitor has had **no activity on the site for 12 hours**.
+  - The **“?”** button in the top bar shows the welcome (home) or the guide of the current page again; it is hidden when that guide is off.
+  - **Preview ↗** links in Settings open the page with `?guide=show`, which shows the guide without it counting as seen.
+- **Common questions.** Up to **3 per page**, shown at the bottom of: home, service pages, search results, glossary and the Academy. Each page has its own questions, a Show switch, and a Preview link. A question needs both a question and an answer to show. Text is shown as plain text.
+- **Restore published wording** puts back what readers see today, for each of the three parts.
+- All edits are logged in the change log, and a draft saved before these settings existed picks them up from the published file.
+
 ### Views (how often each entry is opened)
 
 Every knowledge entry shows an eye with its number of views (overall) on the Knowledge Centre cards, in the detail panel and on the document page. Entries with no views show 0.
@@ -184,6 +198,10 @@ Until step 2 is done the page is in **demo mode**: each browser only counts its 
 
 - **How new joiners keep their Academy progress.** Today it stays in each joiner's browser. Decide whether joiners get an account (through Admin) or a separate login page, so progress follows them.
 - **Lockout notifications.** Super admins only see lockouts that happened in their own browser. If IT provides a server address (for example the view-counting address), lockouts could be reported there too.
+
+## Tests
+
+`tests/` (next to this folder, not inside it) holds the browser tests. Run them with `bash tests/run-all.sh` (needs Node, Python 3 and the `playwright` npm package). `popups.test.js` covers the welcome pop-up, page guides, common questions and card styling; `smoke.test.js` checks the reader pages, search, service pages, Academy, the main Admin flows and publishing. They start their own small web server and do not change any file of the site.
 
 ## Notes
 

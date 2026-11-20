@@ -15,7 +15,7 @@
   --new:#c2410c;--new-bg:#fdeee5;--lock:#7c3aed;--lock-bg:#f1eafe;--hl:#fff6d6;--hl-line:#e3c35a;--mark:#fdeeb0;
   --t1:#be185d;--t2:#0e7490;--t3:#8a4b14;--t4:#374151;--t-ink:#ffffff;
   --overlay:rgba(5,20,35,.45);--toast-bg:#16324a;--toast-ink:#ffffff;
-  --shadow:0 4px 16px rgba(18,59,90,.07);--pop-shadow:0 12px 32px rgba(10,40,70,.18);
+  --shadow:0 2px 12px rgba(18,59,90,.09);--panel-line:#e3e9f1;--pop-shadow:0 12px 32px rgba(10,40,70,.18);
   --font:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
   color-scheme:light;
 }
@@ -27,7 +27,7 @@
   --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;--mark:#5a4a12;
   --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
   --overlay:rgba(0,0,0,.6);--toast-bg:#e2ecf4;--toast-ink:#0c1824;
-  --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}}
+  --shadow:0 4px 16px rgba(0,0,0,.3);--panel-line:#244059;--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;
   --brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
@@ -36,7 +36,7 @@
   --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;--mark:#5a4a12;
   --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
   --overlay:rgba(0,0,0,.6);--toast-bg:#e2ecf4;--toast-ink:#0c1824;
-  --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}
+  --shadow:0 4px 16px rgba(0,0,0,.3);--panel-line:#244059;--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}
 *{box-sizing:border-box}
 html{overflow-x:hidden}
 body{margin:0;font-family:var(--font);font-size:14px;color:var(--ink);background:var(--bg);line-height:1.45;overflow-x:hidden}
@@ -79,7 +79,7 @@ mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
 .chip{border:1px solid rgba(255,255,255,.45);background:transparent;color:var(--hdr-ink);padding:6px 11px;border-radius:999px;cursor:pointer;font-size:13px}
 .chip[aria-pressed="true"]{background:#ffffff;color:#16324a;border-color:#ffffff;font-weight:700}
 .layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:22px;padding-block:22px}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.panel{background:var(--surface);border:1px solid var(--panel-line,var(--line));border-radius:16px;box-shadow:var(--shadow)}
 .side{padding:16px 16px 16px 18px;align-self:start;position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;min-width:0}
 .side h3{margin:0 0 6px;font-size:15px}
 .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-bottom:10px}
@@ -98,12 +98,6 @@ mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
 .leaf:hover{background:var(--brand-soft);color:var(--ink)}
 .leaf.on{background:var(--brand-soft);color:var(--brand);font-weight:700}
 .leaf .nm{flex:1;min-width:0}
-.start{background:var(--brand-soft);border-radius:10px;padding:8px 12px;margin-bottom:14px;font-size:12.5px}
-.start summary{cursor:pointer;font-weight:700;font-size:13.5px;color:var(--brand);list-style:none;display:flex;align-items:center;justify-content:space-between}
-.start summary::-webkit-details-marker{display:none}
-.start summary::after{content:"–";font-weight:700}
-.start:not([open]) summary::after{content:"+"}
-.start ol{margin:8px 0 2px;padding-left:18px;display:grid;gap:5px;color:var(--ink)}
 .main{min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-content:start}
 .crumb{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
 .crumb button{border:0;background:none;padding:0;color:var(--brand);cursor:pointer}
@@ -152,7 +146,7 @@ h3.sec{margin:0 0 10px;font-size:15px}
 .asset h4{margin:0;font-size:14px;display:flex;justify-content:space-between;gap:8px}
 .asset h4 .n{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600}
 .asset .desc{margin:0;color:var(--muted);font-size:12.5px}
-.item{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 10px;cursor:pointer;min-width:0}
+.item{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 10px;cursor:pointer;min-width:0}
 .item:hover{border-color:var(--brand)}
 .item .t{font-weight:650;font-size:13px;display:block;overflow-wrap:anywhere}
 .item .m{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;align-items:center;font-size:11.5px;color:var(--muted)}
@@ -266,8 +260,6 @@ textarea{width:100%;min-height:80px;padding:9px;border-radius:8px;border:1px sol
 
 <div class="layout wrap">
   <aside class="panel side" aria-label="Service taxonomy">
-    <details class="start" id="startBox" open><summary>Start here</summary>
-      <ol><li><b>Browse</b> the taxonomy below (tower, process, service).</li><li><b>Open a process step</b> on a service page for its SOP, guides and videos.</li><li><b>Search</b> when you know the topic, e.g. “letter of credit”.</li></ol></details>
     <h3>Service Taxonomy</h3>
     <div class="legend"><span><i class="dot covered"></i>Covered</span><span><i class="dot partial"></i>Partial</span><span><i class="dot none"></i>Not started</span></div>
     <label for="tf" class="sr">Filter the taxonomy</label>
@@ -567,6 +559,7 @@ function assetGrid(list,c,emptyMsg){
 }
 function feedback(){return `<div class="feedback"><span>Was this page helpful?</span><button type="button" class="btn" data-fb="yes">Yes</button><button type="button" class="btn" data-fb="no">No</button><button type="button" class="btn" data-fb="edit" aria-expanded="false" aria-controls="fbForm">Suggest an edit</button></div><div id="fbForm" hidden style="margin-top:10px"><label for="fbText" class="sub">What should change? Write a note, copy it, then paste it into Teams or email to the page owner.</label><textarea id="fbText"></textarea><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary" data-fb="copy">Copy note for the page owner</button><button type="button" class="btn" data-fb="cancel">Cancel</button></div></div>`}
 
+const faqHtml=k=>window.kmFaq?window.kmFaq(k):'';
 function viewHome(){
   const visItems=ITEMS.filter(vis);
   const recent=visItems.slice().sort((a,b)=>String(b.updated).localeCompare(String(a.updated))).slice(0,6);const nNew=visItems.filter(isNew).length;
@@ -576,7 +569,7 @@ function viewHome(){
   <section class="panel pad"><h3 class="sec">Content coverage by tower</h3><div class="cov">${cov.map(r=>`<div class="covrow"><span>${esc(r.a.name)}</span><span class="bar" role="img" aria-label="${r.c} covered, ${r.p} partial, ${r.n-r.c-r.p} not started"><i class="c" style="width:${r.n?r.c/r.n*100:0}%"></i><i class="p" style="width:${r.n?r.p/r.n*100:0}%"></i></span><span class="num">${r.c+r.p}/${r.n} L2</span></div>`).join('')}</div></section>
   <section class="panel pad"><div class="titlerow"><div><h3 class="sec" style="margin-bottom:4px">Glossary</h3></div><button type="button" class="btn primary" data-view="glossary">Open the glossary</button></div>
    <div class="gl-peek">${['LC','BG','SOP','SLA','PO','KPI'].map(t=>`<button type="button" class="chipbtn" data-term="${esc(t)}" aria-label="Open the glossary at ${esc(t)}"><b>${esc(t)}</b></button>`).join('')}</div></section>
-  <section class="panel academy"><div><b>New to CASS?</b><br><small class="sub">Follow the guided 12-week learning pathway for your tower.</small></div><a href="new-joiner-academy.html">Open New Joiner Academy →</a></section>`;
+  <section class="panel academy"><div><b>New to CASS?</b><br><small class="sub">Follow the guided 12-week learning pathway for your tower.</small></div><a href="new-joiner-academy.html">Open New Joiner Academy →</a></section>${faqHtml('home')}`;
 }
 function l3Section(c){
   const fs=L3[c]||[];
@@ -607,7 +600,7 @@ function viewL2(){
     const loose=items.filter(i=>(!i.step||!steps.some(s=>s.name===i.step))&&!typeHidden(c,i.type,1));
     if(loose.length)body+=`<section class="panel pad"><h3 class="sec">Not linked to a process step</h3><div class="recent">${loose.map(i=>itemCard(i)).join('')}</div></section>`;
   } else body+=`<section><h3 class="sec">Knowledge for this service</h3>${assetGrid(items,c)}</section>`;
-  return head+body+l3Section(c)+`<section class="panel pad">${feedback()}</section>`;
+  return head+body+l3Section(c)+`<section class="panel pad">${feedback()}</section>${faqHtml('service')}`;
 }
 function viewSearch(){
   const q=state.q,r=search(q);const by=k=>r.filter(x=>x.o.kind===k).map(x=>x.o);
@@ -626,7 +619,7 @@ function viewSearch(){
   ${sec('Functions (L3)',fn,o=>`<button type="button" class="resrow" data-act="${esc(JSON.stringify(o.act))}"><span class="ic">${esc(o.code)}</span><span><b>${hl(o.label,q)}</b><small>${esc(o.sub)}</small></span></button>`)}
   ${sec('Glossary',gls,o=>`<button type="button" class="resrow" data-act="${esc(JSON.stringify(o.act))}"><span class="ic">${hl(o.label,q)}</span><span>${hl(o.sub,q)}</span></button>`)}
   ${sec('People',pp,o=>`<div class="resrow" style="cursor:default"><span class="ic">Person</span><span>${personBtn(o.act.person,'From search')}<small>${hl(o.sub,q)}</small></span></div>`)}
-  ${!r.length?`<section class="panel pad"><h3 class="sec">No results</h3><ul class="sub" style="margin:0;padding-left:20px"><li>Try a shorter word or check the spelling.</li><li>Search a code such as 3.2.</li><li>Check the company filter (now: ${esc(company)}).</li><li>Browse the taxonomy on the left.</li></ul></section>`:''}`;
+  ${!r.length?`<section class="panel pad"><h3 class="sec">No results</h3><ul class="sub" style="margin:0;padding-left:20px"><li>Try a shorter word or check the spelling.</li><li>Search a code such as 3.2.</li><li>Check the company filter (now: ${esc(company)}).</li><li>Browse the taxonomy on the left.</li></ul></section>`:''}${faqHtml('search')}`;
 }
 
 /* ---------- Glossary ---------- */
@@ -663,14 +656,18 @@ function viewGlossary(){
     <div class="gl-chips" role="group" aria-label="Filter by tower">${chips.map(([k,n])=>`<button type="button" class="chipbtn ${/^[1-4]$/.test(k)?'tchip tw-'+k:''}" data-gtower="${esc(k)}" aria-pressed="${gl.tower===k}">${esc(n)}</button>`).join('')}</div></div>
    <div class="gl-meta"><span id="glcount" aria-live="polite">${r.count} term${r.count===1?'':'s'}</span><span class="gl-az" id="glaz" role="group" aria-label="Jump to letter">${az.map(L=>`<button type="button" class="azb" data-gletter="${L}" ${r.letters.includes(L)?'':'disabled'} aria-label="Terms starting with ${L==='#'?'a number':L}">${L}</button>`).join('')}</span></div>
    <div class="gl-list" id="gllist">${r.html}</div>
-   <p class="note">Tower tags show where a term is used, based on the service taxonomy and the LC pilot. “Not assigned yet” means we could not tell, so it stays blank until a tower head confirms it.</p></section>`;
+   <p class="note">Tower tags show where a term is used, based on the service taxonomy and the LC pilot. “Not assigned yet” means we could not tell, so it stays blank until a tower head confirms it.</p></section>${faqHtml('glossary')}`;
 }
 function refreshGlossaryList(){const r=glList();document.getElementById('gllist').innerHTML=r.html;document.getElementById('glcount').textContent=r.count+' term'+(r.count===1?'':'s');document.querySelectorAll('#glaz .azb').forEach(b=>{b.disabled=!r.letters.includes(b.dataset.gletter)})}
 
+/* the pop-up guide of the page the visitor is on (shown once per page; the welcome pop-up is the home page's guide) */
+let guideKey='';
+function guideFor(view){const k={home:'home',l2:'service',search:'search',glossary:'glossary'}[view]||'home';if(k===guideKey)return;guideKey=k;if(k==='home')window.kmPage&&window.kmPage('home');else window.kmGuide&&window.kmGuide(k)}
 function render(){
   if(state.view==='l2'&&!L2INDEX[state.l2])state={view:'home'};
   const v={home:viewHome,l2:viewL2,search:viewSearch,glossary:viewGlossary}[state.view]||viewHome;
   mainEl.innerHTML=v();markLeaves();
+  guideFor(state.view);
   if(state.view==='glossary'&&state.term){const el=document.getElementById('gt-'+slug(state.term));if(el){el.scrollIntoView({block:'center'});setTimeout(()=>el.classList.remove('flash'),2500)}state.term=null}
   if(state.view==='l2'&&state.flashFn){const el=document.getElementById(fnId(state.flashFn));if(el){el.scrollIntoView({block:'center'});setTimeout(()=>el.classList.remove('flash'),2500)}state.flashFn=null}
 }
@@ -796,10 +793,10 @@ document.addEventListener('keydown',e=>{
 });
 document.getElementById('tf').addEventListener('input',e=>renderTree(e.target.value));
 document.addEventListener('input',e=>{if(e.target.id!=='gq')return;gl.q=e.target.value;state.term=null;refreshGlossaryList()});
-(function(){const b=document.getElementById('startBox');if(store.get('kmStartOpen',true)===false)b.open=false;b.addEventListener('toggle',()=>store.set('kmStartOpen',b.open))})();
 renderTree();renderChips();
 addEventListener('hashchange',route);
 route();
+if(state.view==='home'&&window.kmWelcome)window.kmWelcome();
 })();
 </script>
 </body>

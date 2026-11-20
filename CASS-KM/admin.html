@@ -301,6 +301,7 @@ function loadDraft(){
   if(DR&&META.n===0&&DR.settings.version===PUB.settings.version&&DR.settings.lastPublished!==PUB.settings.lastPublished)DR=null;
   if(!DR){DR=clone(PUB);META={n:0}}
   if(!DR.views)DR.views={updated:'',sample:false,months:{}};
+  ['welcome','guides','faqs'].forEach(k=>{if(!DR.settings[k]&&PUB.settings[k])DR.settings[k]=clone(PUB.settings[k])});   /* drafts from before pop-ups existed */
   /* drafts from before "SOP / DTP" was renamed "SOP" */
   if(DR.itemTypes.some(t=>t.name==='SOP / DTP')&&!DR.itemTypes.some(t=>t.name==='SOP')&&PUB.itemTypes.some(t=>t.name==='SOP')){const R=n=>n==='SOP / DTP'?'SOP':n;DR.itemTypes.forEach(t=>t.name=R(t.name));DR.items.forEach(i=>i.type=R(i.type));Object.values((DR.academy||{}).weekContent||{}).forEach(c=>(c.materials||[]).forEach(m=>m.type=R(m.type)));const sp=DR.settings.servicePage;if(sp){sp.hideTypesAll=(sp.hideTypesAll||[]).map(R);Object.values(sp.hideTypes||{}).forEach(l=>l.forEach((x,j)=>l[j]=R(x)))}}
   /* drafts from before L1 learning paths: take the paths from the published file */
@@ -2214,6 +2215,7 @@ VIEWS.set={
     return `<div><h1>Settings</h1><p class="sub">${can(a,'accounts')?'Accounts, publishing, badges, banner, companies, labels, search help and taxonomy updates.':'Badges, banner, companies, labels, search help and taxonomy. Change your own password in <b>My account</b> (top bar).'}</p></div>
     ${can(a,'accounts')?accountsHtml():''}
     ${can(a,'settings')?svcPageHtml():''}
+    ${can(a,'settings')?popupsHtml():''}
     <section class="panel pad gap"><h2>Site</h2><div class="g3">
      <div class="fld"><label for="sd">“New” badge period (days)</label><input id="sd" type="number" min="1" max="365" value="${s.newBadgeDays}" data-on="setDays"></div>
      <div class="fld"><label class="lb">Sample banner</label><label class="sw"><input type="checkbox" data-on="setBanner" name="on" ${s.banner.on?'checked':''}> Show banner</label></div></div>
@@ -2235,6 +2237,60 @@ NEED_ON.noop='settings';ON.noop=()=>{};
    settings.servicePage = {hideFields:{owner,expert,approver,lastReviewed}, hideEmptyTypes, hideTypesAll:[type], hideTypes:{"<L2>":[type]}}
    Hiding only changes what readers see on service pages: the values stay in the data, and entries of a hidden category stay in
    search, Recently updated and item links. */
+/* ---- Welcome pop-up, page guides and common questions (Super Admin only) ----
+   settings.welcome = {on,title,text,steps:[{lead,text}x3],button}
+   settings.guides  = {<page key>:{on,text}}          one line, shown as a closable pop-up once per page (12 h without activity: again)
+   settings.faqs    = {<page key>:{on,items:[{q,a}]}}  at most 3 per page
+   The reader pages show them from the published km-data.js (km-boot.js). */
+const GUIDE_PAGES=[['service','Service page (L2)','index.html?guide=show#l2-3.1.1'],['search','Search results','index.html?guide=show#search-letter'],['glossary','Glossary','index.html?guide=show#glossary'],
+  ['academy','Academy: choose tower and area','new-joiner-academy.html?guide=show'],['path','Academy: learning path','new-joiner-academy.html?guide=show#tower-customer-operations'],
+  ['week','Academy: a week','academy-week.html?week=1&tower=customer-operations&guide=show'],['test','Academy: a checkpoint test','academy-test.html?test=cp1&tower=customer-operations&guide=show'],['document','Document viewer','document.html?item=lc-flow&guide=show']];
+const FAQ_PAGES=[['home','Knowledge Centre home','index.html'],['service','Service page (L2)','index.html#l2-3.1.1'],['search','Search results','index.html#search-letter'],['glossary','Glossary','index.html#glossary'],['academy','New Joiner Academy','new-joiner-academy.html']];
+const FAQ_MAX=3;
+function WLC(){const s=DR.settings;if(!s.welcome||typeof s.welcome!=='object')s.welcome={on:false,title:'',text:'',steps:[],button:'Start exploring →'};const w=s.welcome;if(!Array.isArray(w.steps))w.steps=[];return w}
+function GDS(){const s=DR.settings;if(!s.guides||typeof s.guides!=='object')s.guides={};return s.guides}
+function FQS(){const s=DR.settings;if(!s.faqs||typeof s.faqs!=='object')s.faqs={};return s.faqs}
+function popupsHtml(){
+  const w=WLC(),g=GDS(),f=FQS(),st=[0,1,2].map(i=>w.steps[i]||{lead:'',text:''}),hasPub=k=>!!(PUB.settings&&PUB.settings[k]);
+  return `<section class="panel pad gap" id="popups"><h2>Pop-ups and common questions</h2>
+   <p class="sub">Short texts that help readers find their way. Only Super admin can change them. Readers see the changes after you publish.</p>
+   <div class="gap" id="wlc"><div class="row between"><h3 style="margin:0">Welcome pop-up (Knowledge Centre home)</h3><span class="row"><a class="btn small" href="index.html?guide=show" target="_blank" rel="noopener">Preview ↗</a><button type="button" class="btn small" data-act="ppRestore" data-k="welcome" ${hasPub('welcome')?'':'disabled'}>Restore published wording</button></span></div>
+    <label class="sw"><input type="checkbox" data-on="wlOn" ${w.on?'checked':''}><span><b>Show the welcome pop-up</b><br><span class="hint">Shown once per browser to a first-time visitor. The “?” button in the top bar opens it again.</span></span></label>
+    <div class="fld"><label for="wlt">Title</label><input id="wlt" type="text" maxlength="80" value="${esc(w.title)}" data-on="wlField" data-f="title"></div>
+    <div class="fld"><label for="wlx">Introduction</label><textarea id="wlx" maxlength="240" style="min-height:62px" data-on="wlField" data-f="text">${esc(w.text)}</textarea></div>
+    <div class="fld"><span class="lb">Three steps (bold start + rest of the sentence; leave both empty to hide a step)</span>${st.map((x,i)=>`<div class="row" style="margin-bottom:6px"><b style="width:18px">${i+1}</b><input type="text" maxlength="30" style="width:190px" placeholder="Bold start" aria-label="Step ${i+1} bold start" value="${esc(x.lead)}" data-on="wlStep" data-i="${i}" data-f="lead"><input type="text" class="grow" maxlength="100" placeholder="Rest of the sentence" aria-label="Step ${i+1} text" value="${esc(x.text)}" data-on="wlStep" data-i="${i}" data-f="text"></div>`).join('')}</div>
+    <div class="fld" style="max-width:320px"><label for="wlb">Button label</label><input id="wlb" type="text" maxlength="30" value="${esc(w.button||'')}" data-on="wlField" data-f="button"></div></div>
+   <div class="gap" id="gdl"><div class="row between"><h3 style="margin:0">Page guides (one line)</h3><button type="button" class="btn small" data-act="ppRestore" data-k="guides" ${hasPub('guides')?'':'disabled'}>Restore published wording</button></div>
+    <p class="hint" style="margin:0">A closable pop-up with one sentence. It shows once per page. It can show again after a visitor has had no activity on the site for 12 hours. The “?” button shows it on request. An empty text means no guide.</p>
+    <div class="tablewrap"><table><thead><tr><th>Page</th><th>Show</th><th>Text</th><th></th></tr></thead><tbody>${GUIDE_PAGES.map(([k,l,u])=>{const x=g[k]||{on:false,text:''};return `<tr><td><b>${esc(l)}</b></td><td><input type="checkbox" data-on="gdOn" data-k="${k}" ${x.on?'checked':''} aria-label="Show the guide on ${esc(l)}"></td><td style="min-width:360px"><textarea maxlength="200" style="min-height:54px;width:100%" data-on="gdText" data-k="${k}" aria-label="Guide text for ${esc(l)}">${esc(x.text||'')}</textarea></td><td><a class="btn small" href="${u}" target="_blank" rel="noopener">Preview ↗</a></td></tr>`}).join('')}</tbody></table></div></div>
+   <div class="gap" id="fqs"><div class="row between"><h3 style="margin:0">Common questions (up to ${FAQ_MAX} per page)</h3><button type="button" class="btn small" data-act="ppRestore" data-k="faqs" ${hasPub('faqs')?'':'disabled'}>Restore published wording</button></div>
+    <p class="hint" style="margin:0">Each page shows its own questions at the bottom. A question needs both a question and an answer to show. Keep them relevant to that page.</p>
+    ${FAQ_PAGES.map(([k,l,u])=>{const x=f[k]||{on:false,items:[]},it=[0,1,2].map(i=>(x.items||[])[i]||{q:'',a:''});
+     return `<div class="matrow fq" data-k="${k}"><div class="row between"><b>${esc(l)}</b><span class="row"><label class="sw"><input type="checkbox" data-on="fqOn" data-k="${k}" ${x.on?'checked':''}> Show</label><a class="btn small" href="${u}" target="_blank" rel="noopener">Preview ↗</a></span></div>
+      ${it.map((q,i)=>`<div class="g2" style="margin-top:8px"><div class="fld"><label class="lb" for="fq-${k}-q${i}">Question ${i+1}</label><input id="fq-${k}-q${i}" type="text" maxlength="120" value="${esc(q.q)}" data-on="fqField" data-k="${k}"></div><div class="fld"><label class="lb" for="fq-${k}-a${i}">Answer ${i+1}</label><textarea id="fq-${k}-a${i}" maxlength="400" style="min-height:58px" data-on="fqField" data-k="${k}">${esc(q.a)}</textarea></div></div>`).join('')}
+      <div class="hint fqwarn" id="fqw-${k}"></div></div>`}).join('')}</div></section>`;
+}
+const ppLog=(t,s)=>commit('edited','Settings',t,s);
+ON.wlOn=el=>{const w=WLC();w.on=el.checked;ppLog('welcome','Welcome pop-up '+(w.on?'on':'off'));toast('Saved.')};
+ON.wlField=el=>{const w=WLC(),f=el.dataset.f,v=el.value.trim();if(f==='title'&&!v){toast('The title cannot be empty.');el.value=w.title;return}if(v===(w[f]||''))return;w[f]=v;ppLog('welcome','Welcome pop-up: '+({title:'title',text:'introduction',button:'button label'}[f]||f)+' edited');toast('Saved.')};
+ON.wlStep=el=>{const w=WLC(),i=+el.dataset.i,f=el.dataset.f,v=el.value.trim();while(w.steps.length<3)w.steps.push({lead:'',text:''});const old=w.steps[i][f]||'';if(v===old)return;w.steps[i][f]=v;
+  const row=el.closest('.row'),lead=$('[data-f=lead]',row).value.trim(),tx=$('[data-f=text]',row).value.trim();
+  if(lead&&!tx)toast('Step '+(i+1)+' has a bold start but no sentence. It will show as bold text only.');
+  ppLog('welcome',`Welcome pop-up: step ${i+1} edited`);toast('Saved.')};
+ON.gdOn=el=>{const g=GDS(),k=el.dataset.k;(g[k]=g[k]||{on:false,text:''}).on=el.checked;ppLog('guides','Page guide '+k+(el.checked?' on':' off'));toast('Saved.')};
+ON.gdText=el=>{const g=GDS(),k=el.dataset.k,v=el.value.trim(),x=(g[k]=g[k]||{on:false,text:''});if(v===(x.text||''))return;x.text=v;ppLog('guides','Page guide '+k+' text edited');toast(v?'Saved.':'Saved. With no text this guide will not show.')};
+ON.fqOn=el=>{const f=FQS(),k=el.dataset.k;(f[k]=f[k]||{on:false,items:[]}).on=el.checked;ppLog('faqs','Common questions '+k+(el.checked?' on':' off'));toast('Saved.')};
+ON.fqField=el=>{const f=FQS(),k=el.dataset.k,box=el.closest('.fq'),x=(f[k]=f[k]||{on:false,items:[]});
+  const slots=[0,1,2].map(i=>({q:$('#fq-'+k+'-q'+i,box).value.trim(),a:$('#fq-'+k+'-a'+i,box).value.trim()}));
+  const incomplete=slots.filter(s=>(s.q&&!s.a)||(!s.q&&s.a)).length;
+  const items=slots.filter(s=>s.q||s.a).slice(0,FAQ_MAX);if(JSON.stringify(items)===JSON.stringify(x.items||[]))return;
+  x.items=items;$('#fqw-'+k).textContent=incomplete?`${plural(incomplete,'question')} without a matching ${incomplete===1?'question or answer':'questions or answers'} will not show.`:'';
+  ppLog('faqs','Common questions '+k+' edited');toast('Saved.')};
+ACTS.ppRestore=el=>{const k=el.dataset.k;if(!need('settings'))return;if(!(PUB.settings&&PUB.settings[k]))return;
+  confirmDlg({title:'Restore the published wording?',body:`<p>Replaces your unpublished edits of the ${k==='welcome'?'welcome pop-up':k==='guides'?'page guides':'common questions'} with what readers see today.</p>`,ok:'Restore',onOk:()=>{DR.settings[k]=clone(PUB.settings[k]);ppLog(k,'Restored the published wording of '+k);rerender();toast('Restored.')}})};
+NEED.ppRestore='settings';
+Object.assign(NEED_ON,{wlOn:'settings',wlField:'settings',wlStep:'settings',gdOn:'settings',gdText:'settings',fqOn:'settings',fqField:'settings'});
+
 const SPF=[['owner','Page owner'],['approver','Approved by'],['expert','Ask the expert'],['lastReviewed','Last reviewed']];
 function SPS(){const s=DR.settings;if(!s.servicePage||typeof s.servicePage!=='object')s.servicePage={};const p=s.servicePage;
   if(!p.hideFields||typeof p.hideFields!=='object')p.hideFields={};if(!Array.isArray(p.hideTypesAll))p.hideTypesAll=[];if(!p.hideTypes||typeof p.hideTypes!=='object')p.hideTypes={};p.hideEmptyTypes=!!p.hideEmptyTypes;return p}
