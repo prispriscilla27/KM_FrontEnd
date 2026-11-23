@@ -228,3 +228,7 @@ Until step 2 is done the page is in **demo mode**: each browser only counts its 
 
 - People, contact details and dates in this pilot are fictional samples (the `cass-example.co.id` email domain is deliberately fake). Admins replace them with real staff.
 - The glossary tower tags are a first draft for the tower heads to confirm.
+
+### Page headers
+
+Every page starts the same way: a small blue label, then the big title. Home says “Find what you need”, the Academy “Your first 12 weeks”, the People directory “Who to ask”, and a week or test page “New Joiner Academy”. A service page shows “Service · <area name>” above its title (for example “Service · Order to Cash (O2C)”), and the Glossary, search results and document pages have their own short label. No extra description lines were added, because the pages were made shorter on purpose.

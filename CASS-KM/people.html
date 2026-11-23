@@ -53,6 +53,8 @@ button,input{font:inherit;color:inherit}
 .nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
 .mock{font-size:12px;background:var(--hl);color:var(--ink);border-bottom:1px solid var(--hl-line);padding-block:6px}
 .hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
+.eyebrow{margin:0 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand)}
+.hero .eyebrow{color:#a9c8f5}
 .hero h1{margin:0 0 4px;font-size:26px;text-wrap:balance}
 .hero p{margin:0 0 14px;color:var(--hdr-muted);max-width:65ch}
 .hero .search{display:flex;max-width:560px;background:var(--surface);border-radius:12px;overflow:hidden}
@@ -99,7 +101,7 @@ button,input{font:inherit;color:inherit}
 <body>
 <header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home"><img src="cass-logo.png" alt=""></a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a href="new-joiner-academy.html">New Joiner Academy</a><a class="on" href="people.html" aria-current="page">People directory</a><a href="admin.html">Admin login</a></nav></header>
 <div class="mock wrap" id="mockBanner" hidden></div>
-<section class="hero wrap"><h1>People directory</h1><p>Page owners, experts and the people to ask for new content, with their contact details.</p>
+<section class="hero wrap"><p class="eyebrow">Who to ask</p><h1>People directory</h1><p>Page owners, experts and the people to ask for new content, with their contact details.</p>
   <form class="search" role="search" onsubmit="return false"><label for="pq" class="sr">Search people</label><input id="pq" type="search" placeholder="Search by name, role or service, e.g. Credit or 3.1.1" autocomplete="off"></form></section>
 <main class="page wrap" id="page">
   <div class="chips" id="chips" role="group" aria-label="Filter by tower"></div>

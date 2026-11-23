@@ -54,6 +54,8 @@ mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
 .nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
 .mock{font-size:12px;background:var(--hl);color:var(--ink);border-bottom:1px solid var(--hl-line);padding-block:6px}
 .hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
+.eyebrow{margin:0 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand)}
+.hero .eyebrow{color:#a9c8f5}
 .hero h1{margin:0 0 4px;font-size:26px;text-wrap:balance}
 .hero p{margin:0 0 16px;color:var(--hdr-muted);max-width:65ch}
 .searchrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -244,6 +246,7 @@ textarea{width:100%;min-height:80px;padding:9px;border-radius:8px;border:1px sol
 </header>
 <div class="mock wrap" id="mockBanner" hidden></div>
 <section class="hero wrap">
+  <p class="eyebrow">Find what you need</p>
   <h1>CASS Knowledge Centre</h1>
   <div class="searchrow">
     <div class="searchbox">
@@ -589,7 +592,7 @@ function viewL2(){
   const items=ITEMS.filter(i=>i.l2===c&&vis(i));
   const approved=m.status==='Approved';
   const head=`<div class="crumb"><button type="button" data-view="home">Home</button> › Knowledge Centre › ${esc(node.l0.name)} › ${esc(node.l1.name)} › ${esc(nm)}</div>
-   <section class="panel pad"><div class="titlerow"><div><h2><span style="color:var(--muted)">${esc(c)}</span> ${esc(nm)}</h2><p class="sub">${esc(m.intro||'No knowledge content has been added for this service yet.')}</p></div>
+   <section class="panel pad"><div class="titlerow"><div><p class="eyebrow">Service · ${esc(node.l1.name)}</p><h2><span style="color:var(--muted)">${esc(c)}</span> ${esc(nm)}</h2><p class="sub">${esc(m.intro||'No knowledge content has been added for this service yet.')}</p></div>
    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="pill p-${cov}">${COV[cov]}</span>${ST[m.status]?`<span class="pill ${ST[m.status]}">${esc(m.status)}</span>`:''}<button type="button" class="linkbtn" data-legend aria-haspopup="dialog" aria-expanded="false">What do the labels mean?</button></div></div>
    ${metaRow([fieldShown('owner')?`<div><b>Page owner</b>${personBtn(m.owner,'Page owner · '+nm)}</div>`:'',fieldShown('expert')?`<div><b>Ask the expert</b>${personBtn(m.expert,'Ask the expert · '+nm)}</div>`:'',fieldShown('approver')?`<div><b>Approved by</b>${personBtn(m.approver,(approved?'Approved by':'Approver (approval pending)')+' · '+nm)}${approved?'':' <span class="pill p-draft" style="margin-top:4px">Pending</span>'}</div>`:'',fieldShown('lastReviewed')?`<div><b>Last reviewed</b>${m.lastReviewed?fmt(m.lastReviewed):'<span class="tba">Not yet</span>'}</div>`:''])}</section>`;
   let body='';
@@ -619,7 +622,7 @@ function viewSearch(){
     didYou=sug.length?`<p class="sub" style="margin-top:8px">Did you mean: ${sug.map(o=>`<button type="button" class="linkbtn" data-act="${esc(JSON.stringify(o.act))}">${esc(o.code+' '+o.label)}</button>`).join(' · ')}</p>`:'';
   }
   return `<div class="crumb"><button type="button" data-view="home">Home</button> › Search</div>
-  <section class="panel pad"><h2>Results for “${esc(q)}”</h2><p class="sub">${docs.length} document${docs.length===1?'':'s'}, ${svc.length} service${svc.length===1?'':'s'} and processes, ${fn.length} function${fn.length===1?'':'s'}, ${gls.length} glossary term${gls.length===1?'':'s'}, ${pp.length} ${pp.length===1?'person':'people'}${company!=='All'?' · documents are filtered to '+esc(company)+' (change the company filter to see all)':''}</p>${didYou}</section>
+  <section class="panel pad"><p class="eyebrow">Search</p><h2>Results for “${esc(q)}”</h2><p class="sub">${docs.length} document${docs.length===1?'':'s'}, ${svc.length} service${svc.length===1?'':'s'} and processes, ${fn.length} function${fn.length===1?'':'s'}, ${gls.length} glossary term${gls.length===1?'':'s'}, ${pp.length} ${pp.length===1?'person':'people'}${company!=='All'?' · documents are filtered to '+esc(company)+' (change the company filter to see all)':''}</p>${didYou}</section>
   ${sec('Documents & videos',docs,o=>itemCard(o.item,{title:hl(o.item.title,q),extra:`<span>· ${esc(o.item.type)} · ${esc(o.item.l2+' '+nameOf(o.item.l2))}</span>`}))}
   ${sec('Services & processes',svc,o=>`<button type="button" class="resrow" data-act="${esc(JSON.stringify(o.act))}"><span class="ic">${esc(o.code)}</span><span>${o.act.l2?`<i class="dot ${covOf(o.act.l2)}" aria-hidden="true"></i>`:''}<b>${hl(o.label,q)}</b><small>${esc(o.sub)}</small></span></button>`)}
   ${sec('Functions (L3)',fn,o=>`<button type="button" class="resrow" data-act="${esc(JSON.stringify(o.act))}"><span class="ic">${esc(o.code)}</span><span><b>${hl(o.label,q)}</b><small>${esc(o.sub)}</small></span></button>`)}
@@ -657,7 +660,7 @@ function viewGlossary(){
   const chips=[['all','All towers'],...Object.entries(TOWERNAMES),['none','Not assigned yet']];
   const az='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');if(GLOSSARY.some(g=>glLetter(g.term)==='#'))az.push('#');
   return `<div class="crumb"><button type="button" data-view="home">Home</button> › Glossary</div>
-  <section class="panel pad"><h2>Glossary</h2><p class="sub">Acronyms and terms used across CASS. Choose your tower to see the terms for your role, or search for a word.</p>
+  <section class="panel pad"><p class="eyebrow">Acronyms and terms</p><h2>Glossary</h2><p class="sub">Acronyms and terms used across CASS. Choose your tower to see the terms for your role, or search for a word.</p>
    <div class="gl-tools"><label for="gq" class="sr">Search the glossary</label><input id="gq" class="tfilter" type="search" placeholder="Search a term or meaning, e.g. LC or guarantee" value="${esc(gl.q)}" autocomplete="off">
     <div class="gl-chips" role="group" aria-label="Filter by tower">${chips.map(([k,n])=>`<button type="button" class="chipbtn ${/^[1-4]$/.test(k)?'tchip tw-'+k:''}" data-gtower="${esc(k)}" aria-pressed="${gl.tower===k}">${esc(n)}</button>`).join('')}</div></div>
    <div class="gl-meta"><span id="glcount" aria-live="polite">${r.count} term${r.count===1?'':'s'}</span><span class="gl-az" id="glaz" role="group" aria-label="Jump to letter">${az.map(L=>`<button type="button" class="azb" data-gletter="${L}" ${r.letters.includes(L)?'':'disabled'} aria-label="Terms starting with ${L==='#'?'a number':L}">${L}</button>`).join('')}</span></div>

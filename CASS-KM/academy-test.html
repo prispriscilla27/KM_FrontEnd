@@ -54,6 +54,8 @@ h2[tabindex="-1"]:focus,.result[tabindex="-1"]:focus{outline:none}
 .nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
 .mock{font-size:12px;background:var(--hl);color:var(--ink);border-bottom:1px solid var(--hl-line);padding-block:6px}
 .hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
+.eyebrow{margin:0 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand)}
+.hero .eyebrow{color:#a9c8f5}
 .hero h1{margin:0 0 4px;font-size:26px;text-wrap:balance;overflow-wrap:anywhere}
 .hero p{margin:0;color:var(--hdr-muted);max-width:65ch}
 .page{padding-block:22px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
@@ -118,7 +120,7 @@ h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
 <body>
 <header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home"><img src="cass-logo.png" alt=""></a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a class="on" href="new-joiner-academy.html">New Joiner Academy</a><a href="people.html">People directory</a><a href="admin.html">Admin login</a></nav></header>
 <div class="mock wrap" id="mockBanner" hidden></div>
-<section class="hero wrap"><h1 id="tTitle">New Joiner Academy test</h1><p id="tSub"></p></section>
+<section class="hero wrap"><p class="eyebrow">New Joiner Academy</p><h1 id="tTitle">New Joiner Academy test</h1><p id="tSub"></p></section>
 <main class="page wrap" id="page"><section class="panel pad" id="box"></section></main>
 <script src="km-data.js"></script>
 <script src="km-boot.js"></script>

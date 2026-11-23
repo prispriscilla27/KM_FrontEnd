@@ -54,6 +54,8 @@ h2[tabindex="-1"]:focus,.result[tabindex="-1"]:focus{outline:none}
 .nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
 .mock{font-size:12px;background:var(--hl);color:var(--ink);border-bottom:1px solid var(--hl-line);padding-block:6px}
 .hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
+.eyebrow{margin:0 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand)}
+.hero .eyebrow{color:#a9c8f5}
 .hero h1{margin:0 0 4px;font-size:26px;text-wrap:balance;overflow-wrap:anywhere}
 .hero p{margin:0;color:var(--hdr-muted);max-width:65ch}
 .page{padding-block:22px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
@@ -168,7 +170,7 @@ document.title=it.title+' · CASS Knowledge Centre';
 const chip=p=>p?`<button type="button" class="person" data-person="${esc(p.id)}" aria-haspopup="dialog"><span class="av" aria-hidden="true">${esc(initials(p.name))}</span><span>${esc(p.name)}</span></button>`:'<span class="muted"><i>To be assigned</i></span>';
 const back=svc?`index.html#l2-${encodeURIComponent(it.l2)}`:'index.html';
 const head=`<div class="crumb"><a href="index.html">Home</a> › Knowledge Centre › ${svc?`<a href="${back}">${esc(it.l2+' '+svc.name)}</a>`:esc(it.l2)} › Document</div>
- <section class="panel pad"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><span class="pill p-role">${esc(it.type)}</span>${ST[it.status]?`<span class="pill ${ST[it.status]}">${esc(it.status)}</span>`:''}${it.requireAccess?'<span class="pill p-lock">Require access</span>':''}</div>
+ <section class="panel pad"><p class="eyebrow">Document</p><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><span class="pill p-role">${esc(it.type)}</span>${ST[it.status]?`<span class="pill ${ST[it.status]}">${esc(it.status)}</span>`:''}${it.requireAccess?'<span class="pill p-lock">Require access</span>':''}</div>
  <h2>${esc(it.title)}</h2>${it.description?`<p class="sub">${esc(it.description)}</p>`:''}
  <div class="dmeta"><div><b>Version</b>${esc(it.version||'')}</div><div><b>Last updated</b>${fmt(it.updated)}</div><div><b>Views</b>${window.kmEye?window.kmEye(it.id):''}</div><div><b>Owner</b>${chip(owner)}</div><div><b>Service</b>${esc(it.l2)} ${esc(svc?svc.name:'')}</div></div></section>`;
 const foot=`<div class="footnav"><a class="btn ghost" href="${back}">Back to Knowledge Centre</a></div>`;

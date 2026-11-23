@@ -92,6 +92,15 @@ run(async browser => {
   ctx = await newContext(browser, { errors }); p = await ctx.newPage(); await adminLogin(p); ok(await p.locator('header .brand img[src="cass-logo.png"]').count() === 1 && /Admin/.test(await p.locator('header .brand').innerText()), 'Admin header: logo with the word Admin'); await ctx.close();
   ctx = await newContext(browser, { errors }); p = await ctx.newPage(); await p.goto(BASE + 'admin.html'); await sleep(300); ok(await p.locator('.brand img[src="cass-logo.png"]').count() >= 1, 'Admin sign-in page: logo too'); await ctx.close();
 
+  console.log('4c. Same page header (idea 3)');
+  ctx = await newContext(browser, { errors }); p = await ctx.newPage();
+  const eb = async u => { await go(u); return (await p.locator(/#/.test(u) ? '.panel .eyebrow' : '.eyebrow').first().innerText().catch(() => '')).trim() };
+  const exp = { 'index.html': 'FIND WHAT YOU NEED', 'index.html#l2-3.1.1': 'SERVICE · ', 'index.html#glossary': 'ACRONYMS AND TERMS', 'new-joiner-academy.html': 'YOUR FIRST 12 WEEKS', 'academy-week.html?week=1&tower=human-resources': 'NEW JOINER ACADEMY', 'academy-test.html?test=cp1&tower=human-resources': 'NEW JOINER ACADEMY', 'people.html': 'WHO TO ASK', 'document.html?item=lc-flow': 'DOCUMENT' };
+  for (const [u, t] of Object.entries(exp)) { const v = await eb(u); ok(v.startsWith(t), 'small label above the title on ' + u + ' (“' + v + '”)') }
+  await go('index.html#l2-3.1.1'); ok(/^SERVICE · .+/.test(await p.locator('.panel .eyebrow').first().innerText()) && await p.locator('.panel .eyebrow').first().evaluate(e => e.nextElementSibling.tagName === 'H2'), 'service pages show the area name in the label, directly above the title');
+  await go('index.html'); ok(await p.locator('.hero .eyebrow').evaluate(e => getComputedStyle(e).textTransform === 'uppercase' && e.nextElementSibling.tagName === 'H1'), 'the label sits directly above the big title');
+  await ctx.close();
+
   console.log('5. Admin');
   ctx = await newContext(browser, { errors }); p = await ctx.newPage(); await adminLogin(p); await nav(p, 'set');
   ok(await p.locator('#reqc').count() === 1 && await p.locator('#reqc tbody tr').count() === 11, 'Settings › Who receives content requests: 11 areas');
