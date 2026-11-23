@@ -162,11 +162,15 @@ The site has no server, so publishing writes three things into the site folder: 
 
 ### People directory and “Request this content”
 
-- **People directory** (`people.html`, “People directory” in the top bar) lists everyone from Admin › People directory. Readers can filter by tower, search by name, role or service, and open a profile. The profile shows the email address (click it to open a new email to that person), phone, office and hours, an **Open in Outlook on the web** link, and the services the person owns or is the expert for. Cards show no email addresses.
+- **People directory** (`people.html`, “People directory” in the top bar) lists everyone from Admin › People directory. Readers can filter by tower, search by name, role or service, and open a profile. The profile shows the email address (click it to open a new email to that person), phone, office and hours, an **Email** button, and the services the person owns or is the expert for. Cards show no email addresses.
 - Each person has a **Tower** (Admin › People directory › Edit) that the tower filter uses. People without a tower appear under “Other teams”.
-- **Request this content** (shown on a service page that has no content yet) goes to the profile of the person who receives requests for that area (L1), with a **ready-made email**: the button opens the visitor's email program with **To:**, subject and message filled in (nothing is sent until they press Send). If Outlook is the default email program, it opens in Outlook; **Open in Outlook on the web** is there for people who use Outlook in the browser.
+- **Request this content** (shown on a service page that has no content yet, under a one-line “No SOPs, guides or videos have been added for this service yet.”) goes to the profile of the person who receives requests for that area (L1). The profile's title names the exact service (for example “Request content for 3.3.1 Master Data Management”) and lists only the area that applies, even if the person looks after several. **Email** opens the visitor's email program with **To:**, subject and message filled in (nothing is sent until they press Send); if Outlook is the default email program, it opens in Outlook. **Copy the message** puts the same To, subject and text on the clipboard.
 - **Admin › Settings › Who receives content requests** (Super admin only) chooses the person for each of the 11 areas. With nobody chosen, the button copies the request text instead.
 - The email buttons use standard `mailto:` links, so they open whichever email program the visitor's computer uses.
+
+### Academy progress timeline
+
+The learning path shows a 12-week timeline: done weeks are ticked, the current week says **NOW**, and the checkpoint tests (CP 1, CP 2, CP 3 and Final) sit at the end of each month. Each week below keeps its progress ring (for example 2/4). On a phone the timeline scrolls sideways inside its box and brings the current week into view.
 
 ### Colours
 

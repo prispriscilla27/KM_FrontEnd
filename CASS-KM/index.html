@@ -582,7 +582,7 @@ const metaRow=cells=>{const h=cells.join('');return h?`<div class="meta">${h}</d
 function requestBox(c){
   const n=L2INDEX[c],l1=c.split('.').slice(0,2).join('.'),pid=((D.settings||{}).requestContacts||{})[l1],p=pid&&PEOPLE[pid];
   const btn=p?`<a class="btn primary req" href="people.html?request=${encodeURIComponent(c)}#person-${encodeURIComponent(pid)}">Request this content</a>`:`<button type="button" class="btn primary req" data-req="${esc(c)}">Request this content</button>`;
-  return `<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${btn}<button type="button" class="btn" data-view="home">Back to home</button></div>${p?`<p class="note" style="margin:10px 0 0">Requests for ${esc(n.l1.name)} go to <b>${esc(p.name)}</b> (${esc(p.role)}). You will see their email address and a message that is ready to send.</p>`:''}`}
+  return `<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${btn}<button type="button" class="btn" data-view="home">Back to home</button></div>`}
 function viewL2(){
   const c=state.l2,m=meta(c),node=L2INDEX[c],cov=covOf(c),nm=nameOf(c);
   const items=ITEMS.filter(i=>i.l2===c&&vis(i));
@@ -594,7 +594,7 @@ function viewL2(){
   let body='';
   const steps=stepsOf(c);
   if(cov==='none'&&!items.length&&!steps){
-    body+=`<section class="panel pad empty-state"><h3 class="sec">Content not started</h3><p class="sub">The functions above are defined in the service taxonomy, but no SOPs, guides or videos have been added yet. Content is added through the KM governance steps: Tower Head meeting, PIC meeting, input, review and approval.</p>${requestBox(c)}</section>`;
+    body+=`<section class="panel pad empty-state"><h3 class="sec">Content not started</h3><p class="sub">No SOPs, guides or videos have been added for this service yet.</p>${requestBox(c)}</section>`;
   } else if(steps){
     if(!steps.find(s=>s.id===state.step))state.step=defaultStep(c);
     const cur=steps.find(s=>s.id===state.step);

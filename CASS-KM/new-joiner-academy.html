@@ -139,6 +139,18 @@ h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
 @media (max-width:950px){.months{grid-template-columns:minmax(0,1fr)}}
 [hidden]{display:none!important}
 .svcdd{margin:10px 0 4px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--surface)}.svcdd summary{cursor:pointer;font-weight:650;font-size:13.5px}.svcdd ul{list-style:none;margin:8px 0 2px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:4px 14px}.svcdd a{display:block;padding:4px 0;font-size:13px;color:var(--brand);text-decoration:none}.svcdd a:hover{text-decoration:underline}.svcdd a b{color:var(--muted);font-weight:600;margin-right:4px}
+/* progress timeline: done / you are here / coming up, with the checkpoint tests; scrolls sideways inside its box on a phone */
+.tl h3{margin:0 0 2px;font-size:16px}.tl .sub{margin:0 0 12px;color:var(--muted);font-size:13px}
+.tl-scroll{overflow-x:auto;padding-bottom:4px}.tl-in{display:flex;gap:10px;min-width:900px;position:relative}
+.tl-m{min-width:0}.tl-ml{font-size:11.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;white-space:nowrap}
+.tl-row{list-style:none;margin:0;padding:0;display:flex;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.tl-row li{flex:1;min-width:64px;padding:9px 4px 8px;text-align:center;font-size:12px;font-weight:700;border-right:1px solid var(--line);display:grid;gap:3px;justify-items:center;align-content:start;background:var(--surface);color:var(--muted)}
+.tl-row li:last-child{border-right:0}.tl-row li small{font-weight:600;font-size:10.5px;line-height:1.2;padding:0 3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tl-row li.done{background:var(--brand-soft);color:var(--brand)}.tl-row li.now{background:var(--now-bg,var(--hdr1));color:var(--now-ink,#fff)}
+.tl-row li.cp{flex:none;width:62px;min-width:62px;background:var(--surface-2);color:var(--ink)}.tl-row li.cp.done{background:var(--brand-soft);color:var(--brand)}
+.tl-leg{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--muted)}.tl-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--now-bg:var(--brand);--now-ink:var(--on-brand)}}
+:root[data-theme="dark"]{--now-bg:var(--brand);--now-ink:var(--on-brand)}
 </style>
 </head>
 <body>
@@ -158,11 +170,10 @@ h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
       <button type="button" class="back" id="backBtn">← Back to towers</button>
     </div>
     <details class="svcdd" id="svcDd"><summary>Services in this area</summary><ul id="svcList"></ul></details>
-    <div class="bar" role="img" id="barWrap"><span id="bar"></span></div>
-    <div class="progress"><b id="progress"></b><span id="nextUp"></span></div>
     <p class="note">Progress and test results are saved on this device only.</p>
     <button type="button" class="reset" id="resetBtn" hidden>Reset my progress (demo only)</button>
   </section>
+  <section class="panel pad tl" id="timeline" hidden aria-labelledby="tlH"></section>
   <section class="months" id="months" hidden aria-label="Weeks by month"></section>
   <section class="panel final" id="finalBox" hidden aria-labelledby="finalH"></section>
   <div id="faqBox"></div>
@@ -198,7 +209,7 @@ function weekCard(w,W){
   const alt=!open?`Week ${n}: locked`:complete?`Week ${n}: complete`+(I.total?`, ${I.total} of ${I.total} materials finished`:''):I.total?`Week ${n}: ${I.fin} of ${I.total} materials finished`:`Week ${n}: no materials to finish yet`;
   const rg=ring(p,48,label,!open?'lock':complete?'done':'',alt);
   const wk=open?`<a class="btn wkbtn" href="${WEEK_PAGE}?week=${n}${q(tower)}">${complete?'Review':'Open'} week ${n} →</a>`:`<button type="button" class="btn wkbtn" disabled>Week ${n} · locked</button>`;
-  const count=I.total?`${I.fin} of ${I.total} materials finished`:(complete?'Marked as done':'Nothing to finish yet');
+  const count=I.total?'':(complete?'Marked as done':'Nothing to finish yet');   /* the ring already shows how many materials are finished */
   const note=!open?`<span class="lockmsg">${esc(reason)}</span>`:(I.frozen&&complete?'<span class="frozenmsg">Completed. Locked because a checkpoint covering this week has been taken.</span>':'');
   const t=A.tests.find(x=>x.after===n&&x.id!=='final');
   let tb='';if(t){const b=testBox(t,done);tb=`<div class="check"><b>${esc(t.title)} · ${esc(t.covers)}</b><p>${b.why?esc(b.why)+' ':''}Covers ${esc(lower(t.covers))}.</p>${b.btn}${b.res}</div>`}
@@ -207,9 +218,21 @@ function weekCard(w,W){
 /* page guide: one for choosing the tower and area, one for the learning path (shown once each) */
 let guideKey='';
 function guideFor(){const k=tower?'path':'academy';if(k===guideKey)return;guideKey=k;window.kmGuide&&window.kmGuide(k)}
+function timeline(W){
+  const done=W.done,cur=WEEKS.find(w=>!done.includes(w.n)),curN=cur?cur.n:0,tests=(A.tests||[]).filter(t=>t.id!=='final'),F=TESTS.final;
+  const wk=w=>{const st=done.includes(w.n)?'done':w.n===curN?'now':'up',txt=st==='done'?'done':st==='now'?'you are here':'coming up';
+    return `<li class="${st}" title="Week ${w.n} · ${esc(w.title)}" aria-label="Week ${w.n}, ${esc(w.title)}: ${txt}"><span aria-hidden="true">${st==='done'?'✓':st==='now'?'NOW':w.n}</span><small aria-hidden="true">${esc(w.title)}</small></li>`};
+  const cp=(t,lab)=>{const r=result(tower,t.id),ok=!!(r&&r.passed);return `<li class="cp ${ok?'done':''}" title="${esc(t.title)}" aria-label="${esc(t.title)}: ${ok?'passed':'not passed yet'}"><span aria-hidden="true">${ok?'✓':'◆'}</span><small aria-hidden="true">${lab}</small></li>`};
+  const months=[['Month 1 · Understand',1,4],['Month 2 · Practice',5,8],['Month 3 · Apply',9,12]];
+  const groups=months.map(([title,a,b],gi)=>{const ws=WEEKS.filter(w=>w.n>=a&&w.n<=b),t=tests.find(x=>x.after===b);let items=ws.map(wk).join('')+(t?cp(t,esc(String(t.title).replace('Checkpoint','CP'))):'');
+    if(gi===months.length-1&&F)items+=cp(F,'Final');return `<div class="tl-m" style="flex:${ws.length+(t?1:0)+(gi===months.length-1&&F?1:0)}"><div class="tl-ml">${title}</div><ol class="tl-row">${items}</ol></div>`}).join('');
+  const sub=curN?`You are in week ${curN} of ${NWEEKS}. ${done.length} ${done.length===1?'week is':'weeks are'} done.`:`All ${NWEEKS} weeks are done. Take Checkpoint 3, then the final checkpoint.`;
+  $('timeline').innerHTML=`<h3 id="tlH">Your ${NWEEKS}-week path</h3><p class="sub">${sub}</p><div class="tl-scroll"><div class="tl-in">${groups}</div></div><div class="tl-leg" aria-hidden="true"><span><i style="background:var(--brand-soft)"></i>Done</span><span><i style="background:var(--now-bg,var(--hdr1))"></i>You are here</span><span><i style="background:var(--surface)"></i>Coming up</span><span><i style="background:var(--surface-2)"></i>Checkpoint test</span></div>`;
+  const sc=$('timeline').querySelector('.tl-scroll'),nowEl=sc.querySelector('.now');if(nowEl)sc.scrollLeft=Math.max(0,nowEl.offsetLeft-sc.clientWidth/2+nowEl.offsetWidth/2);
+}
 function render(){
   guideFor();$('faqBox').innerHTML=window.kmFaq?window.kmFaq('academy'):'';
-  $('picker').hidden=!!tower;$('journey').hidden=!tower;$('months').hidden=!tower;$('finalBox').hidden=!tower;
+  $('picker').hidden=!!tower;$('journey').hidden=!tower;$('timeline').hidden=!tower;$('months').hidden=!tower;$('finalBox').hidden=!tower;
   if(!tower){
     const PT=pickT?towerObj(pickT):null;
     $('pickH').textContent=PT?'Choose your area in '+PT.name:'Choose your tower';
@@ -228,11 +251,7 @@ function render(){
   $('svcList').innerHTML=L2.map(x=>`<li><a href="index.html#l2-${encodeURIComponent(x.code)}"><b>${esc(x.code)}</b> ${esc(x.name)}</a></li>`).join('');
   const months=[['Month 1 · Understand',1,4],['Month 2 · Practice',5,8],['Month 3 · Apply',9,12]];
   $('months').innerHTML=months.map(([title,a,b])=>`<div class="panel month"><h3>${title}</h3>${WEEKS.filter(w=>w.n>=a&&w.n<=b).map(w=>weekCard(w,W)).join('')}</div>`).join('');
-  const pct=Math.round(done.length/NWEEKS*100);
-  $('bar').style.width=pct+'%';$('barWrap').setAttribute('aria-label',`${done.length} of ${NWEEKS} weeks completed`);
-  $('progress').textContent=`${done.length} of ${NWEEKS} weeks completed`;
-  const next=WEEKS.find(w=>!done.includes(w.n));
-  $('nextUp').textContent=next?`Next: Week ${next.n} · ${next.title}`:'All weeks done. Take Checkpoint 3, then the final checkpoint.';
+  timeline(W);
   const F=TESTS.final;
   if(F){const f=testBox(F,done,true);
     $('finalBox').innerHTML=`<div><h3 id="finalH">Final checkpoint</h3><p>A test on everything you have learned, with extra weight on the last month (weeks 9–12).${f.why?' '+esc(f.why):''}</p>${f.res?`<p style="margin-top:6px">${f.res}</p>`:''}</div>${f.btn}`}
