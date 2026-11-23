@@ -17,6 +17,10 @@
   var flag=null;try{flag=S?S.getItem(FLAG):null}catch(e){}
   var auto=false;
   try{if(L&&L.getItem(DRAFT)&&flag!=='0'&&(flag==='1'||unpublished()>0)){draft=JSON.parse(L.getItem(DRAFT));preview=!!(draft&&draft.taxonomy&&draft.items);auto=flag!=='1'}}catch(e){draft=null;preview=false}
+  /* A draft saved by an older admin page may lack newer parts of the data (for example the welcome pop-up texts): take those from the
+     published file, so new features still show while an admin has unpublished changes. */
+  if(preview&&pub){Object.keys(pub).forEach(function(k){if(!(k in draft))draft[k]=pub[k]});
+    if(pub.settings&&typeof pub.settings==='object'&&draft.settings&&typeof draft.settings==='object')Object.keys(pub.settings).forEach(function(k){if(!(k in draft.settings))draft.settings[k]=pub.settings[k]})}
   window.KM=preview?draft:pub;
   window.KM_PUBLISHED=pub;
   window.KM_PREVIEW=preview;

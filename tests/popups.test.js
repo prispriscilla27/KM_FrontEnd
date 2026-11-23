@@ -117,6 +117,15 @@ run(async browser => {
   await p.goto('about:blank'); await p.goto(BASE + 'index.html#glossary'); await sleep(500); ok(await p.locator('.kmfaq').count() === 0, 'a page whose only question is incomplete shows no block');
   await ctx.close();
 
+  console.log('3b. A browser that still holds an old unpublished draft');
+  ctx = await newContext(browser, { popups: true, errors }); p = await ctx.newPage();
+  await p.goto(BASE + 'index.html'); await sleep(400);
+  await p.evaluate(() => { const d = JSON.parse(JSON.stringify(window.KM_PUBLISHED)); delete d.settings.welcome; delete d.settings.guides; delete d.settings.faqs; localStorage.setItem('cassKM.draft', JSON.stringify(d)); localStorage.setItem('cassKM.draftMeta', '{"n":35}'); localStorage.removeItem('cassKM.welcomeSeen') });
+  await p.reload(); await sleep(600);
+  ok(await p.locator('.kmprev').count() === 1, 'the orange “unpublished changes” bar shows (old draft in use)');
+  ok(await p.locator('.kmw').count() === 1 && await p.locator('.kmfaq-i').count() === 3, 'the welcome pop-up and the common questions still show');
+  await ctx.close();
+
   console.log('4. Card styling');
   ctx = await newContext(browser, { errors }); p = await ctx.newPage(); await p.goto(BASE + 'index.html'); await sleep(500);
   const st = await p.evaluate(() => ({ panel: getComputedStyle(document.querySelector('.panel.pad')).borderRadius, item: getComputedStyle(document.querySelector('.item')).borderRadius }));
