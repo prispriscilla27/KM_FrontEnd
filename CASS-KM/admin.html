@@ -38,7 +38,7 @@ button,input,textarea,select{font:inherit;color:inherit}
 .wrap{padding-inline:max(16px,3vw)}
 .top{background:linear-gradient(105deg,var(--hdr1),#163360);color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
 .top a{color:var(--hdr-ink)}
-.brand{font-weight:800;font-size:19px;letter-spacing:.4px}
+.brand{display:inline-flex;align-items:center}.brand img{display:block;height:44px;width:auto}@media (max-width:560px){.brand img{height:34px}}
 .brand small{font-weight:600;font-size:13px;margin-left:10px;color:var(--hdr-muted);letter-spacing:0}
 .nav{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 .nav a,.nav button{padding:8px 12px;border-radius:8px;background:none;border:0;cursor:pointer;color:var(--hdr-ink);font-size:14px}
@@ -406,7 +406,7 @@ function touch(){if(!me)return;me.t=Date.now();try{ss().setItem(SESS,JSON.string
 function logout(msg){me=null;try{ss().removeItem(SESS)}catch(e){}try{localStorage.removeItem('cassKM.adminActive')}catch(e){}closeAllLayers();clearInterval(idleTimer);renderLogin(msg||'')}
 function lockState(){try{return JSON.parse(ss().getItem(LOCKK)||'{"fails":0,"until":0}')}catch(e){return {fails:0,until:0}}}
 function setLock(s){try{ss().setItem(LOCKK,JSON.stringify(s))}catch(e){}}
-const topBarLogin=()=>`<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS home">CASS</a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a href="new-joiner-academy.html">New Joiner Academy</a><a class="on" href="admin.html">Admin login</a></nav></header>`;
+const topBarLogin=()=>`<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS home"><img src="cass-logo.png" alt=""></a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a href="new-joiner-academy.html">New Joiner Academy</a><a class="on" href="admin.html">Admin login</a></nav></header>`;
 const HONEST='This password stops casual edits. It is not a security boundary, because anyone can read the page code. Real protection comes from folder permissions: only admins should have write access to the folder that holds km-data.js and km-accounts.js.';
 function renderLogin(msg){
   document.title='CASS Admin login';
@@ -763,7 +763,7 @@ const VIEWS={};
 const LOCK_SVG='<svg class="lk" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none"/></svg>';
 function renderShell(){
   const a=ME();document.title='CASS Admin';
-  APP.innerHTML=`<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS home">CASS<small>Admin</small></a>
+  APP.innerHTML=`<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Admin home"><img src="cass-logo.png" alt=""><small>Admin</small></a>
    <nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a href="new-joiner-academy.html">New Joiner Academy</a>
     <span class="who">Signed in as <b>${esc(a.name)}</b> ${a.type==='superadmin'?'<span class="pill p-role">All towers</span>':towerPills(a.towers)} <span class="pill tag-type">${TYPE_LABEL[a.type]}</span></span>
     ${a.type!=='editor'?`<button type="button" class="bell" data-act="bell" id="bell" aria-label="Waiting for approval"></button>`:''}
@@ -2280,11 +2280,11 @@ function RCS(){const s=DR.settings;if(!s.requestContacts||typeof s.requestContac
 function requestsHtml(){
   const rc=RCS(),rows=[];DR.taxonomy.forEach(t=>t.l1.forEach(a=>rows.push({t,a})));
   return `<section class="panel pad gap" id="reqc"><h2>Who receives content requests</h2>
-   <p class="sub">When a reader clicks <b>Request this content</b> on a service page that has no content yet, they go to the profile of the person chosen here for that area (L1). The profile shows the email address and opens an email with the request ready. With no person chosen, the request text is copied instead. Only Super admin can change this.</p>
+   <p class="sub">When a reader clicks <b>Request this content</b> on a service page that has no content yet, they go to the profile of the person chosen here for that area (L1). The profile shows the email address and opens an email with the request ready. With no person chosen, the button opens the People directory. Only Super admin can change this.</p>
    <div class="tablewrap"><table><thead><tr><th>Area (L1)</th><th>Tower</th><th>Person who receives the requests</th></tr></thead><tbody>${rows.map(({t,a})=>`<tr><td><b>${esc(a.code)}</b> ${esc(a.name)}</td><td>${towerPills([t.code])}</td><td>${pk('rc-'+a.code,rc[a.code]||'',{optional:1,label:'Person for '+a.name})}</td></tr>`).join('')}</tbody></table></div></section>`}
 document.addEventListener('input',e=>{const h=e.target;if(!h||h.tagName!=='INPUT'||h.type!=='hidden'||!/^rc-/.test(h.name)||!h.closest('#reqc'))return;
   if(!need('settings')){rerender();return}const code=h.name.slice(3),rc=RCS();if((rc[code]||'')===h.value)return;
-  if(h.value)rc[code]=h.value;else delete rc[code];ppLog('requestContacts',`Content requests for ${code}: ${h.value?personName(h.value):'nobody (the request text is copied)'}`);toast('Saved.')});
+  if(h.value)rc[code]=h.value;else delete rc[code];ppLog('requestContacts',`Content requests for ${code}: ${h.value?personName(h.value):'nobody (the button opens the People directory)'}`);toast('Saved.')});
 ON.wlOn=el=>{const w=WLC();w.on=el.checked;ppLog('welcome','Welcome pop-up '+(w.on?'on':'off'));toast('Saved.')};
 ON.wlField=el=>{const w=WLC(),f=el.dataset.f,v=el.value.trim();if(f==='title'&&!v){toast('The title cannot be empty.');el.value=w.title;return}if(v===(w[f]||''))return;w[f]=v;ppLog('welcome','Welcome pop-up: '+({title:'title',text:'introduction',button:'button label'}[f]||f)+' edited');toast('Saved.')};
 ON.wlStep=el=>{const w=WLC(),i=+el.dataset.i,f=el.dataset.f,v=el.value.trim();while(w.steps.length<3)w.steps.push({lead:'',text:''});const old=w.steps[i][f]||'';if(v===old)return;w.steps[i][f]=v;

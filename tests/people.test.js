@@ -46,21 +46,17 @@ run(async browser => {
   ok(rm.startsWith('mailto:mirela.tanbury@cass-example.co.id?') && decodeURIComponent(u.searchParams.get('subject')) === 'Content request: 1.1.1 Customer Data Management' && /Hello Mirela,/.test(decodeURIComponent(rm)) && /index\.html#l2-1\.1\.1/.test(decodeURIComponent(rm)), 'the email button opens an email To: Mirela with the subject and message ready');
   ok(await p.locator('.pf a[href*="outlook.office.com"]').count() === 0 && await p.locator('#pfMail').getAttribute('href') === 'mailto:mirela.tanbury@cass-example.co.id', 'no Outlook-on-the-web button; the email address itself is a mail link');
   const rbx = await p.locator('.reqbox').innerText();
-  ok(await p.locator('#pfReq').innerText() === 'Email' && /^Request content for 1\.1\.1 Customer Data Management/.test(rbx) && !/looks after|nothing is sent/i.test(rbx), 'the request box has just the title and the buttons “Email” and “Copy the message”');
+  ok(await p.locator('#pfReq').innerText() === 'Email' && /^Request content for 1\.1\.1 Customer Data Management/.test(rbx) && !/looks after|nothing is sent/i.test(rbx), 'the request box has just the title and the “Email” button');
   await go('people.html?request=3.3.1#person-leona');
   ok(/Request content for 3\.3\.1 /.test(await p.locator('.reqbox').innerText()) && /3\.3 Record to Report/.test(await p.locator('.pf').innerText()) && !/3\.1 Order to Cash|3\.7 /.test(await p.locator('.pf').innerText()), 'Leona looks after 7 areas, but a request from 3.3.1 names only that service and lists only its area');
   await go('people.html?request=3.2.1#person-leona'); ok(/Request content for 3\.2\.1 /.test(await p.locator('.reqbox').innerText()) && /3\.2 Purchase to Pay/.test(await p.locator('.pf').innerText()), 'a request from another service of the same person changes the text accordingly');
-  await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: BASE.replace(/\/$/, '') });
-  await go('people.html?request=1.1.1#person-mirela'); await p.click('[data-copy]'); await sleep(250);
-  const clip = await p.evaluate(() => navigator.clipboard.readText());
-  ok(/^To: mirela\.tanbury@cass-example\.co\.id\nSubject: Content request: 1\.1\.1 Customer Data Management\n\nHello Mirela,\n\nPlease add knowledge content \(SOPs, guides, videos\) for this service in the CASS Knowledge Centre:\n1\.1\.1 Customer Data Management \(Customer Operations › Customer Success\)\nPage: .*index\.html#l2-1\.1\.1\n\nThank you\.$/.test(clip), '“Copy the message” puts the whole email (To, Subject, text) on the clipboard');
-  ok(/Message copied/.test(await p.locator('#toast').innerText()), 'and says “Message copied. Paste it into an email.”');
+  await go('people.html?request=1.1.1#person-mirela'); ok(await p.locator('[data-copy]').count() === 0 && !/Copy the message/i.test(await p.locator('.reqbox').innerText()) && await p.locator('#toast').count() === 0, 'there is no “Copy the message” button any more');
   await go('index.html#l2-2.1.1'); ok(/person-dorian/.test(await p.locator('a.req').getAttribute('href').catch(() => '')), 'another area goes to its own person (Procurement → Dorian)');
   await go('index.html#l2-4.1.1'); const href4 = await p.locator('a.req').getAttribute('href').catch(() => null); ok(href4 === null || /person-calista/.test(href4), 'Human Resources → Calista');
   await go('index.html#l2-3.3.1'); ok(/person-leona/.test(await p.locator('a.req').getAttribute('href').catch(() => '')), 'Finance & Accounting areas → Leona');
   await ctx.close();
   ctx = await newContext(browser, { data: D => { delete D.settings.requestContacts['1.1'] } }); p = await ctx.newPage();
-  await go('index.html#l2-1.1.1'); ok(await p.locator('button.req[data-req]').count() === 1, 'no person chosen for an area: the old “copy the request” button is used');
+  await go('index.html#l2-1.1.1'); ok(await p.locator('a.req').getAttribute('href') === 'people.html' && await p.locator('button.req').count() === 0, 'no person chosen for an area: the button opens the People directory (nothing is copied)');
   await ctx.close();
   ctx = await newContext(browser, { data: D => { D.settings.guides.people.on = true }, popups: true, errors }); p = await ctx.newPage();
   await p.goto(BASE + 'index.html'); await sleep(300); await p.click('.kmw-go'); await p.goto(BASE + 'people.html'); await sleep(500);
@@ -77,6 +73,24 @@ run(async browser => {
   ctx = await browser.newContext({ colorScheme: 'dark', viewport: { width: 1440, height: 900 } }); p = await ctx.newPage(); await p.goto(BASE + 'index.html'); await sleep(400);
   ok(await p.evaluate(() => getComputedStyle(document.body).backgroundColor) === 'rgb(9, 23, 43)', 'dark mode uses the navy background');
   await ctx.close();
+
+  console.log('4b. Calmer tower colours and the CASS logo');
+  ctx = await newContext(browser, { errors }); p = await ctx.newPage();
+  await go('people.html'); ok(await p.locator('.pcard .pill.tw').count() === 0 && await p.locator('.av').first().evaluate(e => getComputedStyle(e).backgroundColor) === 'rgb(11, 31, 58)', 'people cards: no coloured tower label, every avatar is the same navy');
+  const cols = await p.evaluate(() => [...document.querySelectorAll('.pill.p-own,.pill.p-exp,.pill.p-req')].map(e => getComputedStyle(e).backgroundColor)); ok(cols.length > 0 && new Set(cols).size === 1, 'the role chips all share one light-blue tint');
+  await p.click('.pcard >> nth=0'); await sleep(200); ok(await p.locator('.pf .pill.tw').count() === 0, 'the profile has no tower label either');
+  await go('index.html#l2-1.1.1'); ok(await p.evaluate(() => { const v = ['--tc'].map(k => getComputedStyle(document.querySelector('.tw-1, .tw-2, .tw-3, .tw-4') || document.body).getPropertyValue(k).trim()); return !/^#(be185d|0e7490|8a4b14|374151)$/i.test(v[0]) }), 'Knowledge Centre: towers no longer use four different colours');
+  const css = await p.evaluate(() => [...document.styleSheets].flatMap(s => [...s.cssRules]).map(r => r.cssText).join('\n')); ok(!/--t1\)|--t2\)|--t3\)|--t4\)/.test(css), 'the tower colours are not used by any rule');
+  for (const u of ['index.html', 'new-joiner-academy.html', 'academy-week.html?week=1&tower=human-resources', 'academy-test.html?test=cp1&tower=human-resources', 'document.html?item=lc-flow', 'people.html']) {
+    await go(u); const lg = await p.evaluate(() => { const a = document.querySelector('header .brand'), i = a && a.querySelector('img'), r = i && i.getBoundingClientRect(); return { src: i && i.getAttribute('src'), loaded: !!(i && i.complete && i.naturalWidth > 100), h: r ? Math.round(r.height) : 0, vis: !!r && r.width > 60 && r.top >= 0, label: a && a.getAttribute('aria-label') } });
+    ok(lg.src === 'cass-logo.png' && lg.loaded && lg.h >= 40 && lg.vis && /CASS/.test(lg.label), 'CASS logo in the header of ' + u.split('?')[0] + ' (' + lg.h + 'px high)');
+  }
+  await ctx.close();
+  ctx = await newContext(browser, { width: 390, height: 844, errors }); p = await ctx.newPage(); await go('index.html');
+  const ph = await p.evaluate(() => { const i = document.querySelector('header .brand img').getBoundingClientRect(); return { h: Math.round(i.height), page: document.documentElement.scrollWidth, ok: i.right <= innerWidth } }); ok(ph.h >= 32 && ph.page <= 390 && ph.ok, 'phone: the logo is smaller but clear, and the page does not scroll sideways (' + ph.h + 'px)');
+  await ctx.close();
+  ctx = await newContext(browser, { errors }); p = await ctx.newPage(); await adminLogin(p); ok(await p.locator('header .brand img[src="cass-logo.png"]').count() === 1 && /Admin/.test(await p.locator('header .brand').innerText()), 'Admin header: logo with the word Admin'); await ctx.close();
+  ctx = await newContext(browser, { errors }); p = await ctx.newPage(); await p.goto(BASE + 'admin.html'); await sleep(300); ok(await p.locator('.brand img[src="cass-logo.png"]').count() >= 1, 'Admin sign-in page: logo too'); await ctx.close();
 
   console.log('5. Admin');
   ctx = await newContext(browser, { errors }); p = await ctx.newPage(); await adminLogin(p); await nav(p, 'set');

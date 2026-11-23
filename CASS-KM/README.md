@@ -162,19 +162,23 @@ The site has no server, so publishing writes three things into the site folder: 
 
 ### People directory and “Request this content”
 
-- **People directory** (`people.html`, “People directory” in the top bar) lists everyone from Admin › People directory. Readers can filter by tower, search by name, role or service, and open a profile. The profile shows the email address (click it to open a new email to that person), phone, office and hours, an **Email** button, and the services the person owns or is the expert for. Cards show no email addresses.
+- **People directory** (`people.html`, “People directory” in the top bar) lists everyone from Admin › People directory. Readers can filter by tower, search by name, role or service, and open a profile. The profile shows the email address (click it to open a new email to that person), phone, office and hours, an **Email** button, and the services the person owns or is the expert for. Cards show no email addresses. Avatars are all navy and the role chips share one light-blue tint; the tower is not shown as a coloured label (the tower filter at the top does that job).
 - Each person has a **Tower** (Admin › People directory › Edit) that the tower filter uses. People without a tower appear under “Other teams”.
-- **Request this content** (shown on a service page that has no content yet, under a one-line “No SOPs, guides or videos have been added for this service yet.”) goes to the profile of the person who receives requests for that area (L1). The profile's title names the exact service (for example “Request content for 3.3.1 Master Data Management”) and lists only the area that applies, even if the person looks after several. **Email** opens the visitor's email program with **To:**, subject and message filled in (nothing is sent until they press Send); if Outlook is the default email program, it opens in Outlook. **Copy the message** puts the same To, subject and text on the clipboard.
-- **Admin › Settings › Who receives content requests** (Super admin only) chooses the person for each of the 11 areas. With nobody chosen, the button copies the request text instead.
+- **Request this content** (shown on a service page that has no content yet, under a one-line “No SOPs, guides or videos have been added for this service yet.”) goes to the profile of the person who receives requests for that area (L1). The profile's title names the exact service (for example “Request content for 3.3.1 Master Data Management”) and lists only the area that applies, even if the person looks after several. **Email** opens the visitor's email program with **To:**, subject and message filled in (nothing is sent until they press Send); if Outlook is the default email program, it opens in Outlook.
+- **Admin › Settings › Who receives content requests** (Super admin only) chooses the person for each of the 11 areas. With nobody chosen, the button opens the People directory. There is no “copy the message” function.
 - The email buttons use standard `mailto:` links, so they open whichever email program the visitor's computer uses.
 
 ### Academy progress timeline
 
-The learning path shows a 12-week timeline: done weeks are ticked, the current week says **NOW**, and the checkpoint tests (CP 1, CP 2, CP 3 and Final) sit at the end of each month. Each week below keeps its progress ring (for example 2/4). On a phone the timeline scrolls sideways inside its box and brings the current week into view.
+The learning path shows a 12-week timeline: done weeks are ticked, the current week says **NOW**, and the checkpoint tests (CP 1, CP 2, CP 3 and Final) sit at the end of each month. Below it, **Month 1, 2 and 3 are dropdowns**. The month you are in is open and the others are closed, so a new joiner is not shown all the weeks at once. Each dropdown says its weeks and how many are done (for example “1 of 4 weeks done”, or “All done”). When a month is finished, the next one opens by itself. Each week keeps its progress ring (for example 2/4). On a phone the timeline scrolls sideways inside its box and brings the current week into view.
+
+### CASS logo
+
+The CASS logo (`cass-logo.png`, white on a transparent background) sits at the left of the navy header on every page, including Admin (with the word “Admin” next to it). It links to the Knowledge Centre home. It is about 46 px high on a computer and 36 px on a phone. Keep `cass-logo.png` in the same folder as the pages.
 
 ### Colours
 
-The site uses four colours: **navy** (header, text), **blue** (buttons, links, the search area), **light blue** (soft backgrounds and highlights) and **white** (cards). Tower colours, status colours (Approved, Draft, In review) and warning colours stay as they were because they carry meaning. Dark mode uses a navy version of the same scheme. The colours are defined once at the top of each page (`:root` in the `<style>` block), so they are easy to adjust.
+The site uses four colours: **navy** (header, text), **blue** (buttons, links, the search area), **light blue** (soft backgrounds and highlights) and **white** (cards). Towers share the same calm blue (the tower name says which tower it is). Status colours (Approved, Draft, In review) and warning colours stay as they were because they carry meaning. The Admin page keeps its own tower colours because it is a working tool. Dark mode uses a navy version of the same scheme. The colours are defined once at the top of each page (`:root` in the `<style>` block), so they are easy to adjust.
 
 ### Welcome pop-up, page guides and common questions (Super Admin)
 

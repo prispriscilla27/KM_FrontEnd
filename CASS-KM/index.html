@@ -47,7 +47,8 @@ button,input,textarea{font:inherit;color:inherit}
 mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
 .wrap{padding-inline:max(16px,4vw)}
 .top{background:linear-gradient(105deg,var(--hdr1),var(--hdr1b));color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
-.brand{font-weight:800;font-size:19px;letter-spacing:.4px;color:var(--hdr-ink)}
+.brand{color:var(--hdr-ink)}
+.brand{display:inline-flex;align-items:center}.brand img{display:block;height:46px;width:auto}@media (max-width:560px){.brand img{height:36px}}
 .nav{display:flex;gap:4px;flex-wrap:wrap}
 .nav a{padding:8px 12px;border-radius:8px;color:var(--hdr-ink)}
 .nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
@@ -108,8 +109,8 @@ h3.sec{margin:0 0 10px;font-size:15px}
 .pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
 .p-covered{background:var(--ok-bg);color:var(--ok)}.p-partial{background:var(--partial-bg);color:var(--partial-ink)}.p-none{background:var(--none-bg);color:var(--none)}
 .p-approved{background:var(--ok-bg);color:var(--ok)}.p-draft{background:var(--warn-bg);color:var(--warn)}.p-review{background:var(--brand-soft);color:var(--brand)}
-.tw-1{--tc:var(--t1)}.tw-2{--tc:var(--t2)}.tw-3{--tc:var(--t3)}.tw-4{--tc:var(--t4)}
-.pill.tw{background:var(--tc);color:var(--t-ink)}
+.tw-1,.tw-2,.tw-3,.tw-4{--tc:var(--brand)}   /* towers share one calm colour; the name says which tower */
+.pill.tw{background:var(--brand-soft);color:var(--brand)}
 .tsw{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--tc);flex:none;align-self:center}
 .p-new{background:var(--new-bg);color:var(--new)}.p-lock{background:var(--lock-bg);color:var(--lock)}.p-role{background:var(--surface-2);color:var(--ink);font-weight:600}
 .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
@@ -234,7 +235,7 @@ textarea{width:100%;min-height:80px;padding:9px;border-radius:8px;border:1px sol
 </head>
 <body>
 <header class="top wrap">
-  <a class="brand" href="index.html" aria-label="CASS Knowledge Centre home">CASS</a>
+  <a class="brand" href="index.html" aria-label="CASS Knowledge Centre home"><img src="cass-logo.png" alt=""></a>
   <nav class="nav" aria-label="Main">
     <a class="on" href="index.html" aria-current="page">Knowledge Centre</a>
     <a href="new-joiner-academy.html">New Joiner Academy</a>
@@ -581,7 +582,7 @@ const metaRow=cells=>{const h=cells.join('');return h?`<div class="meta">${h}</d
 /* “Request this content”: goes to the profile of the person who looks after this area (Admin › Settings › Content requests), with the email ready */
 function requestBox(c){
   const n=L2INDEX[c],l1=c.split('.').slice(0,2).join('.'),pid=((D.settings||{}).requestContacts||{})[l1],p=pid&&PEOPLE[pid];
-  const btn=p?`<a class="btn primary req" href="people.html?request=${encodeURIComponent(c)}#person-${encodeURIComponent(pid)}">Request this content</a>`:`<button type="button" class="btn primary req" data-req="${esc(c)}">Request this content</button>`;
+  const btn=p?`<a class="btn primary req" href="people.html?request=${encodeURIComponent(c)}#person-${encodeURIComponent(pid)}">Request this content</a>`:`<a class="btn primary req" href="people.html">Request this content</a>`;
   return `<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${btn}<button type="button" class="btn" data-view="home">Back to home</button></div>`}
 function viewL2(){
   const c=state.l2,m=meta(c),node=L2INDEX[c],cov=covOf(c),nm=nameOf(c);
@@ -745,11 +746,6 @@ addEventListener('resize',placePop);
 document.addEventListener('scroll',placePop,{passive:true,capture:true});
 
 /* ---------- Copy messages (nothing is sent from this page) ---------- */
-function requestContent(c){
-  const n=L2INDEX[c];
-  const msg=`Hello Process Excellence,\n\nPlease add knowledge content (SOPs, guides, videos) for this service in the CASS Knowledge Centre:\n${c} ${n.n} (${n.l0.name} › ${n.l1.name})\nPage: ${pageUrl('#l2-'+c)}\n\nThank you.`;
-  copyText(msg).then(()=>toast('Request copied. Paste it into Teams or email to Process Excellence.'),()=>toast('Could not copy. Please contact Process Excellence about '+c+'.'));
-}
 function copyFeedback(){
   const c=state.l2,m=meta(c),owner=PEOPLE[m.owner],note=(document.getElementById('fbText').value||'').trim();
   if(!note){toast('Write a note first.');document.getElementById('fbText').focus();return}
@@ -779,7 +775,6 @@ document.addEventListener('click',e=>{
   if(ds.step){state.step=ds.step;state.stepPicked=true;state.fn=null;setHash(viewHash());render();const b=document.querySelector(`.node[data-step="${CSS.escape(ds.step)}"]`);if(b)b.focus();return}
   if(ds.item){openItem(ds.item);return}
   if(ds.co){company=ds.co;store.set('kmCompany',company);renderChips();render();const b=document.querySelector(`.chip[data-co="${CSS.escape(company)}"]`);if(b)b.focus();return}
-  if(ds.req){requestContent(ds.req);return}
   if(ds.fb){const f=document.getElementById('fbForm'),k=ds.fb,eb=document.querySelector('[data-fb="edit"]');
     if(k==='edit'){f.hidden=false;eb.setAttribute('aria-expanded','true');document.getElementById('fbText').focus()}
     else if(k==='cancel'){f.hidden=true;eb.setAttribute('aria-expanded','false');eb.focus()}

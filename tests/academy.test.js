@@ -12,6 +12,14 @@ run(async browser => {
   ok(!/materials finished/.test(await p.locator('#months').innerText()) && await p.locator('#months .ring').count() === 12, 'the “x of y materials finished” lines are gone; each week keeps its ring');
   ok((await p.locator('#timeline .tl-ml').allInnerTexts()).join('|').toLowerCase() === 'month 1 · understand|month 2 · practice|month 3 · apply', 'grouped under the three months');
   ok((await p.locator('#timeline li.cp small').allInnerTexts()).join() === 'CP 1,CP 2,CP 3,Final', 'checkpoint tests sit at the end of each month, then the final one');
+  /* months are dropdowns: only the month you are in is open */
+  ok(await p.locator('#months details.month').count() === 3 && await p.locator('#months details.month[open]').count() === 1 && await p.locator('#months details.month').first().getAttribute('open') !== null, 'Month 1, 2 and 3 are dropdowns; a new joiner sees only Month 1 open');
+  ok(/Weeks 1–4/.test(await p.locator('#months summary').first().innerText()) && /0 of 4 weeks done/.test(await p.locator('#months summary').first().innerText()), 'each dropdown says its weeks and how many are done');
+  ok(await p.locator('#months details.month:not([open]) .week').first().isVisible() === false && await p.locator('#months details.month[open] .week').first().isVisible(), 'weeks of the closed months stay hidden until opened');
+  await p.click('#months details.month:nth-child(2) summary'); await sleep(150);
+  ok(await p.locator('#months details.month[open]').count() === 2 && await p.locator('#months details.month:nth-child(2) .week').first().isVisible(), 'opening Month 2 shows its weeks and leaves Month 1 open');
+  await p.evaluate(() => document.querySelector('.wkbtn, #months .check') && 0); await p.click('#months details.month:nth-child(1) summary'); await sleep(150);
+  ok(await p.locator('#months details.month:nth-child(1)[open]').count() === 0, 'a month can be closed again');
   /* progress: week 1 finished, week 2 half done, checkpoint 1 passed */
   await p.evaluate(t => { const P = { fin: [], opn: [], man: [] }; countable(1, t).forEach(m => { P.fin.push(m.id); P.opn.push(m.id) }); countable(2, t).slice(0, 2).forEach(m => { P.fin.push(m.id); P.opn.push(m.id) }); saveProg(t, P) }, T);
   await open();
@@ -21,6 +29,7 @@ run(async browser => {
   /* passing Checkpoint 1 locks weeks 1 to 4 as complete (existing rule), so the timeline moves on */
   await p.evaluate(t => store.set('acadTest-' + t + '-cp1', { score: 100, passed: true, date: 'x' }), T); await open();
   ok(await p.locator('#timeline li.cp.done').count() === 1 && /passed/.test(await p.locator('#timeline li.cp.done').getAttribute('aria-label')) && await p.locator('#timeline li.done:not(.cp)').count() === 4 && /Week 5/.test(await p.locator('#timeline li.now').getAttribute('aria-label')), 'a passed checkpoint test is ticked, weeks 1 to 4 are done and week 5 is NOW');
+  ok(await p.locator('#months details.month[open]').count() === 1 && await p.locator('#months details.month:nth-child(2)[open]').count() === 1 && /All done/.test(await p.locator('#months summary').first().innerText()), 'with Month 1 finished, Month 2 opens by itself and Month 1 says “All done”');
   ok(await p.locator('#timeline li').first().getAttribute('title') !== null, 'every box has the full week title as a tooltip');
   /* phone: timeline scrolls inside its own box, NOW is brought into view */
   await ctx.close(); ctx = await newContext(browser, { width: 390, height: 844, errors }); p = await ctx.newPage(); await open();
