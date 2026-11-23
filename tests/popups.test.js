@@ -137,7 +137,7 @@ run(async browser => {
   console.log('5. Admin: Super admin settings');
   ctx = await newContext(browser, { errors }); p = await ctx.newPage(); await adminLogin(p); await nav(p, 'set');
   ok(await p.locator('#popups').count() === 1 && /Pop-ups and common questions/.test(await p.locator('#popups h2').innerText()), 'Settings › Pop-ups and common questions is there for Super admin');
-  ok(await p.locator('#popups [data-on=gdText]').count() === 8 && await p.locator('#popups .fq').count() === 5 && await p.locator('#popups .fq textarea').count() === 15, '8 page guides and 5 pages × 3 question slots');
+  ok(await p.locator('#popups [data-on=gdText]').count() === 9 && await p.locator('#popups .fq').count() === 5 && await p.locator('#popups .fq textarea').count() === 15, '9 page guides and 5 pages × 3 question slots');
   ok(await p.evaluate(() => ['wlOn', 'wlField', 'wlStep', 'gdOn', 'gdText', 'fqOn', 'fqField'].every(k => NEED_ON[k] === 'settings') && NEED.ppRestore === 'settings'), 'every change is guarded by the Super admin-only permission');
   ok(await p.evaluate(() => !can({ type: 'head', towers: ['1'], active: true }, 'settings') && !can({ type: 'editor', towers: ['1'], active: true }, 'settings') && can(ME(), 'settings')), 'tower heads and editors cannot change them');
   await p.fill('#wlt', 'Welcome to CASS KM!'); await p.locator('#wlt').blur(); await sleep(150);

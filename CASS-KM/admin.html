@@ -4,30 +4,30 @@
 <style>
 /* Admin page for the CASS Knowledge Centre. Same design tokens as index.html. */
 :root{
-  --bg:#f3f6fa;--surface:#ffffff;--surface-2:#eef4f9;--ink:#16324a;--muted:#5d7385;--line:#dae4ed;
-  --brand:#0a6fc2;--brand-soft:#e5f1fb;--on-brand:#ffffff;--hdr1:#052944;--hdr-ink:#ffffff;--hdr-muted:#d4ebf5;
+  --bg:#eef3fa;--surface:#ffffff;--surface-2:#e8f0fb;--ink:#0f2342;--muted:#55657f;--line:#d9e3f1;
+  --brand:#1a5dc8;--brand-soft:#e3edfb;--on-brand:#ffffff;--hdr1:#0b1f3a;--hdr-ink:#ffffff;--hdr-muted:#e3edfb;
   --ok:#1d7f55;--ok-bg:#e3f4ec;--partial:#efcf6a;--partial-ink:#7a6210;--partial-bg:#fbf3d6;
   --warn:#9a6411;--warn-bg:#fbf0dc;--none:#7a8896;--none-bg:#edf1f4;--bad:#b42318;--bad-bg:#fdeceb;
   --new:#c2410c;--new-bg:#fdeee5;--lock:#7c3aed;--lock-bg:#f1eafe;--hl:#fff6d6;--hl-line:#e3c35a;
   --t1:#be185d;--t2:#0e7490;--t3:#8a4b14;--t4:#374151;--t-ink:#ffffff;
-  --shadow:0 4px 16px rgba(18,59,90,.07);--pop-shadow:0 12px 32px rgba(10,40,70,.18);
+  --shadow:0 4px 16px rgba(11,31,58,.07);--pop-shadow:0 12px 32px rgba(11,31,58,.18);
   --font:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;color-scheme:light
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;
-  --brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --bg:#09172b;--surface:#0f2440;--surface-2:#163153;--ink:#e4edfa;--muted:#9db3d0;--line:#26436b;
+  --brand:#5ba4f5;--brand-soft:#17335c;--on-brand:#06203d;--hdr-muted:#c3d8f5;
   --ok:#5bd09a;--ok-bg:#163a2b;--partial:#e3c45f;--partial-ink:#efd78c;--partial-bg:#3a3218;
   --warn:#e7b25a;--warn-bg:#3a2d14;--none:#8e9dab;--none-bg:#1e3142;--bad:#f59a8f;--bad-bg:#3d1a17;
   --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;
-  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
+  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#09172b;
   --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0c1824;--surface:#122536;--surface-2:#173046;--ink:#e2ecf4;--muted:#9bb0c1;--line:#244059;
-  --brand:#4ea9f2;--brand-soft:#173a57;--on-brand:#06223a;--hdr-muted:#c3dfee;
+  --bg:#09172b;--surface:#0f2440;--surface-2:#163153;--ink:#e4edfa;--muted:#9db3d0;--line:#26436b;
+  --brand:#5ba4f5;--brand-soft:#17335c;--on-brand:#06203d;--hdr-muted:#c3d8f5;
   --ok:#5bd09a;--ok-bg:#163a2b;--partial:#e3c45f;--partial-ink:#efd78c;--partial-bg:#3a3218;
   --warn:#e7b25a;--warn-bg:#3a2d14;--none:#8e9dab;--none-bg:#1e3142;--bad:#f59a8f;--bad-bg:#3d1a17;
   --new:#fb9a5c;--new-bg:#3f2414;--lock:#c4a5ff;--lock-bg:#2c2147;--hl:#2f2a14;--hl-line:#b89a3c;
-  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#0c1824;
+  --t1:#f472b6;--t2:#22d3ee;--t3:#e0a35e;--t4:#cbd5e1;--t-ink:#09172b;
   --shadow:0 4px 16px rgba(0,0,0,.3);--pop-shadow:0 12px 32px rgba(0,0,0,.5);color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;font-family:var(--font);font-size:14px;color:var(--ink);background:var(--bg);line-height:1.45}
@@ -36,7 +36,7 @@ button,input,textarea,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 [hidden]{display:none!important}
 .wrap{padding-inline:max(16px,3vw)}
-.top{background:linear-gradient(105deg,var(--hdr1),#07527e);color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
+.top{background:linear-gradient(105deg,var(--hdr1),#163360);color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
 .top a{color:var(--hdr-ink)}
 .brand{font-weight:800;font-size:19px;letter-spacing:.4px}
 .brand small{font-weight:600;font-size:13px;margin-left:10px;color:var(--hdr-muted);letter-spacing:0}
@@ -301,7 +301,9 @@ function loadDraft(){
   if(DR&&META.n===0&&DR.settings.version===PUB.settings.version&&DR.settings.lastPublished!==PUB.settings.lastPublished)DR=null;
   if(!DR){DR=clone(PUB);META={n:0}}
   if(!DR.views)DR.views={updated:'',sample:false,months:{}};
-  ['welcome','guides','faqs'].forEach(k=>{if(!DR.settings[k]&&PUB.settings[k])DR.settings[k]=clone(PUB.settings[k])});   /* drafts from before pop-ups existed */
+  ['welcome','guides','faqs','requestContacts'].forEach(k=>{if(!DR.settings[k]&&PUB.settings[k])DR.settings[k]=clone(PUB.settings[k])});
+  ['guides','faqs'].forEach(k=>Object.keys(PUB.settings[k]||{}).forEach(x=>{if(DR.settings[k]&&!DR.settings[k][x])DR.settings[k][x]=clone(PUB.settings[k][x])}));   /* newer pages added after the draft was saved */
+  DR.people.forEach(p=>{if(!('tower' in p)){const q=(PUB.people||[]).find(x=>x.id===p.id);p.tower=q&&q.tower!==undefined?q.tower:''}});   /* drafts from before pop-ups existed */
   /* drafts from before "SOP / DTP" was renamed "SOP" */
   if(DR.itemTypes.some(t=>t.name==='SOP / DTP')&&!DR.itemTypes.some(t=>t.name==='SOP')&&PUB.itemTypes.some(t=>t.name==='SOP')){const R=n=>n==='SOP / DTP'?'SOP':n;DR.itemTypes.forEach(t=>t.name=R(t.name));DR.items.forEach(i=>i.type=R(i.type));Object.values((DR.academy||{}).weekContent||{}).forEach(c=>(c.materials||[]).forEach(m=>m.type=R(m.type)));const sp=DR.settings.servicePage;if(sp){sp.hideTypesAll=(sp.hideTypesAll||[]).map(R);Object.values(sp.hideTypes||{}).forEach(l=>l.forEach((x,j)=>l[j]=R(x)))}}
   /* drafts from before L1 learning paths: take the paths from the published file */
@@ -1693,9 +1695,10 @@ function popPreview(v){
   return `<div class="popprev"><div class="ph"><span class="bigav">${esc(initials(v.name||'?'))}</span><div><b>${esc(v.name||'Name')}</b><div class="muted small">${esc(v.role||'Role')}</div></div></div><dl><dt>Team</dt><dd>${esc(v.team||'—')}</dd><dt>Email</dt><dd>${esc(v.email||'—')}</dd><dt>Phone</dt><dd>${esc(v.phone||'—')}</dd><dt>Office</dt><dd>${esc(v.location||'—')}</dd><dt>Hours</dt><dd>${esc(v.hours||'—')}</dd></dl><div class="muted small">${esc(v.about||'')}</div></div>`;
 }
 function openPersonForm(p,onSaved){
-  const isNew=!p,ro=!can(ME(),'people.edit'),o=p||{name:'',role:'',team:'',email:'',phone:'',location:'',hours:'Mon–Fri, 08:00–17:00 WIB',about:''};
+  const isNew=!p,ro=!can(ME(),'people.edit'),o=p||{name:'',role:'',team:'',tower:'',email:'',phone:'',location:'',hours:'Mon–Fri, 08:00–17:00 WIB',about:''};
   if(isNew&&ro)return deny(denyText('people.edit'));
   const body=`${fld('name','Name',inp('name',o.name,'autocomplete="off"'),{req:1})}${fld('role','Role',inp('role',o.role),{req:1})}${fld('team','Team',inp('team',o.team,'placeholder="e.g. Finance & Accounting · Order to Cash"'))}
+   ${fld('tower','Tower (for the People directory filter)',sel('tower',[['','No tower (other team)'],...DR.taxonomy.map(t=>[t.code,t.name])],o.tower||''))}
    ${fld('email','Work email',`<input type="email" id="f_email" name="email" value="${esc(o.email)}" autocomplete="off">`,{req:1})}
    <div class="g2">${fld('phone','Phone',inp('phone',o.phone))}${fld('location','Office location',inp('location',o.location))}</div>${fld('hours','Working hours',inp('hours',o.hours))}
    ${fld('about','About (one line)',`<textarea id="f_about" name="about" maxlength="160" style="min-height:56px">${esc(o.about)}</textarea>`,{counter:1})}
@@ -1708,9 +1711,9 @@ function openPersonForm(p,onSaved){
     onOpen(rec,form){const u=()=>{$('#ppv',form).innerHTML=popPreview(readForm(form))};u();form.addEventListener('input',u);counters(form)},
     onSave(v){
       if(!need('people.edit'))return false;
-      const val={name:v.name.trim(),role:v.role.trim(),team:v.team.trim(),email:v.email.trim(),phone:v.phone.trim(),location:v.location.trim(),hours:v.hours.trim(),about:v.about.trim()};
+      const val={name:v.name.trim(),role:v.role.trim(),team:v.team.trim(),tower:v.tower||'',email:v.email.trim(),phone:v.phone.trim(),location:v.location.trim(),hours:v.hours.trim(),about:v.about.trim()};
       if(isNew){let id=slug(val.name),n=2;while(person(id))id=slug(val.name)+'-'+n++;DR.people.push({id,...val});commit('added','People directory',id,`Added ${val.name} (${val.role})`,{tower:''});toast(val.name+' added.');onSaved&&onSaved(id)}
-      else{const ch=Object.keys(val).filter(k=>p[k]!==val[k]).map(k=>k==='email'?`Email ${p.email} → ${val.email}`:k==='name'?`Name ${p.name} → ${val.name}`:`${k[0].toUpperCase()+k.slice(1)} edited`);if(!ch.length){toast('No changes to save.');return}Object.assign(p,val);commit('edited','People directory',p.id,`${val.name}: ${ch.join('; ')}`,{tower:''});toast('Saved. Every page and item that shows this person is updated.')}
+      else{const ch=Object.keys(val).filter(k=>(p[k]||'')!==val[k]).map(k=>k==='email'?`Email ${p.email} → ${val.email}`:k==='name'?`Name ${p.name} → ${val.name}`:`${k[0].toUpperCase()+k.slice(1)} edited`);if(!ch.length){toast('No changes to save.');return}Object.assign(p,val);commit('edited','People directory',p.id,`${val.name}: ${ch.join('; ')}`,{tower:''});toast('Saved. Every page and item that shows this person is updated.')}
       if(CUR==='people')renderPeople();return true;
     }});
 }
@@ -2216,6 +2219,7 @@ VIEWS.set={
     ${can(a,'accounts')?accountsHtml():''}
     ${can(a,'settings')?svcPageHtml():''}
     ${can(a,'settings')?popupsHtml():''}
+    ${can(a,'settings')?requestsHtml():''}
     <section class="panel pad gap"><h2>Site</h2><div class="g3">
      <div class="fld"><label for="sd">“New” badge period (days)</label><input id="sd" type="number" min="1" max="365" value="${s.newBadgeDays}" data-on="setDays"></div>
      <div class="fld"><label class="lb">Sample banner</label><label class="sw"><input type="checkbox" data-on="setBanner" name="on" ${s.banner.on?'checked':''}> Show banner</label></div></div>
@@ -2244,7 +2248,7 @@ NEED_ON.noop='settings';ON.noop=()=>{};
    The reader pages show them from the published km-data.js (km-boot.js). */
 const GUIDE_PAGES=[['service','Service page (L2)','index.html?guide=show#l2-3.1.1'],['search','Search results','index.html?guide=show#search-letter'],['glossary','Glossary','index.html?guide=show#glossary'],
   ['academy','Academy: choose tower and area','new-joiner-academy.html?guide=show'],['path','Academy: learning path','new-joiner-academy.html?guide=show#tower-customer-operations'],
-  ['week','Academy: a week','academy-week.html?week=1&tower=customer-operations&guide=show'],['test','Academy: a checkpoint test','academy-test.html?test=cp1&tower=customer-operations&guide=show'],['document','Document viewer','document.html?item=lc-flow&guide=show']];
+  ['week','Academy: a week','academy-week.html?week=1&tower=customer-operations&guide=show'],['test','Academy: a checkpoint test','academy-test.html?test=cp1&tower=customer-operations&guide=show'],['document','Document viewer','document.html?item=lc-flow&guide=show'],['people','People directory','people.html?guide=show']];
 const FAQ_PAGES=[['home','Knowledge Centre home','index.html'],['service','Service page (L2)','index.html#l2-3.1.1'],['search','Search results','index.html#search-letter'],['glossary','Glossary','index.html#glossary'],['academy','New Joiner Academy','new-joiner-academy.html']];
 const FAQ_MAX=3;
 function WLC(){const s=DR.settings;if(!s.welcome||typeof s.welcome!=='object')s.welcome={on:false,title:'',text:'',steps:[],button:'Start exploring →'};const w=s.welcome;if(!Array.isArray(w.steps))w.steps=[];return w}
@@ -2271,6 +2275,16 @@ function popupsHtml(){
       <div class="hint fqwarn" id="fqw-${k}"></div></div>`}).join('')}</div></section>`;
 }
 const ppLog=(t,s)=>commit('edited','Settings',t,s);
+/* Who receives “Request this content” (one person per area, L1) */
+function RCS(){const s=DR.settings;if(!s.requestContacts||typeof s.requestContacts!=='object')s.requestContacts={};return s.requestContacts}
+function requestsHtml(){
+  const rc=RCS(),rows=[];DR.taxonomy.forEach(t=>t.l1.forEach(a=>rows.push({t,a})));
+  return `<section class="panel pad gap" id="reqc"><h2>Who receives content requests</h2>
+   <p class="sub">When a reader clicks <b>Request this content</b> on a service page that has no content yet, they go to the profile of the person chosen here for that area (L1). The profile shows the email address and opens an email with the request ready. With no person chosen, the request text is copied instead. Only Super admin can change this.</p>
+   <div class="tablewrap"><table><thead><tr><th>Area (L1)</th><th>Tower</th><th>Person who receives the requests</th></tr></thead><tbody>${rows.map(({t,a})=>`<tr><td><b>${esc(a.code)}</b> ${esc(a.name)}</td><td>${towerPills([t.code])}</td><td>${pk('rc-'+a.code,rc[a.code]||'',{optional:1,label:'Person for '+a.name})}</td></tr>`).join('')}</tbody></table></div></section>`}
+document.addEventListener('input',e=>{const h=e.target;if(!h||h.tagName!=='INPUT'||h.type!=='hidden'||!/^rc-/.test(h.name)||!h.closest('#reqc'))return;
+  if(!need('settings')){rerender();return}const code=h.name.slice(3),rc=RCS();if((rc[code]||'')===h.value)return;
+  if(h.value)rc[code]=h.value;else delete rc[code];ppLog('requestContacts',`Content requests for ${code}: ${h.value?personName(h.value):'nobody (the request text is copied)'}`);toast('Saved.')});
 ON.wlOn=el=>{const w=WLC();w.on=el.checked;ppLog('welcome','Welcome pop-up '+(w.on?'on':'off'));toast('Saved.')};
 ON.wlField=el=>{const w=WLC(),f=el.dataset.f,v=el.value.trim();if(f==='title'&&!v){toast('The title cannot be empty.');el.value=w.title;return}if(v===(w[f]||''))return;w[f]=v;ppLog('welcome','Welcome pop-up: '+({title:'title',text:'introduction',button:'button label'}[f]||f)+' edited');toast('Saved.')};
 ON.wlStep=el=>{const w=WLC(),i=+el.dataset.i,f=el.dataset.f,v=el.value.trim();while(w.steps.length<3)w.steps.push({lead:'',text:''});const old=w.steps[i][f]||'';if(v===old)return;w.steps[i][f]=v;

@@ -18,6 +18,7 @@ The CASS Knowledge Centre is an internal website for CASS (Chandra Asri Sentral 
 | `admin.html` | The admin page: individual logins, add, edit and delete content, approvals, versions, documents, people and roles, glossary, Academy, then publish. |
 | `km-accounts.js` | The admin accounts (names, usernames, account type, towers, roles and password hashes). **Only `admin.html` loads it**; reader pages never do. |
 | `documents/` | Uploaded documents, written here when an admin publishes. Created automatically on the first publish with a document. |
+| `people.html` | The People directory: a card per person (tower filter and search), and a profile with the person's email, the services they own or are the expert for, and the areas whose content requests go to them. |
 | `cass-logo.png` | The CASS logo (white, on a transparent background). It is shown on a dark badge in the welcome pop-up and the page guides. |
 | `km-boot.js` | A small shared loader that every reader page loads right after `km-data.js`. It hands the content to the page. It also shows an admin their own unpublished changes: in a browser where changes were saved in `admin.html` and not published yet, every page (search included) uses that draft, with an orange bar on top. **Show published version** on the bar switches back for that tab. Other people's browsers never see the draft. |
 | `reference/service-taxonomy.json` | The source of the taxonomy (towers, processes, services) and the L3 functions. `km-data.js` was built from it. |
@@ -159,12 +160,24 @@ The site has no server, so publishing writes three things into the site folder: 
 - Hiding a category removes only its **box** from the service page. Its entries can still be found through search, Recently updated and item links. Process steps always show; a step with nothing left to show says so. Content coverage by tower still counts every entry.
 - Like every change, it reaches readers when you publish.
 
+### People directory and “Request this content”
+
+- **People directory** (`people.html`, “People directory” in the top bar) lists everyone from Admin › People directory. Readers can filter by tower, search by name, role or service, and open a profile. The profile shows the email address (click it to open a new email to that person), phone, office and hours, an **Open in Outlook on the web** link, and the services the person owns or is the expert for. Cards show no email addresses.
+- Each person has a **Tower** (Admin › People directory › Edit) that the tower filter uses. People without a tower appear under “Other teams”.
+- **Request this content** (shown on a service page that has no content yet) goes to the profile of the person who receives requests for that area (L1), with a **ready-made email**: the button opens the visitor's email program with **To:**, subject and message filled in (nothing is sent until they press Send). If Outlook is the default email program, it opens in Outlook; **Open in Outlook on the web** is there for people who use Outlook in the browser.
+- **Admin › Settings › Who receives content requests** (Super admin only) chooses the person for each of the 11 areas. With nobody chosen, the button copies the request text instead.
+- The email buttons use standard `mailto:` links, so they open whichever email program the visitor's computer uses.
+
+### Colours
+
+The site uses four colours: **navy** (header, text), **blue** (buttons, links, the search area), **light blue** (soft backgrounds and highlights) and **white** (cards). Tower colours, status colours (Approved, Draft, In review) and warning colours stay as they were because they carry meaning. Dark mode uses a navy version of the same scheme. The colours are defined once at the top of each page (`:root` in the `<style>` block), so they are easy to adjust.
+
 ### Welcome pop-up, page guides and common questions (Super Admin)
 
 **Admin › Settings › Pop-ups and common questions** (AdminPE / Super admin only). Readers see changes after you publish.
 
 - **Welcome pop-up.** Shown once per browser to a first-time visitor on the Knowledge Centre home (not when they arrive through a link to a service page). Title, introduction, three steps and the button label can be edited, or the whole pop-up switched off. It replaces the old “Start here” box.
-- **Page guides.** One sentence in a closable pop-up (× at the top right, or Esc) with the CASS logo. Pages: service page, search results, glossary, Academy (choose tower and area), Academy learning path, Academy week, Academy test and the document viewer. Each can be edited or switched off; an empty text means no guide.
+- **Page guides.** One sentence in a closable pop-up (× at the top right, or Esc) with the CASS logo. Pages: service page, search results, glossary, People directory, Academy (choose tower and area), Academy learning path, Academy week, Academy test and the document viewer. Each can be edited or switched off; an empty text means no guide.
   - A guide shows **once per page**. It can show again after a visitor has had **no activity on the site for 12 hours**.
   - The **“?”** button in the top bar shows the welcome (home) or the guide of the current page again; it is hidden when that guide is off.
   - **Preview ↗** links in Settings open the page with `?guide=show`, which shows the guide without it counting as seen.

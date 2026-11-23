@@ -83,6 +83,10 @@ window.KM_DATA = {
       "document": {
         "on": true,
         "text": "Read the document on this page. A Download button appears only when the owner allows it."
+      },
+      "people": {
+        "on": true,
+        "text": "Filter by tower, then open a person to see their email and the services they look after."
       }
     },
     "faqs": {
@@ -167,6 +171,19 @@ window.KM_DATA = {
           }
         ]
       }
+    },
+    "requestContacts": {
+      "1.1": "mirela",
+      "2.1": "dorian",
+      "2.2": "dorian",
+      "3.1": "leona",
+      "3.2": "leona",
+      "3.3": "leona",
+      "3.4": "leona",
+      "3.5": "leona",
+      "3.6": "leona",
+      "3.7": "leona",
+      "4.1": "calista"
     }
   },
   "taxonomy": [
@@ -2090,7 +2107,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1201",
       "location": "Jakarta office, Level 12",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Go-to person for LC review and clause questions."
+      "about": "Go-to person for LC review and clause questions.",
+      "tower": "3"
     },
     {
       "id": "orin",
@@ -2101,7 +2119,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1188",
       "location": "Jakarta office, Level 12",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Owns credit policy, credit limits and the Credit Management pages."
+      "about": "Owns credit policy, credit limits and the Credit Management pages.",
+      "tower": "3"
     },
     {
       "id": "leona",
@@ -2112,7 +2131,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1100",
       "location": "Jakarta office, Level 12",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Approves Finance & Accounting knowledge content."
+      "about": "Approves Finance & Accounting knowledge content.",
+      "tower": "3"
     },
     {
       "id": "davin",
@@ -2123,7 +2143,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1322",
       "location": "Jakarta office, Level 10",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Contact for order fulfilment and billing questions."
+      "about": "Contact for order fulfilment and billing questions.",
+      "tower": "1"
     },
     {
       "id": "mirela",
@@ -2134,7 +2155,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1300",
       "location": "Jakarta office, Level 10",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Approves Customer Operations knowledge content."
+      "about": "Approves Customer Operations knowledge content.",
+      "tower": "1"
     },
     {
       "id": "jules",
@@ -2145,7 +2167,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1450",
       "location": "Jakarta office, Level 11",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Maintains the Knowledge Centre and its governance."
+      "about": "Maintains the Knowledge Centre and its governance.",
+      "tower": ""
     },
     {
       "id": "dorian",
@@ -2156,7 +2179,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1410",
       "location": "Jakarta office, Level 9",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Approves Procurement knowledge content."
+      "about": "Approves Procurement knowledge content.",
+      "tower": "2"
     },
     {
       "id": "calista",
@@ -2167,7 +2191,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1420",
       "location": "Jakarta office, Level 8",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Approves Human Resources knowledge content."
+      "about": "Approves Human Resources knowledge content.",
+      "tower": "4"
     },
     {
       "id": "bastian",
@@ -2178,7 +2203,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1430",
       "location": "Jakarta office, Level 9",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Contact for purchase requests and vendor questions."
+      "about": "Contact for purchase requests and vendor questions.",
+      "tower": "2"
     },
     {
       "id": "ilsabet",
@@ -2189,7 +2215,8 @@ window.KM_DATA = {
       "phone": "+62 21 5000 1440",
       "location": "Jakarta office, Level 8",
       "hours": "Mon–Fri, 08:00–17:00 WIB",
-      "about": "Contact for employee data and payroll preparation questions."
+      "about": "Contact for employee data and payroll preparation questions.",
+      "tower": "4"
     }
   ],
   "itemTypes": [
