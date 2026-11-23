@@ -8,7 +8,9 @@ The CASS Knowledge Centre is an internal website for CASS (Chandra Asri Sentral 
 
 | File | What it is |
 |---|---|
-| `index.html` | The Knowledge Centre: taxonomy, service pages, process maps, search and glossary. |
+| `index.html` | The Knowledge Centre: the service taxonomy (a drill-down list), service pages, process maps and search. |
+| `glossary.html` | The Glossary: all acronyms and terms on one separate page, with a tower filter, search and an A to Z jump. |
+| `km-nav.css` | The white tab bar at the top of every reader page (shared by all pages). |
 | `km-data.js` | **All the content**: settings, the service taxonomy with its L3 functions, people, service page details, knowledge items, glossary, search synonyms, Academy content and the change log. Every page reads this one file. |
 | `new-joiner-academy.html` | The New Joiner Academy: pick a tower, then follow its 12-week pathway with a progress circle per week and checkpoint tests. |
 | `academy-week.html` | One week of the Academy (`academy-week.html?week=3&tower=customer-operations`): its goals and materials, which you open and mark as finished. |
@@ -45,7 +47,7 @@ Put the **whole folder** somewhere everyone can reach, for example a shared netw
   - `.../index.html#l2-3.1.1/step-5` also selects process step 5.
   - `.../index.html#l2-3.3.1/fn-3.3.1.4` scrolls to the L3 function 3.3.1.4 and highlights it.
   - `.../index.html#item-lc-dtp` opens the detail panel of one knowledge item.
-  - `.../index.html#glossary` opens the glossary.
+  - `.../glossary.html` opens the glossary; `.../glossary.html?term=LC` opens it at the term LC. (An old `index.html#glossary` link jumps to the glossary page.)
   - `.../index.html#search-letter%20of%20credit` runs a search.
 
 ## Update the content
@@ -232,3 +234,15 @@ Until step 2 is done the page is in **demo mode**: each browser only counts its 
 ### Page headers
 
 Every page starts the same way: a small blue label, then the big title. Home says “Find what you need”, the Academy “Your first 12 weeks”, the People directory “Who to ask”, and a week or test page “New Joiner Academy”. A service page shows “Service · <area name>” above its title (for example “Service · Order to Cash (O2C)”), and the Glossary, search results and document pages have their own short label. No extra description lines were added, because the pages were made shorter on purpose.
+
+### Top tab bar
+
+Under the dark logo bar, every reader page has a white tab bar: **Knowledge Centre, Glossary, New Joiner Academy, People directory**. The tab of the page you are on is underlined. **Admin login** stays at the right end of the same bar, with the “?” help button next to it. On a phone the tabs scroll sideways and Admin login stays in view. The bar's styles are in `km-nav.css`, so keep that file next to the pages.
+
+### Service Taxonomy (drill-down list)
+
+The box on the left of the Knowledge Centre shows one level at a time: the four towers, then the areas inside the tower you pick, then its services. **‹ Back** goes up one level. When you open a service page, the box shows the area that service belongs to, with the service highlighted. The filter box above the list searches all services at once. The coloured dots show Covered, Partial or Not started.
+
+### Glossary
+
+All glossary terms live on `glossary.html`, and nowhere else in the Knowledge Centre (the glossary box on the home page and the glossary view inside the Knowledge Centre were removed). The terms are still edited in Admin › Glossary. A glossary hit in the Knowledge Centre search opens the glossary page at that term.

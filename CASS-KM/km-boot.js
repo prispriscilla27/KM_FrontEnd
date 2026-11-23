@@ -87,7 +87,7 @@
    '.kmw-card li i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--brand,#1a5dc8);color:var(--on-brand,#fff);display:grid;place-items:center;font-style:normal;font-weight:700;font-size:13px}'+
    '.kmw-go{border:0;background:var(--brand,#1a5dc8);color:var(--on-brand,#fff);font:700 15px var(--font,system-ui,sans-serif);padding:12px 28px;border-radius:999px;cursor:pointer;box-shadow:0 8px 20px rgba(26,93,200,.35)}.kmw-go:hover{filter:brightness(1.08)}'+
    '.kmw-x:focus-visible,.kmw-go:focus-visible,.kmg-x:focus-visible,.kmhelp:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}'+
-   '.kmg{position:fixed;z-index:250;top:74px;left:50%;transform:translateX(-50%);width:min(780px,calc(100vw - 24px));display:flex;gap:14px;align-items:center;background:linear-gradient(105deg,var(--hdr1,#0b1f3a),var(--hdr1b,#163360));color:#fff;border-radius:16px;padding:12px 52px 12px 14px;box-shadow:0 14px 36px rgba(5,20,35,.4);animation:kmIn .3s ease}'+
+   '.kmg{position:fixed;z-index:250;top:132px;left:50%;transform:translateX(-50%);width:min(780px,calc(100vw - 24px));display:flex;gap:14px;align-items:center;background:linear-gradient(105deg,var(--hdr1,#0b1f3a),var(--hdr1b,#163360));color:#fff;border-radius:16px;padding:12px 52px 12px 14px;box-shadow:0 14px 36px rgba(5,20,35,.4);animation:kmIn .3s ease}'+
    '.kmg .kmlogo{flex:none;padding:7px 12px;border-radius:12px;background:rgba(255,255,255,.1)}.kmg .kmlogo img{height:30px}.kmg-t{min-width:0}.kmg-l{font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#9cc4f5;margin-bottom:2px}.kmg-m{font-size:14px;line-height:1.5}'+
    '.kmg-x{position:absolute;right:10px;top:10px;border:0;background:rgba(255,255,255,.16);color:#fff;width:30px;height:30px;border-radius:50%;font-size:19px;line-height:1;cursor:pointer}.kmg-x:hover{background:rgba(255,255,255,.3)}'+
    '@media (max-width:560px){.kmg{align-items:flex-start;padding-right:46px}.kmg .kmlogo{display:none}.kmlogo img{height:44px}.kmw-card{padding:26px 20px 22px}}'+
@@ -132,7 +132,7 @@
   window.kmFaq=function(key){var f=(cfg().faqs||{})[key];if(!f||f.on===false)return '';css();
     var items=(f.items||[]).filter(function(i){return i&&String(i.q||'').trim()&&String(i.a||'').trim()}).slice(0,3);if(!items.length)return '';
     return '<section class="kmfaq" aria-labelledby="kmfaq-'+esc2(key)+'"><h3 class="kmfaq-h" id="kmfaq-'+esc2(key)+'">Common questions</h3>'+items.map(function(i){return '<details class="kmfaq-i"><summary>'+esc2(i.q)+'</summary><div>'+esc2(i.a)+'</div></details>'}).join('')+'</section>'};
-  function initHelp(){var nav=document.querySelector('header .nav');if(!nav||nav.querySelector('.kmhelp')||!window.KM)return;css();
+  function initHelp(){var nav=document.querySelector('.tabbar')||document.querySelector('header .nav');if(!nav||nav.querySelector('.kmhelp')||!window.KM)return;css();
     var b=document.createElement('button');b.type='button';b.className='kmhelp';b.textContent='?';b.setAttribute('aria-label','Show the help for this page');b.title='Help for this page';b.hidden=true;
     b.addEventListener('click',function(){if(curKey==='home')window.kmWelcome(true);else window.kmGuide(curKey,true)});nav.appendChild(b);updateHelp()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initHelp);else initHelp();

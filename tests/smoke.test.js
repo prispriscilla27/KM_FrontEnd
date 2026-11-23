@@ -12,7 +12,7 @@ run(async browser => {
   await go('index.html');
   ok(await p.locator('.recent .item').count() === 6 && /Recently updated/.test(await txt('#main')), 'home: Recently updated shows 6 items');
   ok(await p.locator('.recent .item .kmviews').count() === 6, 'every card shows its view count');
-  ok(await p.locator('.leaf').count() === 50, 'taxonomy tree lists all 50 services');
+  ok(await p.locator('#tree .dr-row').count() === 4 && await p.locator('#tree details').count() === 0, 'taxonomy: the box starts with the four towers (drill-down list)');
   ok(!/Find SOPs, desktop procedures|Each bar counts L2 services|Look up the acronyms/.test(await p.locator('body').innerText()), 'the removed intro texts are gone');
   ok(await p.evaluate(() => KM.itemTypes.some(t => t.name === 'SOP') && !KM.itemTypes.some(t => /DTP/.test(t.name)) && !KM.glossary.some(g => g.term === 'DTP')), 'category is called SOP; DTP term removed');
   await p.fill('#q', 'letter of credit'); await sleep(400);
@@ -21,8 +21,8 @@ run(async browser => {
   ok(/Results for/.test(await txt('#main')) && await p.locator('#main .item, #main .resrow').count() > 0, 'search results page');
   await go('index.html'); await p.fill('#q', '3.1.1'); await p.press('#q', 'Enter'); await sleep(500);
   ok(await p.locator('#main .resrow').count() > 0, 'a service code finds the service');
-  await go('index.html#glossary'); ok(/65 terms/.test(await txt('#glcount')), 'glossary: 65 terms');
-  await p.click('[data-gtower="3"]'); await sleep(200); ok(!/65 terms/.test(await txt('#glcount')), 'glossary tower filter narrows the list');
+  await go('glossary.html'); ok(/65 terms/.test(await txt('#glcount')), 'glossary: 65 terms');
+  await p.click('[data-tower="3"]'); await sleep(200); ok(!/65 terms/.test(await txt('#glcount')), 'glossary tower filter narrows the list');
 
   console.log('2. Service pages');
   await go('index.html#l2-3.1.1');
@@ -60,7 +60,7 @@ run(async browser => {
 
   console.log('4. Phone width');
   ctx = await newContext(browser, { width: 390, height: 844, errors }); p = await ctx.newPage();
-  for (const u of ['index.html', 'index.html#l2-3.1.1', 'new-joiner-academy.html', 'index.html#glossary']) { await go(u); ok(await p.evaluate(() => document.documentElement.scrollWidth <= 390), 'no sideways scroll on ' + u) }
+  for (const u of ['index.html', 'index.html#l2-3.1.1', 'new-joiner-academy.html', 'glossary.html']) { await go(u); ok(await p.evaluate(() => document.documentElement.scrollWidth <= 390), 'no sideways scroll on ' + u) }
   await ctx.close();
 
   console.log('5. Admin: login, accounts, lock');

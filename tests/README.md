@@ -7,6 +7,7 @@ The tests start a local web server on port 8790 (`KM_PORT` changes it) and do no
 
 - `popups.test.js`: welcome pop-up, page guides (once per page, 12 hours, close, “?”), common questions (max 3), card styling, and the Super admin settings that control them.
 - `people.test.js`: People directory, profile and email links, “Request this content” (goes to the right person), the colour palette, and the matching Admin settings.
-- `academy.test.js`: the Academy progress timeline.
+- `academy.test.js`: the Academy progress timeline and the month dropdowns.
+- `nav.test.js`: the top tab bar (with Admin login), the separate Glossary page, and the drill-down Service Taxonomy list.
 - `smoke.test.js`: reader pages, search, service pages, Academy, phone width, Admin login and lock, items and versions, other Admin sections, publishing.
 - `helpers.js`: shared code. By default the pop-ups are marked as seen so they do not cover the pages under test.

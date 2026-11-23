@@ -48,9 +48,10 @@ run(async browser => {
   await p.evaluate(() => { location.hash = '#l2-3.1.2' }); await sleep(400);
   ok(await p.locator('.kmg').count() === 0, 'another service page: not shown again (already seen)');
   await p.reload(); await sleep(400); ok(await p.locator('.kmg').count() === 0, 'a reload does not show it again');
-  await p.evaluate(() => { location.hash = '#glossary' }); await sleep(400);
+  await p.goto(BASE + 'glossary.html'); await sleep(500);
   ok(/Look up an abbreviation/.test(await p.locator('.kmg').innerText().catch(() => '')), 'glossary has its own guide, shown on first visit');
   await p.keyboard.press('Escape'); await sleep(100); ok(await p.locator('.kmg').count() === 0, 'Esc closes a guide');
+  await p.goto(BASE + 'index.html'); await sleep(400);
   await p.fill('#q', 'letter of credit'); await p.press('#q', 'Enter'); await sleep(500);
   ok(/Results are grouped by type/.test(await p.locator('.kmg').innerText().catch(() => '')), 'search results have their own guide');
   await p.goto('about:blank'); await p.goto(BASE + 'index.html#l2-3.1.1'); await sleep(400);
@@ -74,7 +75,7 @@ run(async browser => {
   await p.goto(BASE + 'index.html'); await sleep(300); await p.click('.kmw-go');
   await p.goto('about:blank'); await p.goto(BASE + 'index.html#l2-3.1.1'); await sleep(500);
   ok(await p.locator('.kmg').count() === 0 && await p.locator('.kmhelp').isHidden(), 'a guide switched off in Settings does not show and has no “?”');
-  await p.evaluate(() => { location.hash = '#glossary' }); await sleep(400);
+  await p.goto(BASE + 'glossary.html'); await sleep(500);
   ok(await p.locator('.kmg').count() === 0, 'a guide with empty text does not show');
   await ctx.close();
 
@@ -98,7 +99,7 @@ run(async browser => {
   let q = await faq('index.html'); ok(q.length === 3 && /SOP and a Quick Reference Guide/.test(q[0]), 'home: 3 questions');
   q = await faq('index.html#l2-3.1.1'); ok(q.length === 3 && /Covered, Partial and Not started/.test(q[0]), 'service page: 3 questions about service pages');
   q = await faq('index.html#search-letter'); ok(q.length === 3, 'search results: 3 questions');
-  q = await faq('index.html#glossary'); ok(q.length === 2, 'glossary: 2 questions');
+  q = await faq('glossary.html'); ok(q.length === 2, 'glossary: 2 questions');
   q = await faq('new-joiner-academy.html'); ok(q.length === 3 && /Which tower or area/.test(q[0]), 'Academy: 3 questions');
   await p.click('.tcard[data-tower="Human Resources"]'); await sleep(300); ok(await p.locator('.kmfaq-i').count() === 3, 'Academy learning path still shows them');
   await p.goto(BASE + 'index.html'); await sleep(400);
@@ -114,7 +115,7 @@ run(async browser => {
   ok(await p.locator('.kmfaq-i summary b, .kmfaq-i div i').count() === 0 && /Question 1 <b>x<\/b>/.test(await p.locator('.kmfaq-i summary').first().innerText()), 'question text is shown as plain text (no HTML)');
   await p.goto('about:blank'); await p.goto(BASE + 'index.html#l2-3.1.1'); await sleep(500); ok(await p.locator('.kmfaq').count() === 0, 'switched off for a page: none shown');
   await p.goto('about:blank'); await p.goto(BASE + 'index.html#search-letter'); await sleep(500); ok(await p.locator('.kmfaq-i').count() === 2, 'a question without an answer is not shown');
-  await p.goto('about:blank'); await p.goto(BASE + 'index.html#glossary'); await sleep(500); ok(await p.locator('.kmfaq').count() === 0, 'a page whose only question is incomplete shows no block');
+  await p.goto('about:blank'); await p.goto(BASE + 'glossary.html'); await sleep(500); ok(await p.locator('.kmfaq').count() === 0, 'a page whose only question is incomplete shows no block');
   await ctx.close();
 
   console.log('3b. A browser that still holds an old unpublished draft');

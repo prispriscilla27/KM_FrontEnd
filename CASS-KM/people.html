@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CASS People directory</title>
+<link rel="stylesheet" href="km-nav.css">
 <style>
 /* People directory: who owns a service page, who is the expert, and who to ask for new content. Profile pop-up with email links. Tokens copied from index.html. */
 :root{
@@ -48,9 +49,6 @@ button,input{font:inherit;color:inherit}
 .top{background:linear-gradient(105deg,var(--hdr1),var(--hdr1b));color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
 .brand{color:var(--hdr-ink)}
 .brand{display:inline-flex;align-items:center}.brand img{display:block;height:46px;width:auto}@media (max-width:560px){.brand img{height:36px}}
-.nav{display:flex;gap:4px;flex-wrap:wrap}
-.nav a{padding:8px 12px;border-radius:8px;color:var(--hdr-ink)}
-.nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
 .mock{font-size:12px;background:var(--hl);color:var(--ink);border-bottom:1px solid var(--hl-line);padding-block:6px}
 .hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
 .eyebrow{margin:0 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand)}
@@ -99,7 +97,8 @@ button,input{font:inherit;color:inherit}
 </style>
 </head>
 <body>
-<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home"><img src="cass-logo.png" alt=""></a><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a href="new-joiner-academy.html">New Joiner Academy</a><a class="on" href="people.html" aria-current="page">People directory</a><a href="admin.html">Admin login</a></nav></header>
+<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home"><img src="cass-logo.png" alt=""></a></header>
+<div class="tabbar wrap"><nav class="nav" aria-label="Main"><a href="index.html">Knowledge Centre</a><a href="glossary.html">Glossary</a><a href="new-joiner-academy.html">New Joiner Academy</a><a class="on" href="people.html" aria-current="page">People directory</a></nav><span class="sp"></span><a class="adm" href="admin.html">Admin<span class="lg"> login</span></a></div>
 <div class="mock wrap" id="mockBanner" hidden></div>
 <section class="hero wrap"><p class="eyebrow">Who to ask</p><h1>People directory</h1><p>Page owners, experts and the people to ask for new content, with their contact details.</p>
   <form class="search" role="search" onsubmit="return false"><label for="pq" class="sr">Search people</label><input id="pq" type="search" placeholder="Search by name, role or service, e.g. Credit or 3.1.1" autocomplete="off"></form></section>

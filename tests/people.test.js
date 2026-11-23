@@ -95,7 +95,7 @@ run(async browser => {
   console.log('4c. Same page header (idea 3)');
   ctx = await newContext(browser, { errors }); p = await ctx.newPage();
   const eb = async u => { await go(u); return (await p.locator(/#/.test(u) ? '.panel .eyebrow' : '.eyebrow').first().innerText().catch(() => '')).trim() };
-  const exp = { 'index.html': 'FIND WHAT YOU NEED', 'index.html#l2-3.1.1': 'SERVICE · ', 'index.html#glossary': 'ACRONYMS AND TERMS', 'new-joiner-academy.html': 'YOUR FIRST 12 WEEKS', 'academy-week.html?week=1&tower=human-resources': 'NEW JOINER ACADEMY', 'academy-test.html?test=cp1&tower=human-resources': 'NEW JOINER ACADEMY', 'people.html': 'WHO TO ASK', 'document.html?item=lc-flow': 'DOCUMENT' };
+  const exp = { 'index.html': 'FIND WHAT YOU NEED', 'index.html#l2-3.1.1': 'SERVICE · ', 'glossary.html': 'ACRONYMS AND TERMS', 'new-joiner-academy.html': 'YOUR FIRST 12 WEEKS', 'academy-week.html?week=1&tower=human-resources': 'NEW JOINER ACADEMY', 'academy-test.html?test=cp1&tower=human-resources': 'NEW JOINER ACADEMY', 'people.html': 'WHO TO ASK', 'document.html?item=lc-flow': 'DOCUMENT' };
   for (const [u, t] of Object.entries(exp)) { const v = await eb(u); ok(v.startsWith(t), 'small label above the title on ' + u + ' (“' + v + '”)') }
   await go('index.html#l2-3.1.1'); ok(/^SERVICE · .+/.test(await p.locator('.panel .eyebrow').first().innerText()) && await p.locator('.panel .eyebrow').first().evaluate(e => e.nextElementSibling.tagName === 'H2'), 'service pages show the area name in the label, directly above the title');
   await go('index.html'); ok(await p.locator('.hero .eyebrow').evaluate(e => getComputedStyle(e).textTransform === 'uppercase' && e.nextElementSibling.tagName === 'H1'), 'the label sits directly above the big title');

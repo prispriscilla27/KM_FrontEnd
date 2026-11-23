@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CASS Knowledge Centre</title>
+<link rel="stylesheet" href="km-nav.css">
 <style>
-/* Layout: brand bar + search hero (with live suggestions), then taxonomy sidebar | content (home, L2 page, search results, glossary). */
+/* Layout: brand bar + search hero (with live suggestions), then taxonomy sidebar | content (home, L2 page, search results). */
 :root{
   --bg:#eef3fa;--surface:#ffffff;--surface-2:#e8f0fb;--ink:#0f2342;--muted:#55657f;--line:#d9e3f1;
   --brand:#1a5dc8;--brand-soft:#e3edfb;--on-brand:#ffffff;--hdr1:#0b1f3a;--hdr1b:#163360;--hdr2:#1a5dc8;--hdr3:#1f62cc;--hdr-ink:#ffffff;--hdr-muted:#e3edfb;
@@ -49,9 +50,6 @@ mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
 .top{background:linear-gradient(105deg,var(--hdr1),var(--hdr1b));color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
 .brand{color:var(--hdr-ink)}
 .brand{display:inline-flex;align-items:center}.brand img{display:block;height:46px;width:auto}@media (max-width:560px){.brand img{height:36px}}
-.nav{display:flex;gap:4px;flex-wrap:wrap}
-.nav a{padding:8px 12px;border-radius:8px;color:var(--hdr-ink)}
-.nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
 .mock{font-size:12px;background:var(--hl);color:var(--ink);border-bottom:1px solid var(--hl-line);padding-block:6px}
 .hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
 .eyebrow{margin:0 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand)}
@@ -89,18 +87,22 @@ mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle;flex:none}
 .dot.covered{background:var(--ok)}.dot.partial{background:var(--partial)}.dot.none{background:var(--none-bg);border:1.5px solid var(--none)}
 .tfilter{width:100%;border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--surface);color:var(--ink);margin-bottom:8px;font-size:13px}
-.tree details{margin:2px 0}
-.tree summary{cursor:pointer;padding:7px 8px;font-weight:650;border-radius:7px;list-style:none;display:flex;align-items:baseline;gap:6px}
-.tree summary::-webkit-details-marker{display:none}
-.tree summary::before{content:"";flex:none;width:0;height:0;border-style:solid;border-width:5px 0 5px 7px;border-color:transparent transparent transparent var(--muted);margin:0 4px 0 2px;transform:translateY(-1px);transition:transform .15s}
-.tree details[open]>summary::before{transform:translateY(-1px) rotate(90deg)}
-.tree summary:hover{background:var(--surface-2)}
+.dr-head{display:flex;align-items:center;gap:8px;margin:2px 0 8px}
+.dr-back{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--brand);border-radius:999px;padding:5px 12px;font-weight:650;font-size:12.5px;cursor:pointer}
+.dr-back:hover{border-color:var(--brand)}
+.dr-title{font-weight:700;font-size:14px;line-height:1.25;min-width:0;overflow-wrap:anywhere}
+.dr-row{display:flex;align-items:center;gap:10px;width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;padding:11px 8px;color:var(--ink);cursor:pointer;font-size:14px}
+.dr-row:hover{background:var(--surface-2)}
+.dr-row .code{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600;font-size:12px;min-width:30px}
+.dr-row .nm{flex:1;min-width:0;font-weight:650;line-height:1.3}
+.dr-row small{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:1px}
+.dr-row .chev{color:var(--muted);font-size:18px;line-height:1}
 .tree .code{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600;font-size:12px;white-space:nowrap}
-.tree details details{margin-left:14px;border-left:1px solid var(--line);padding-left:6px}
-.leaf{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;text-align:left;padding:7px 8px;border-radius:7px;color:var(--muted);cursor:pointer;font-size:13px}
-.leaf:hover{background:var(--brand-soft);color:var(--ink)}
+.leaf{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;text-align:left;padding:9px 8px;border-radius:7px;color:var(--ink);cursor:pointer;font-size:13.5px}
+.leaf:hover{background:var(--brand-soft)}
 .leaf.on{background:var(--brand-soft);color:var(--brand);font-weight:700}
 .leaf .nm{flex:1;min-width:0}
+.leaf small{display:block;color:var(--muted);font-weight:400;font-size:11.5px}
 .main{min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-content:start}
 .crumb{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
 .crumb button{border:0;background:none;padding:0;color:var(--brand);cursor:pointer}
@@ -236,14 +238,8 @@ textarea{width:100%;min-height:80px;padding:9px;border-radius:8px;border:1px sol
 </style>
 </head>
 <body>
-<header class="top wrap">
-  <a class="brand" href="index.html" aria-label="CASS Knowledge Centre home"><img src="cass-logo.png" alt=""></a>
-  <nav class="nav" aria-label="Main">
-    <a class="on" href="index.html" aria-current="page">Knowledge Centre</a>
-    <a href="new-joiner-academy.html">New Joiner Academy</a>
-    <a href="people.html">People directory</a><a href="admin.html">Admin login</a>
-  </nav>
-</header>
+<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home"><img src="cass-logo.png" alt=""></a></header>
+<div class="tabbar wrap"><nav class="nav" aria-label="Main"><a class="on" href="index.html" aria-current="page">Knowledge Centre</a><a href="glossary.html">Glossary</a><a href="new-joiner-academy.html">New Joiner Academy</a><a href="people.html">People directory</a></nav><span class="sp"></span><a class="adm" href="admin.html">Admin<span class="lg"> login</span></a></div>
 <div class="mock wrap" id="mockBanner" hidden></div>
 <section class="hero wrap">
   <p class="eyebrow">Find what you need</p>
@@ -479,7 +475,7 @@ function runAct(a){
   if(a.q!==undefined){qEl.value=a.q;showSearch(a.q)}
   else if(a.l2){go(a.l2,{fn:a.fn||null})}
   else if(a.item){openItem(a.item)}
-  else if(a.view==='glossary'){showGlossary(a.term||null)}
+  else if(a.view==='glossary'){location.href='glossary.html'+(a.term?'?term='+encodeURIComponent(a.term):'')}
   else if(a.person){openPerson(a.person,qEl,'From search')}
 }
 qEl.addEventListener('input',()=>{clearTimeout(sgTimer);sgTimer=setTimeout(renderSuggest,80)});
@@ -497,12 +493,10 @@ let state={view:'home',l2:null,step:null,q:'',fn:null,term:null};
 function viewHash(){
   if(state.view==='l2'){let h='#l2-'+state.l2;if(state.fn)h+='/fn-'+state.fn;else if(state.stepPicked&&state.step)h+='/'+state.step;return h}
   if(state.view==='search')return '#search-'+encodeURIComponent(state.q);
-  if(state.view==='glossary')return '#glossary';
   return '';
 }
 function showHome(){state={view:'home'};setHash('');render()}
 function showSearch(q){state={view:'search',q};setHash(viewHash());render();mainEl.scrollIntoView({block:'start'})}
-function showGlossary(term){state={view:'glossary',term:term||null};if(term)gl={tower:'all',q:''};setHash('#glossary');render();if(!term)mainEl.scrollIntoView({block:'start'})}
 function defaultStep(c){const s=stepsOf(c);return s?(s.find(x=>x.km)||s[0]).id:null}
 function go(l2,opt){
   opt=opt||{};if(!L2INDEX[l2])return;
@@ -511,8 +505,8 @@ function go(l2,opt){
   if(!opt.fn&&!opt.noScroll)document.querySelector('.layout').scrollIntoView({block:'start'});
 }
 function expandTo(l2){
-  if(document.getElementById('tf').value){document.getElementById('tf').value='';renderTree('')}
-  const leaf=document.querySelector(`.leaf[data-l2="${CSS.escape(l2)}"]`);if(leaf){let d=leaf.closest('details');while(d){d.open=true;d=d.parentElement&&d.parentElement.closest('details')}}
+  const n=L2INDEX[l2];if(!n)return;nav={l0:n.l0.code,l1:n.l1.code};
+  const tf=document.getElementById('tf');if(tf.value)tf.value='';renderTree('');
 }
 function route(){
   let h='';try{h=decodeURIComponent(location.hash.slice(1))}catch(e){h=location.hash.slice(1)}
@@ -524,7 +518,7 @@ function route(){
     state={view:'l2',l2:c,step:st||defaultStep(c),stepPicked:!!st,fn,flashFn:fn};
   }
   else if(h.startsWith('item-')){const it=ITEMS.find(i=>i.id===h.slice(5));if(it&&L2INDEX[it.l2]){const st=(stepsOf(it.l2)||[]).find(x=>x.name===it.step);state={view:'l2',l2:it.l2,step:st?st.id:defaultStep(it.l2),stepPicked:!!st,fn:null};openId=it.id}else state={view:'home'}}
-  else if(h==='glossary'){state={view:'glossary',term:null}}
+  else if(h==='glossary'){location.replace('glossary.html');return}
   else if(h.startsWith('search-')&&h.length>7){state={view:'search',q:h.slice(7)};qEl.value=state.q}
   else state={view:'home'};
   if(state.l2)expandTo(state.l2);
@@ -533,16 +527,32 @@ function route(){
 }
 
 /* ---------- Views ---------- */
+/* Service Taxonomy: a drill-down list, one level at a time (tower, then area, then service) */
+let nav={l0:null,l1:null};
+function leafBtn(a,b,x,withPath){const cv=covOf(x.code);return `<button type="button" class="leaf" data-l2="${esc(x.code)}" title="${COV[cv]}"><i class="dot ${cv}" aria-hidden="true"></i><span class="sr">${COV[cv]}: </span><span class="code">${esc(x.code)}</span><span class="nm">${esc(x.name)}${withPath?`<small>${esc(a.name)} › ${esc(b.name)}</small>`:''}</span></button>`}
+const countL2=a=>(a.l1||[]).reduce((n,b)=>n+(b.l2||[]).length,0);
+const plural=(n,w)=>n+' '+w+(n===1?'':'s');
 function renderTree(filter){
-  const f=norm(filter||''),numeric=/^[0-9.]+$/.test(f);
-  const hit=(codes,text)=>!f||(numeric?codes.some(c=>String(c).startsWith(f)):norm(codes.join(' ')+' '+text).includes(f));
-  const html=TAX.map(a=>{
-    const l1s=(a.l1||[]).map(b=>{const leaves=(b.l2||[]).filter(x=>hit([a.code,b.code,x.code],a.name+' '+b.name+' '+x.name));if(!leaves.length)return '';
-      return `<details ${f||b.code==='3.1'||b.code==='1.1'?'open':''}><summary><span class="code">${esc(b.code)}</span><span>${esc(b.name)}</span></summary>${leaves.map(x=>{const cv=covOf(x.code);return `<button type="button" class="leaf" data-l2="${esc(x.code)}" title="${COV[cv]}"><i class="dot ${cv}" aria-hidden="true"></i><span class="sr">${COV[cv]}: </span><span class="code">${esc(x.code)}</span><span class="nm">${esc(x.name)}</span></button>`}).join('')}</details>`}).join('');
-    if(!l1s)return '';
-    return `<details ${f||a.code==='3'||a.code==='1'?'open':''}><summary><span class="code">L0 · ${esc(a.code)}</span><i class="tsw tw-${esc(a.code)}" aria-hidden="true"></i><span>${esc(a.name)}</span></summary>${l1s}</details>`}).join('');
-  document.getElementById('tree').innerHTML=html||'<p class="sub" style="font-size:12.5px;padding:6px">No service matches that filter.</p>';
-  markLeaves();
+  const f=norm(filter||''),numeric=/^[0-9.]+$/.test(f),el=document.getElementById('tree');
+  if(f){
+    const hit=(codes,text)=>numeric?codes.some(c=>String(c).startsWith(f)):norm(codes.join(' ')+' '+text).includes(f);
+    const rows=TAX.flatMap(a=>(a.l1||[]).flatMap(b=>(b.l2||[]).filter(x=>hit([a.code,b.code,x.code],a.name+' '+b.name+' '+x.name)).map(x=>leafBtn(a,b,x,true)))).join('');
+    el.innerHTML=rows||'<p class="sub" style="font-size:12.5px;padding:6px">No service matches that filter.</p>';markLeaves();return;
+  }
+  const a=nav.l0?L0BY[nav.l0]:null,b=a&&nav.l1?(a.l1||[]).find(x=>x.code===nav.l1):null;
+  let html;
+  if(!a){html=TAX.map(t=>`<button type="button" class="dr-row" data-nav="l0:${esc(t.code)}"><span class="code">${esc(t.code)}</span><span class="nm">${esc(t.name)}<small>${plural(countL2(t),'service')}</small></span><span class="chev" aria-hidden="true">›</span></button>`).join('')}
+  else if(!b){html=`<div class="dr-head"><button type="button" class="dr-back" data-nav="back">‹ Back</button><span class="dr-title">${esc(a.name)}</span></div>`+(a.l1||[]).map(x=>`<button type="button" class="dr-row" data-nav="l1:${esc(x.code)}"><span class="code">${esc(x.code)}</span><span class="nm">${esc(x.name)}<small>${plural((x.l2||[]).length,'service')}</small></span><span class="chev" aria-hidden="true">›</span></button>`).join('')}
+  else{html=`<div class="dr-head"><button type="button" class="dr-back" data-nav="back">‹ Back</button><span class="dr-title">${esc(b.code)} ${esc(b.name)}</span></div>`+(b.l2||[]).map(x=>leafBtn(a,b,x,false)).join('')}
+  el.innerHTML=html;markLeaves();
+}
+function navTo(spec){
+  const prev=nav.l1?'l1:'+nav.l1:nav.l0?'l0:'+nav.l0:'';
+  if(spec==='back'){if(nav.l1)nav.l1=null;else nav.l0=null}
+  else{const [k,c]=spec.split(':');if(k==='l0'){nav={l0:c,l1:null}}else if(k==='l1'){nav.l1=c}}
+  renderTree(document.getElementById('tf').value);
+  const t=document.getElementById('tree'),target=spec==='back'?t.querySelector(`[data-nav="${CSS.escape(prev)}"]`):t.querySelector('.dr-back');
+  if(target)target.focus();
 }
 function markLeaves(){document.querySelectorAll('.leaf').forEach(b=>{const on=state.view==='l2'&&b.dataset.l2===state.l2;b.classList.toggle('on',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')})}
 function renderChips(){document.getElementById('coChips').innerHTML='<span class="lbl" aria-hidden="true">Company</span>'+['All',...COMPANIES].map(c=>`<button type="button" class="chip" data-co="${esc(c)}" aria-pressed="${c===company}">${esc(c)}</button>`).join('')}
@@ -571,8 +581,6 @@ function viewHome(){
   return `<div class="crumb">Home › Knowledge Centre</div>
   <section class="panel pad"><div class="titlerow" style="margin-bottom:10px"><h3 class="sec" style="margin:0">Recently updated${company!=='All'?' · '+esc(company):''}</h3>${nNew?`<span class="pill p-new">${nNew} new for you</span>`:''}</div>${recent.length?`<div class="recent">${recent.map(i=>itemCard(i,{lead:towerLead(i),dateTop:true})).join('')}</div>`:'<p class="sub">No documents for this company yet.</p>'}</section>
   <section class="panel pad"><h3 class="sec">Content coverage by tower</h3><div class="cov">${cov.map(r=>`<div class="covrow"><span>${esc(r.a.name)}</span><span class="bar" role="img" aria-label="${r.c} covered, ${r.p} partial, ${r.n-r.c-r.p} not started"><i class="c" style="width:${r.n?r.c/r.n*100:0}%"></i><i class="p" style="width:${r.n?r.p/r.n*100:0}%"></i></span><span class="num">${r.c+r.p}/${r.n} L2</span></div>`).join('')}</div></section>
-  <section class="panel pad"><div class="titlerow"><div><h3 class="sec" style="margin-bottom:4px">Glossary</h3></div><button type="button" class="btn primary" data-view="glossary">Open the glossary</button></div>
-   <div class="gl-peek">${['LC','BG','SOP','SLA','PO','KPI'].map(t=>`<button type="button" class="chipbtn" data-term="${esc(t)}" aria-label="Open the glossary at ${esc(t)}"><b>${esc(t)}</b></button>`).join('')}</div></section>
   <section class="panel academy"><div><b>New to CASS?</b><br><small class="sub">Follow the guided 12-week learning pathway for your tower.</small></div><a href="new-joiner-academy.html">Open New Joiner Academy →</a></section>${faqHtml('home')}`;
 }
 function l3Section(c){
@@ -631,53 +639,14 @@ function viewSearch(){
   ${!r.length?`<section class="panel pad"><h3 class="sec">No results</h3><ul class="sub" style="margin:0;padding-left:20px"><li>Try a shorter word or check the spelling.</li><li>Search a code such as 3.2.</li><li>Check the company filter (now: ${esc(company)}).</li><li>Browse the taxonomy on the left.</li></ul></section>`:''}${faqHtml('search')}`;
 }
 
-/* ---------- Glossary ---------- */
-let gl={tower:'all',q:''};
-function glFiltered(){
-  const q=norm(gl.q);
-  return GLOSSARY.filter(g=>{
-    if(gl.tower==='none'){if(g.towers.length)return false}
-    else if(gl.tower!=='all'){if(!(g.towers.includes(gl.tower)||g.towers.includes('all')))return false}
-    return !q||norm(g.term+' '+g.meaning+' '+glTowerText(g)).includes(q);
-  }).sort((x,y)=>x.term.localeCompare(y.term,'en',{numeric:true,sensitivity:'base'}));
-}
-const glLetter=t=>{const c=(t[0]||'').toUpperCase();return /[A-Z]/.test(c)?c:'#'};
-function glTowerChips(g){
-  if(!g.towers.length)return '<span class="tba">Not assigned yet</span>';
-  if(g.towers.includes('all'))return '<span class="pill p-role">All towers</span>';
-  return g.towers.map(c=>`<span class="pill tw tw-${esc(c)}">${esc(TOWERNAMES[c]||c)}</span>`).join(' ');
-}
-function glList(){
-  const list=glFiltered();
-  if(!list.length)return {html:`<p class="sub" style="padding:14px 4px">No terms match${gl.q?' “'+esc(gl.q)+'”':''}${gl.tower!=='all'?' for this filter':''}. Try another word or choose “All towers”.</p>`,count:0,letters:[]};
-  let cur='',rows='';const letters=[];
-  list.forEach(g=>{const L=glLetter(g.term);if(L!==cur){cur=L;letters.push(L);rows+=`<div class="gl-letter" id="gl-${L==='#'?'num':L}">${L}</div>`}
-    rows+=`<div class="gl-row ${state.term===g.term?'flash':''}" id="gt-${slug(g.term)}"><div class="gl-term">${hl(g.term,gl.q)}</div><div class="gl-mean">${g.meaning?hl(g.meaning,gl.q):'<span class="tba">Meaning to be added</span>'}</div><div class="gl-tw">${glTowerChips(g)}</div></div>`});
-  return {html:rows,count:list.length,letters};
-}
-function viewGlossary(){
-  const r=glList();
-  const chips=[['all','All towers'],...Object.entries(TOWERNAMES),['none','Not assigned yet']];
-  const az='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');if(GLOSSARY.some(g=>glLetter(g.term)==='#'))az.push('#');
-  return `<div class="crumb"><button type="button" data-view="home">Home</button> › Glossary</div>
-  <section class="panel pad"><p class="eyebrow">Acronyms and terms</p><h2>Glossary</h2><p class="sub">Acronyms and terms used across CASS. Choose your tower to see the terms for your role, or search for a word.</p>
-   <div class="gl-tools"><label for="gq" class="sr">Search the glossary</label><input id="gq" class="tfilter" type="search" placeholder="Search a term or meaning, e.g. LC or guarantee" value="${esc(gl.q)}" autocomplete="off">
-    <div class="gl-chips" role="group" aria-label="Filter by tower">${chips.map(([k,n])=>`<button type="button" class="chipbtn ${/^[1-4]$/.test(k)?'tchip tw-'+k:''}" data-gtower="${esc(k)}" aria-pressed="${gl.tower===k}">${esc(n)}</button>`).join('')}</div></div>
-   <div class="gl-meta"><span id="glcount" aria-live="polite">${r.count} term${r.count===1?'':'s'}</span><span class="gl-az" id="glaz" role="group" aria-label="Jump to letter">${az.map(L=>`<button type="button" class="azb" data-gletter="${L}" ${r.letters.includes(L)?'':'disabled'} aria-label="Terms starting with ${L==='#'?'a number':L}">${L}</button>`).join('')}</span></div>
-   <div class="gl-list" id="gllist">${r.html}</div>
-   <p class="note">Tower tags show where a term is used, based on the service taxonomy and the LC pilot. “Not assigned yet” means we could not tell, so it stays blank until a tower head confirms it.</p></section>${faqHtml('glossary')}`;
-}
-function refreshGlossaryList(){const r=glList();document.getElementById('gllist').innerHTML=r.html;document.getElementById('glcount').textContent=r.count+' term'+(r.count===1?'':'s');document.querySelectorAll('#glaz .azb').forEach(b=>{b.disabled=!r.letters.includes(b.dataset.gletter)})}
-
 /* the pop-up guide of the page the visitor is on (shown once per page; the welcome pop-up is the home page's guide) */
 let guideKey='';
-function guideFor(view){const k={home:'home',l2:'service',search:'search',glossary:'glossary'}[view]||'home';if(k===guideKey)return;guideKey=k;if(k==='home')window.kmPage&&window.kmPage('home');else window.kmGuide&&window.kmGuide(k)}
+function guideFor(view){const k={home:'home',l2:'service',search:'search'}[view]||'home';if(k===guideKey)return;guideKey=k;if(k==='home')window.kmPage&&window.kmPage('home');else window.kmGuide&&window.kmGuide(k)}
 function render(){
   if(state.view==='l2'&&!L2INDEX[state.l2])state={view:'home'};
-  const v={home:viewHome,l2:viewL2,search:viewSearch,glossary:viewGlossary}[state.view]||viewHome;
+  const v={home:viewHome,l2:viewL2,search:viewSearch}[state.view]||viewHome;
   mainEl.innerHTML=v();markLeaves();
   guideFor(state.view);
-  if(state.view==='glossary'&&state.term){const el=document.getElementById('gt-'+slug(state.term));if(el){el.scrollIntoView({block:'center'});setTimeout(()=>el.classList.remove('flash'),2500)}state.term=null}
   if(state.view==='l2'&&state.flashFn){const el=document.getElementById(fnId(state.flashFn));if(el){el.scrollIntoView({block:'center'});setTimeout(()=>el.classList.remove('flash'),2500)}state.flashFn=null}
 }
 
@@ -769,12 +738,10 @@ document.addEventListener('click',e=>{
   if(ds.copy!==undefined){const v=ds.copy;copyText(v).then(()=>toast('Email copied'),()=>toast('Copy this email: '+v));return}
   if(ds.copylink){copyText(pageUrl('#item-'+ds.copylink)).then(()=>toast('Link copied'),()=>toast('Copy this link: '+pageUrl('#item-'+ds.copylink)));return}
   if(t.hasAttribute('data-close')){closeDrawer();return}
-  if(ds.gtower!==undefined){gl.tower=ds.gtower;state.term=null;render();const b=document.querySelector(`[data-gtower="${CSS.escape(ds.gtower)}"]`);if(b)b.focus();return}
-  if(ds.gletter){const el=document.getElementById('gl-'+(ds.gletter==='#'?'num':ds.gletter));if(el)el.scrollIntoView({block:'start'});return}
-  if(ds.term){showGlossary(ds.term);return}
+  if(ds.nav){navTo(ds.nav);return}
   if(ds.act){try{runAct(JSON.parse(ds.act))}catch(err){}return}
   if(ds.l2){go(ds.l2);return}
-  if(ds.view){if(ds.view==='home')showHome();else if(ds.view==='glossary')showGlossary(null);return}
+  if(ds.view){if(ds.view==='home')showHome();return}
   if(ds.step){state.step=ds.step;state.stepPicked=true;state.fn=null;setHash(viewHash());render();const b=document.querySelector(`.node[data-step="${CSS.escape(ds.step)}"]`);if(b)b.focus();return}
   if(ds.item){openItem(ds.item);return}
   if(ds.co){company=ds.co;store.set('kmCompany',company);renderChips();render();const b=document.querySelector(`.chip[data-co="${CSS.escape(company)}"]`);if(b)b.focus();return}
@@ -795,7 +762,6 @@ document.addEventListener('keydown',e=>{
   if(e.key==='/'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const a=document.activeElement;if(!a||!/^(input|textarea|select)$/i.test(a.tagName)&&!a.isContentEditable){e.preventDefault();closePop();closeDrawer();qEl.focus();qEl.select()}}
 });
 document.getElementById('tf').addEventListener('input',e=>renderTree(e.target.value));
-document.addEventListener('input',e=>{if(e.target.id!=='gq')return;gl.q=e.target.value;state.term=null;refreshGlossaryList()});
 renderTree();renderChips();
 addEventListener('hashchange',route);
 route();

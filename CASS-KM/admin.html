@@ -2246,10 +2246,10 @@ NEED_ON.noop='settings';ON.noop=()=>{};
    settings.guides  = {<page key>:{on,text}}          one line, shown as a closable pop-up once per page (12 h without activity: again)
    settings.faqs    = {<page key>:{on,items:[{q,a}]}}  at most 3 per page
    The reader pages show them from the published km-data.js (km-boot.js). */
-const GUIDE_PAGES=[['service','Service page (L2)','index.html?guide=show#l2-3.1.1'],['search','Search results','index.html?guide=show#search-letter'],['glossary','Glossary','index.html?guide=show#glossary'],
+const GUIDE_PAGES=[['service','Service page (L2)','index.html?guide=show#l2-3.1.1'],['search','Search results','index.html?guide=show#search-letter'],['glossary','Glossary','glossary.html?guide=show'],
   ['academy','Academy: choose tower and area','new-joiner-academy.html?guide=show'],['path','Academy: learning path','new-joiner-academy.html?guide=show#tower-customer-operations'],
   ['week','Academy: a week','academy-week.html?week=1&tower=customer-operations&guide=show'],['test','Academy: a checkpoint test','academy-test.html?test=cp1&tower=customer-operations&guide=show'],['document','Document viewer','document.html?item=lc-flow&guide=show'],['people','People directory','people.html?guide=show']];
-const FAQ_PAGES=[['home','Knowledge Centre home','index.html'],['service','Service page (L2)','index.html#l2-3.1.1'],['search','Search results','index.html#search-letter'],['glossary','Glossary','index.html#glossary'],['academy','New Joiner Academy','new-joiner-academy.html']];
+const FAQ_PAGES=[['home','Knowledge Centre home','index.html'],['service','Service page (L2)','index.html#l2-3.1.1'],['search','Search results','index.html#search-letter'],['glossary','Glossary','glossary.html'],['academy','New Joiner Academy','new-joiner-academy.html']];
 const FAQ_MAX=3;
 function WLC(){const s=DR.settings;if(!s.welcome||typeof s.welcome!=='object')s.welcome={on:false,title:'',text:'',steps:[],button:'Start exploring →'};const w=s.welcome;if(!Array.isArray(w.steps))w.steps=[];return w}
 function GDS(){const s=DR.settings;if(!s.guides||typeof s.guides!=='object')s.guides={};return s.guides}

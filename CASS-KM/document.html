@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CASS Document</title>
+<link rel="stylesheet" href="km-nav.css">
 <style>
 /* Document viewer for a Knowledge Centre item: details, then the embedded viewer (PDF, image, text/CSV, video, audio). Nothing downloads automatically. Tokens copied from index.html. */
 :root{
@@ -49,9 +50,6 @@ h2[tabindex="-1"]:focus,.result[tabindex="-1"]:focus{outline:none}
 .top{background:linear-gradient(105deg,var(--hdr1),var(--hdr1b));color:var(--hdr-ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px}
 .brand{color:var(--hdr-ink)}
 .brand{display:inline-flex;align-items:center}.brand img{display:block;height:46px;width:auto}@media (max-width:560px){.brand img{height:36px}}
-.nav{display:flex;gap:4px;flex-wrap:wrap}
-.nav a{padding:8px 12px;border-radius:8px;color:var(--hdr-ink)}
-.nav a:hover,.nav .on{background:rgba(255,255,255,.14)}
 .mock{font-size:12px;background:var(--hl);color:var(--ink);border-bottom:1px solid var(--hl-line);padding-block:6px}
 .hero{background:linear-gradient(110deg,var(--hdr1),var(--hdr2) 62%,var(--hdr3));color:var(--hdr-ink);padding-block:26px}
 .eyebrow{margin:0 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand)}
@@ -125,7 +123,8 @@ h2{margin:0 0 6px;font-size:20px;text-wrap:balance;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
-<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home"><img src="cass-logo.png" alt=""></a><nav class="nav" aria-label="Main"><a class="on" href="index.html">Knowledge Centre</a><a href="new-joiner-academy.html">New Joiner Academy</a><a href="people.html">People directory</a><a href="admin.html">Admin login</a></nav></header>
+<header class="top wrap"><a class="brand" href="index.html" aria-label="CASS Knowledge Centre home"><img src="cass-logo.png" alt=""></a></header>
+<div class="tabbar wrap"><nav class="nav" aria-label="Main"><a class="on" href="index.html">Knowledge Centre</a><a href="glossary.html">Glossary</a><a href="new-joiner-academy.html">New Joiner Academy</a><a href="people.html">People directory</a></nav><span class="sp"></span><a class="adm" href="admin.html">Admin<span class="lg"> login</span></a></div>
 <div class="mock wrap" id="mockBanner" hidden></div>
 <main class="page wrap" id="page"></main>
 <div id="popRoot"></div>
