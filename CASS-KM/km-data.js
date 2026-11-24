@@ -4159,7 +4159,7 @@ window.KM_DATA = {
             "title": "CASS terms and acronyms",
             "time": "10 min",
             "desc": "Look up acronyms and filter them by your tower.",
-            "href": "index.html#glossary",
+            "href": "glossary.html",
             "tba": false
           }
         ]
