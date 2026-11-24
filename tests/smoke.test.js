@@ -94,8 +94,11 @@ run(async browser => {
   await p.click('[data-act=itemEdit][data-id="rtp-qrd"]'); await sleep(200); await p.click('.pmodal [data-ptab=v]'); await sleep(150);
   ok(await p.locator('#verList table.vtable thead th').count() >= 7 && await p.locator('#verList tbody tr[data-vrow]').count() >= 2, 'Versions tab is a table with one row per version');
   await p.keyboard.press('Escape'); await sleep(80); if (await p.locator('.modal [data-x=o]').count()) await p.click('.modal [data-x=o]');
-  const site = await ctx.newPage(); await site.goto(BASE + 'index.html'); await sleep(450); await site.fill('#q', 'zebrafish'); await sleep(400);
-  ok(/Zebrafish purchase checklist/.test(await site.locator('#suggest').innerText()), 'the edit is found by the search bar in the Knowledge Centre (same browser)');
+  const plain = await ctx.newPage(); await plain.goto(BASE + 'index.html'); await sleep(450); await plain.fill('#q', 'zebrafish'); await sleep(400);
+  ok(!/Zebrafish purchase checklist/.test(await plain.locator('#suggest').innerText().catch(() => '')) && await plain.locator('.kmprev').count() === 0, 'the normal site (same browser) does not show the unpublished edit');
+  await plain.close();
+  const site = await ctx.newPage(); await site.goto(BASE + 'index.html?preview=1'); await sleep(450); await site.fill('#q', 'zebrafish'); await sleep(400);
+  ok(/Zebrafish purchase checklist/.test(await site.locator('#suggest').innerText()), 'the edit is found by the search bar in the Admin preview tab');
   await site.close();
 
   console.log('7. Admin: other sections');

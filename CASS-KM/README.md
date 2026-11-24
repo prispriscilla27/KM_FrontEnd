@@ -22,7 +22,7 @@ The CASS Knowledge Centre is an internal website for CASS (Chandra Asri Sentral 
 | `documents/` | Uploaded documents, written here when an admin publishes. Created automatically on the first publish with a document. |
 | `people.html` | The People directory: a card per person (tower filter and search), and a profile with the person's email, the services they own or are the expert for, and the areas whose content requests go to them. |
 | `cass-logo.png` | The CASS logo (white, on a transparent background). It is shown on a dark badge in the welcome pop-up and the page guides. |
-| `km-boot.js` | A small shared loader that every reader page loads right after `km-data.js`. It hands the content to the page. It also shows an admin their own unpublished changes: in a browser where changes were saved in `admin.html` and not published yet, every page (search included) uses that draft, with an orange bar on top. **Show published version** on the bar switches back for that tab. Other people's browsers never see the draft. |
+| `km-boot.js` | A small shared loader that every reader page loads right after `km-data.js`. It hands the content to the page. Every page always shows the published `km-data.js`: a draft left in someone's browser is never shown by itself. The only exception is **Preview on site** inside `admin.html`, which opens one tab that shows the admin's working draft with an orange bar and an **Exit preview** button. |
 | `reference/service-taxonomy.json` | The source of the taxonomy (towers, processes, services) and the L3 functions. `km-data.js` was built from it. |
 | `reference/glossary-seed.json` | The starting glossary (66 terms with tower tags). |
 | `reference/academy-sample-questions.json` | The 51 sample test questions copied into the Academy. |
@@ -141,7 +141,7 @@ Items can hold an uploaded document as well as (or instead of) a Loop link:
 The site has no server, so publishing writes three things into the site folder: **`km-data.js`** (the content), **`km-accounts.js`** (only when accounts changed) and new files in **`documents/`**.
 
 1. **Edit.** Changes go into a working draft in your own browser. The strip at the top shows how many are not published yet.
-2. Open the Knowledge Centre in the same browser: as soon as you save, it shows your unpublished changes (and the search bar finds them), with an orange bar. A Knowledge Centre tab that is already open refreshes by itself. **Preview on site** does the same. Other readers never see it until you publish.
+2. Click **Preview on site**: a new tab shows your unpublished changes (the search bar finds them too) with an orange bar. That tab refreshes by itself when you save again. The Knowledge Centre everywhere else, in your own browser too, keeps showing the published version until you publish.
 3. **Publish…** then either:
    - **Publish to folder…** (Edge and Chrome): choose the site folder once; the page writes the files straight into it and lists any old files you can delete from `documents/`; or
    - **Download .zip**: extract it over the site folder (replace existing files). There are also buttons for km-data.js or km-accounts.js on their own.

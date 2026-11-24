@@ -107,8 +107,10 @@ run(async browser => {
   ok((await p.locator('#reqc tbody tr').first().innerText()).includes('Mirela Tanbury'), 'with the current person for each area');
   await p.click('#reqc tbody tr:first-child .pkb'); await p.click('#reqc tbody tr:first-child .pop .opt:has-text("Davin Ashgrove")'); await sleep(250);
   ok(await p.evaluate(() => DR.settings.requestContacts['1.1'] === 'davin' && /Content requests for 1\.1/.test(DR.changeLog[0].summary)), 'choosing another person is saved and logged');
-  const site = await ctx.newPage(); await site.goto(BASE + 'index.html#l2-1.1.1'); await sleep(600);
-  ok(/person-davin/.test(await site.locator('a.req').getAttribute('href').catch(() => '')), 'the Knowledge Centre uses the new person straight away (draft)');
+  const site = await ctx.newPage(); await site.goto(BASE + 'index.html?preview=1#l2-1.1.1'); await sleep(600);
+  ok(/person-davin/.test(await site.locator('a.req').getAttribute('href').catch(() => '')), 'the Admin preview tab uses the new person straight away (draft)');
+  const normal = await ctx.newPage(); await normal.goto(BASE + 'index.html#l2-1.1.1'); await sleep(600);
+  ok(/person-mirela/.test(await normal.locator('a.req').getAttribute('href').catch(() => '')) && await normal.locator('.kmprev').count() === 0, 'the normal site, in the same browser, still shows the published person and no orange bar');
   await p.bringToFront(); await p.click('#reqc tbody tr:first-child .pkb'); await p.click('#reqc tbody tr:first-child .pop .opt:has-text("To be assigned")'); await sleep(250);
   ok(await p.evaluate(() => !DR.settings.requestContacts['1.1']), 'a person can also be taken away');
   ok(await p.evaluate(() => !can({ type: 'head', towers: ['1'], active: true }, 'settings')), 'only Super admin can change it');

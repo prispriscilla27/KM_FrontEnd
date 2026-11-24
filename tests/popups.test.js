@@ -123,8 +123,12 @@ run(async browser => {
   await p.goto(BASE + 'index.html'); await sleep(400);
   await p.evaluate(() => { const d = JSON.parse(JSON.stringify(window.KM_PUBLISHED)); delete d.settings.welcome; delete d.settings.guides; delete d.settings.faqs; localStorage.setItem('cassKM.draft', JSON.stringify(d)); localStorage.setItem('cassKM.draftMeta', '{"n":35}'); localStorage.removeItem('cassKM.welcomeSeen') });
   await p.reload(); await sleep(600);
-  ok(await p.locator('.kmprev').count() === 1, 'the orange “unpublished changes” bar shows (old draft in use)');
-  ok(await p.locator('.kmw').count() === 1 && await p.locator('.kmfaq-i').count() === 3, 'the welcome pop-up and the common questions still show');
+  ok(await p.locator('.kmprev').count() === 0 && await p.locator('#kmExit, button:has-text("Show published version"), button:has-text("Show my unpublished")').count() === 0, 'a saved old draft is NOT shown: no orange bar and no switch between versions');
+  ok(await p.evaluate(() => window.KM === window.KM_PUBLISHED && !window.KM_PREVIEW), 'the page uses the published data');
+  ok(await p.locator('.kmw').count() === 1 && await p.locator('.kmfaq-i').count() === 3, 'the welcome pop-up and the common questions show');
+  await p.goto('about:blank'); await p.goto(BASE + 'index.html?preview=1'); await sleep(600);
+  ok(await p.locator('.kmprev').count() === 1 && /Admin preview/.test(await p.locator('.kmprev').innerText()) && await p.locator('#kmExit').innerText() === 'Exit preview', 'only the Admin “Preview on site” address shows the draft, with an orange bar and “Exit preview”');
+  await p.click('#kmExit'); await sleep(600); ok(await p.locator('.kmprev').count() === 0, 'Exit preview returns to the published version');
   await ctx.close();
 
   console.log('4. Card styling');
@@ -158,10 +162,10 @@ run(async browser => {
   await p.uncheck('[data-on=fqOn][data-k=glossary]'); await sleep(120);
   ok(await p.evaluate(() => DR.settings.faqs.glossary.on === false), 'common questions can be switched off per page');
   ok(await p.evaluate(() => { const t = buildFile(); return /Welcome to CASS KM!/.test(t) && /Pick a step to see its knowledge\./.test(t) && /Where do I start\?/.test(t) }), 'the edits go into km-data.js when published');
-  /* the edits show on the site in this browser straight away (draft) */
-  const site = await ctx.newPage(); await site.goto(BASE + 'index.html?guide=show#l2-3.1.1'); await sleep(600);
-  ok(/Pick a step to see its knowledge\./.test(await site.locator('.kmg').innerText().catch(() => '')), 'the edited guide shows on the Knowledge Centre (orange draft bar) right away');
-  await site.goto('about:blank'); await site.goto(BASE + 'index.html'); await sleep(500);
+  /* the edits show in the Admin preview tab (draft); the normal site keeps the published version */
+  const site = await ctx.newPage(); await site.goto(BASE + 'index.html?guide=show&preview=1#l2-3.1.1'); await sleep(600);
+  ok(/Pick a step to see its knowledge\./.test(await site.locator('.kmg').innerText().catch(() => '')), 'the edited guide shows in the Admin preview tab (orange draft bar) right away');
+  await site.goto('about:blank'); await site.goto(BASE + 'index.html?preview=1'); await sleep(500);
   ok(/Where do I start\?/.test(await site.locator('.kmfaq').innerText().catch(() => '')), 'the edited common question shows on the home page');
   await site.goto('about:blank'); await site.goto(BASE + 'index.html?guide=show'); await sleep(500);
   ok(/Welcome to CASS KM!/.test(await site.locator('.kmw').innerText().catch(() => '')), 'the edited welcome title shows in the welcome pop-up (preview link)');
